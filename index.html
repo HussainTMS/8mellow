@@ -243,11 +243,19 @@
     display:flex; align-items:center; gap:16px;
   }
   .msg-time{ font-size:13px; color:var(--muted); }
-  .btn-reply{
-    background:transparent; border:1.5px solid var(--purple);
-    color:var(--purple); padding:10px 20px; border-radius:999px;
-    font-size:14px; font-weight:600; cursor:pointer;
-    transition:all .2s;
+  .btn-reply {
+  background: transparent;
+  border: 1.5px solid var(--purple);
+  color: var(--purple);
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  text-decoration: none; /* Removes the underline */
+  display: inline-block;  /* Ensures it behaves like a button */
+}
   }
   .btn-reply:hover{ background:var(--purple); color:white; }
 
@@ -332,13 +340,21 @@
     </div>
   </nav>
 
-  <div class="hero-content">
-    <h1>Some things<br>are worth saying.</h1>
-    <p>Find, share, or respond to messages from people in your past — safely and privately.</p>
-    <a href="auth.html" class="btn-hero">
-      Get Started →</a>
-    </a>
-  </div>
+<div class="hero-content">
+  <h1 style="color: var(--purple);">Some things<br>are worth saying.</h1>
+  <p>Find, share, or respond to messages from people in your past — safely and privately.</p>
+  
+  <p style="font-size: 15px; color: var(--muted); max-width: 480px; margin-bottom: 24px; line-height: 1.7;">
+    <strong style="color: var(--dark-gold);">8mellow</strong> is a safe, anonymous space to say the things you never got to say—or were hesitant to say. Whether it's an apology, a forgiveness, a goodbye, a thank you, or something else entirely—write it here. Someone might read it and reply privately. Or you might just find peace in letting it out.
+  </p>
+
+  <a href="auth.html" class="btn-hero">
+    Get Started
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+  </a>
+</div>
+
+</div>
 
   <!-- SCROLL DOWN INDICATOR -->
   <a href="#messages" class="scroll-indicator">
@@ -413,7 +429,7 @@
         <div class="msg-meta">
           <span class="msg-time">5 hours ago</span>
         </div>
-        <button class="btn-reply">Reply privately</button>
+        <a href="auth.html" class="btn-reply">Reply privately</a>
       </div>
     </div>
 
@@ -425,7 +441,7 @@
         <div class="msg-meta">
           <span class="msg-time">1 day ago</span>
         </div>
-        <button class="btn-reply">Reply privately</button>
+        <a href="auth.html" class="btn-reply">Reply privately</a>
       </div>
     </div>
 
@@ -437,7 +453,7 @@
         <div class="msg-meta">
           <span class="msg-time">2 days ago</span>
         </div>
-        <button class="btn-reply">Reply privately</button>
+        <a href="auth.html" class="btn-reply">Reply privately</a>
       </div>
     </div>
   </div>
