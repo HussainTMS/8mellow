@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — Inbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#5B32A5;
+    --purple-hover:#482680;
+    --light-purple:#F3ECFC;
+    --mint:#7FFFD4; 
+    --dark-gold:#B8860B; 
+    --ink:#1A1A1A;
+    --muted:#666666;
+    --line:#EAEAEA;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  
+  body{
+    background: 
+      radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%),
+      #FAF7F2;
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  
+  /* Main Container */
+  .inbox-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    padding: 48px;
+    box-shadow: 0 20px 60px rgba(91,50,165,0.06);
+    border: 1px solid rgba(255,255,255,0.8);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Decorative top accent */
+  .inbox-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--purple), var(--mint));
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+  .logo {
+    font-family:'Outfit',sans-serif; 
+    font-size: 24px; 
+    font-weight:700; 
+    color:var(--dark-gold); 
+    letter-spacing: -0.03em;
+    padding-bottom: 2px; 
+    border-bottom: 4px solid var(--mint); 
+    display: inline-block;
+  }
+  .back-btn {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .back-btn:hover { color: var(--ink); }
+  .back-btn svg { width: 16px; height: 16px; }
+
+  /* Typography */
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 32px;
+    color: var(--purple);
+    margin-bottom: 32px;
+    font-weight: 700;
+  }
+
+  /* Sections */
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+    margin-top: 32px;
+  }
+  .section-label:first-of-type { margin-top: 0; }
+
+  /* Chat Rows */
+  .chat-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: #FAFAFA;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .chat-row:hover {
+    background: white;
+    border-color: var(--purple);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(91,50,165,0.05);
+  }
+
+  .chat-icon {
+    font-size: 24px;
+    width: 48px;
+    height: 48px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--line);
+  }
+
+  .chat-details {
+    flex: 1;
+    min-width: 0; /* allows text truncation */
+  }
+  .chat-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chat-preview {
+    font-size: 14px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .chat-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .chat-time {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .unread-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--mint);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(127, 255, 212, 0.2);
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+  .empty-state p {
+    font-size: 15px;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  @media(max-width: 600px) {
+    .inbox-container { padding: 32px 24px; }
+    h1 { font-size: 28px; }
+    .chat-row { padding: 16px; }
+    .chat-icon { width: 40px; height: 40px; font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="inbox-container">
+  
+  <div class="header">
+    <div class="logo">8mellow</div>
+    <a href="#" class="back-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Back to Wall
+    </a>
+  </div>
+
+  <h1>Inbox</h1>
+
+  <!-- SECTION 1: CHATS FROM MY MESSAGES -->
+  <div class="section-label">Chats from my messages</div>
+  
+  <!-- Chat Row 1 -->
+  <a href="chat.html" class="chat-row">
+    <div class="chat-icon">❤️</div>
+    <div class="chat-details">
+      <div class="chat-title">Re: "I'm sorry for how I left things…"</div>
+      <div class="chat-preview">I saw your message. I think I know who you might mean.</div>
+    </div>
+    <div class="chat-meta">
+      <div class="chat-time">2h ago</div>
+      <div class="unread-dot"></div>
+    </div>
+  </a>
+
+  <!-- Chat Row 2 -->
+  <a href="chat.html" class="chat-row">
+    <div class="chat-icon">🕊️</div>
+    <div class="chat-details">
+      <div class="chat-title">Re: "I hope wherever you are…"</div>
+      <div class="chat-preview">That meant a lot to read. Thank you for posting it.</div>
+    </div>
+    <div class="chat-meta">
+      <div class="chat-time">1d ago</div>
+    </div>
+  </a>
+
+
+  <!-- SECTION 2: CHATS I STARTED -->
+  <div class="section-label">Chats I started</div>
+
+  <!-- Chat Row 3 -->
+  <a href="chat.html" class="chat-row">
+    <div class="chat-icon">🙏</div>
+    <div class="chat-details">
+      <div class="chat-title">Re: "You probably don't know…"</div>
+      <div class="chat-preview">Thank you for replying. I didn't expect anyone to.</div>
+    </div>
+    <div class="chat-meta">
+      <div class="chat-time">3d ago</div>
+    </div>
+  </a>
+
+  <!-- Chat Row 4 (Empty State Example - remove if you want) -->
+  <!--
+  <div class="empty-state">
+    <p>No chats here yet. When you reply to a message on the wall, it will appear here.</p>
+  </div>
+  -->
+
+</div>
+
+</body>
+</html>

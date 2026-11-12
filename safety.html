@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — Safety & Support</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#5B32A5;
+    --purple-hover:#482680;
+    --light-purple:#F3ECFC;
+    --mint:#7FFFD4; 
+    --dark-gold:#B8860B; 
+    --ink:#1A1A1A;
+    --muted:#666666;
+    --line:#EAEAEA;
+    --danger:#C97064;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  
+  body{
+    background: 
+      radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%),
+      #FAF7F2;
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+
+  /* Page Title (for the review page) */
+  .page-title {
+    text-align: center;
+    max-width: 800px;
+    margin-bottom: 20px;
+  }
+  .page-title h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 36px;
+    color: var(--purple);
+    margin-bottom: 8px;
+  }
+  .page-title p {
+    color: var(--muted);
+    font-size: 16px;
+  }
+  
+  /* Modal Container (to display them nicely on this page) */
+  .modal-demo {
+    width: 100%;
+    max-width: 520px;
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(91,50,165,0.1);
+    border: 1px solid rgba(255,255,255,0.8);
+    position: relative;
+    overflow: hidden;
+  }
+  .modal-demo::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--purple), var(--mint));
+  }
+
+  /* Modal Typography */
+  .modal-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px;
+    color: var(--purple);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .modal-subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  /* Form Elements */
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .reason-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .reason-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reason-option:hover {
+    border-color: var(--purple);
+    background: #FAFAFA;
+  }
+  .reason-option input[type="radio"] {
+    accent-color: var(--purple);
+    width: 18px;
+    height: 18px;
+  }
+  .reason-option label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0;
+    cursor: pointer;
+    flex: 1;
+  }
+
+  textarea {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 80px;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px var(--light-purple);
+  }
+
+  /* Buttons */
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+  }
+  .btn-ghost {
+    background: white;
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+  .btn-ghost:hover { border-color: var(--ink); }
+  
+  .btn-primary {
+    background: var(--purple);
+    color: white;
+  }
+  .btn-primary:hover {
+    background: var(--purple-hover);
+    transform: translateY(-1px);
+  }
+  
+  .btn-danger {
+    background: var(--danger);
+    color: white;
+  }
+  .btn-danger:hover {
+    background: #B35A4F;
+    transform: translateY(-1px);
+  }
+
+  /* Safety Info Box */
+  .info-box {
+    background: var(--light-purple);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .info-box svg {
+    width: 20px;
+    height: 20px;
+    color: var(--purple);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .info-box p {
+    font-size: 13px;
+    color: var(--purple);
+    line-height: 1.5;
+  }
+
+  /* Crisis Resources Box */
+  .crisis-box {
+    background: #FFF4F2;
+    border: 1px solid #FFD6CC;
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 8px;
+  }
+  .crisis-box h4 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    color: #8B3A3A;
+    margin-bottom: 8px;
+  }
+  .crisis-box p {
+    font-size: 13px;
+    color: #8B3A3A;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .crisis-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .crisis-links a {
+    color: #C97064;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #FFD6CC;
+    transition: background 0.2s;
+  }
+  .crisis-links a:hover {
+    background: #FFF9F8;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+  }
+
+  @media(max-width: 600px) {
+    .modal-demo { padding: 24px; }
+    .modal-title { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE TITLE (For review purposes) -->
+<div class="page-title">
+  <h1>Safety & Support Screens</h1>
+  <p>These dialogs appear when a user clicks "Report" or "Block" on a message or chat.</p>
+</div>
+
+<!-- 1. REPORT DIALOG -->
+<div class="modal-demo">
+  <div class="modal-title">Report this content</div>
+  <p class="modal-subtitle">Why are you reporting this? Your report is anonymous.</p>
+
+  <form>
+    <div class="form-group">
+      <div class="reason-list">
+        <div class="reason-option">
+          <input type="radio" name="reason" id="r1">
+          <label for="r1">Harassment or bullying</label>
+        </div>
+        <div class="reason-option">
+          <input type="radio" name="reason" id="r2">
+          <label for="r2">Contains real names or contact info</label>
+        </div>
+        <div class="reason-option">
+          <input type="radio" name="reason" id="r3">
+          <label for="r3">Threats or violence</label>
+        </div>
+        <div class="reason-option">
+          <input type="radio" name="reason" id="r4">
+          <label for="r4">Spam or scam</label>
+        </div>
+        <div class="reason-option">
+          <input type="radio" name="reason" id="r5">
+          <label for="r5">Something else</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="report-details">Additional details (optional)</label>
+      <textarea id="report-details" placeholder="Tell us more about what's wrong..."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost">Cancel</button>
+      <button type="button" class="btn btn-danger">Submit Report</button>
+    </div>
+  </form>
+
+  <div class="info-box">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+    <p>Our safety team will review this within 24 hours. The content will be hidden while we investigate.</p>
+  </div>
+</div>
+
+<!-- 2. BLOCK DIALOG -->
+<div class="modal-demo">
+  <div class="modal-title">Block this person?</div>
+  <p class="modal-subtitle">They will no longer be able to see your messages or contact you.</p>
+
+  <div class="info-box" style="background: #FFF5F5; margin-top: 0; margin-bottom: 24px;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--danger);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+    <p style="color: var(--danger);">This action cannot be undone. You will lose access to this conversation.</p>
+  </div>
+
+  <div class="modal-actions">
+    <button type="button" class="btn btn-ghost">Cancel</button>
+    <button type="button" class="btn btn-danger">Block Person</button>
+  </div>
+</div>
+
+<!-- 3. CRISIS / SUPPORT PAGE -->
+<div class="modal-demo">
+  <div class="modal-title">You are not alone</div>
+  <p class="modal-subtitle">If you are in crisis or need someone to talk to, support is available.</p>
+
+  <div class="crisis-box">
+    <h4>Get immediate help</h4>
+    <p>These free, confidential helplines are available 24/7.</p>
+    
+    <div class="crisis-links">
+      <a href="#">
+        <span>🇺🇸 US: 988 Suicide & Crisis Lifeline</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+      </a>
+      <a href="#">
+        <span>🇬🇧 UK: Samaritans (116 123)</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+      </a>
+      <a href="#">
+        <span>🌍 International: Find a helpline</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="modal-actions" style="margin-top: 24px;">
+    <button type="button" class="btn btn-primary" style="width: 100%;">I understand</button>
+  </div>
+</div>
+
+</body>
+</html>

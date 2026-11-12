@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — How It Works & FAQs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#5B32A5;
+    --purple-hover:#482680;
+    --light-purple:#F3ECFC;
+    --mint:#7FFFD4; 
+    --dark-gold:#B8860B; 
+    --ink:#1A1A1A;
+    --muted:#666666;
+    --line:#EAEAEA;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  
+  body{
+    background: 
+      radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%),
+      #FAF7F2;
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    padding: 48px;
+    box-shadow: 0 20px 60px rgba(91,50,165,0.06);
+    border: 1px solid rgba(255,255,255,0.8);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--purple), var(--mint));
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+  .logo {
+    font-family:'Outfit',sans-serif; 
+    font-size: 24px; 
+    font-weight:700; 
+    color:var(--dark-gold); 
+    letter-spacing: -0.03em;
+    padding-bottom: 2px; 
+    border-bottom: 4px solid var(--mint); 
+    display: inline-block;
+  }
+  .back-btn {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .back-btn:hover { color: var(--ink); }
+
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 32px;
+    color: var(--purple);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    margin-bottom: 40px;
+  }
+
+  /* How It Works Section */
+  .how-it-works {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .step-card {
+    background: #FAFAFA;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+  }
+  .step-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+  .step-card h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .step-card p {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* FAQ Section */
+  .faq-section h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px;
+    color: var(--purple);
+    margin-bottom: 24px;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--line);
+    padding: 16px 0;
+  }
+  .faq-item:last-child {
+    border-bottom: none;
+  }
+  .faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+    cursor: pointer;
+    list-style: none; /* Hide default triangle */
+  }
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+  .faq-question svg {
+    width: 20px;
+    height: 20px;
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+  details[open] .faq-question svg {
+    transform: rotate(180deg);
+  }
+  .faq-answer {
+    font-size: 14px;
+    color: var(--muted);
+    padding-top: 12px;
+    line-height: 1.6;
+  }
+
+  @media(max-width: 600px) {
+    .container { padding: 32px 24px; }
+    h1 { font-size: 28px; }
+    .how-it-works { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  
+  <div class="header">
+    <div class="logo">8mellow</div>
+    <a href="index.html" class="back-btn">Back to Wall</a>
+  </div>
+
+  <h1>How It Works</h1>
+  <p class="subtitle">A safe, anonymous way to connect with people from your past.</p>
+
+  <!-- HOW IT WORKS STEPS -->
+  <div class="how-it-works">
+    <div class="step-card">
+      <div class="step-icon">📝</div>
+      <h3>1. Post a Message</h3>
+      <p>Share what's on your mind for someone from your past. Choose a category like apology, goodbye, or thank you.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-icon">🔍</div>
+      <h3>2. Find the Right Person</h3>
+      <p>Your message is posted anonymously on the public wall. Anyone can read it, but no one knows it's from you.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-icon">🛡️</div>
+      <h3>3. Connect Safely</h3>
+      <p>If someone wants to reply, they must create an account. This keeps the community safe and prevents spam.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-icon">🔒</div>
+      <h3>4. Chat Privately</h3>
+      <p>Once they reply, a private conversation opens. Only you two can see it. No one else can join or read it.</p>
+    </div>
+  </div>
+
+  <!-- FAQ SECTION -->
+  <div class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+
+    <details class="faq-item">
+      <summary class="faq-question">
+        Is my message really anonymous?
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </summary>
+      <div class="faq-answer">
+        Yes. When you post on the public wall, your name and email are never shown. You can also choose to leave your Display Name blank, making you fully anonymous. Only you know which messages are yours.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">
+        Can anyone message me directly?
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </summary>
+      <div class="faq-answer">
+        No. We have a strict "No Cold DMs" policy. The only way someone can start a private chat with you is by replying to one of your public messages. You will never receive unsolicited private messages.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">
+        What happens if someone reports my message?
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </summary>
+      <div class="faq-answer">
+        If a message is reported, it is automatically hidden from the public wall while our safety team reviews it. If it violates our guidelines (e.g., contains real names, threats, or harassment), it will be permanently removed.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">
+        Can I delete a message I posted?
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </summary>
+      <div class="faq-answer">
+        Yes. Go to "My Messages" from your dashboard. You can hide a message from the wall or delete it permanently at any time.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">
+        Is 8mellow a crisis service?
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </summary>
+      <div class="faq-answer">
+        No. 8mellow is not a therapy service, a crisis hotline, or a substitute for professional mental health care. If you are in crisis, please contact a local emergency service or a crisis helpline immediately.
+      </div>
+    </details>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — My Messages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#5B32A5;
+    --purple-hover:#482680;
+    --light-purple:#F3ECFC;
+    --mint:#7FFFD4; 
+    --dark-gold:#B8860B; 
+    --ink:#1A1A1A;
+    --muted:#666666;
+    --line:#EAEAEA;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  
+  body{
+    background: 
+      radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%),
+      #FAF7F2;
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  
+  /* Main Container */
+  .messages-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    padding: 48px;
+    box-shadow: 0 20px 60px rgba(91,50,165,0.06);
+    border: 1px solid rgba(255,255,255,0.8);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Decorative top accent */
+  .messages-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--purple), var(--mint));
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+  .logo {
+    font-family:'Outfit',sans-serif; 
+    font-size: 24px; 
+    font-weight:700; 
+    color:var(--dark-gold); 
+    letter-spacing: -0.03em;
+    padding-bottom: 2px; 
+    border-bottom: 4px solid var(--mint); 
+    display: inline-block;
+  }
+  .new-btn {
+    background: var(--purple);
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .new-btn:hover { background: var(--purple-hover); }
+  .new-btn svg { width: 16px; height: 16px; }
+
+  /* Typography */
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 32px;
+    color: var(--purple);
+    margin-bottom: 32px;
+    font-weight: 700;
+  }
+
+  /* Message Cards */
+  .message-card {
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 24px;
+    background: #FAFAFA;
+    margin-bottom: 20px;
+    transition: all 0.2s;
+  }
+  .message-card:hover {
+    border-color: var(--purple);
+    background: white;
+    box-shadow: 0 10px 30px rgba(91,50,165,0.05);
+  }
+
+  /* Card Header (Meta & Status) */
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .category-badge {
+    background: var(--light-purple);
+    color: var(--purple);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 12px;
+  }
+  
+  /* Status Badges */
+  .status-badge {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .status-public {
+    background: #E8F5E9;
+    color: #2E7D32;
+  }
+  .status-hidden {
+    background: #FFF3E0;
+    color: #E65100;
+  }
+
+  /* Card Content */
+  .card-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+
+  /* Card Footer (Stats & Actions) */
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+  .card-stats {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  /* Action Buttons */
+  .card-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .action-btn {
+    background: white;
+    border: 1px solid var(--line);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+  .action-btn:hover {
+    border-color: var(--purple);
+    color: var(--purple);
+  }
+  .action-btn.primary {
+    background: var(--light-purple);
+    border-color: var(--light-purple);
+    color: var(--purple);
+  }
+  .action-btn.primary:hover {
+    background: var(--purple);
+    color: white;
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: #FAFAFA;
+    border-radius: 20px;
+    border: 1px dashed var(--line);
+  }
+  .empty-state h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .empty-state p {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  @media(max-width: 600px) {
+    .messages-container { padding: 32px 24px; }
+    h1 { font-size: 28px; }
+    .card-footer { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .card-actions { width: 100%; justify-content: flex-end; }
+  }
+</style>
+</head>
+<body>
+
+<div class="messages-container">
+  
+  <div class="header">
+    <div class="logo">8mellow</div>
+    <a href="write.html" class="new-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      New Message
+    </a>
+  </div>
+
+  <h1>My Messages</h1>
+
+  <!-- MESSAGE 1: PUBLIC -->
+  <div class="message-card">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="category-badge">❤️ I'm sorry</span>
+        <span>2 hours ago</span>
+      </div>
+      <span class="status-badge status-public">Public</span>
+    </div>
+    
+    <p class="card-text">
+      I'm sorry for how I left things with you. I was scared and I took the easy way out. You deserved better than silence.
+    </p>
+
+    <div class="card-footer">
+      <div class="card-stats">
+        <div class="stat">♥ 24 me too</div>
+        <div class="stat">💬 3 replies</div>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn">Hide</button>
+        <a href="inbox.html" class="action-btn primary">View Chats</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MESSAGE 2: HIDDEN -->
+  <div class="message-card">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="category-badge">🕊️ Goodbye</span>
+        <span>2 days ago</span>
+      </div>
+      <span class="status-badge status-hidden">Hidden</span>
+    </div>
+    
+    <p class="card-text">
+      I hope wherever you are, you know I loved you. I never got the chance to say it out loud.
+    </p>
+
+    <div class="card-footer">
+      <div class="card-stats">
+        <div class="stat">♥ 63 me too</div>
+        <div class="stat">💬 1 reply</div>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn">Delete</button>
+        <button class="action-btn primary">Make Public</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTIONAL: EMPTY STATE (Remove if not needed) -->
+  <!--
+  <div class="empty-state">
+    <h3>No messages yet</h3>
+    <p>When you write a message and post it to the wall, it will appear here so you can manage it.</p>
+    <a href="write.html" class="new-btn" style="display: inline-flex;">Write your first message</a>
+  </div>
+  -->
+
+</div>
+
+</body>
+</html>

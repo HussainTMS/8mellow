@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — Some things are worth saying</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#5B32A5;
+    --purple-hover:#482680;
+    --light-purple:#F3ECFC;
+    --mint:#7FFFD4; 
+    --dark-gold:#B8860B; 
+    --bg:#FAFAFA;
+    --ink:#1A1A1A;
+    --muted:#666666;
+    --line:#EAEAEA;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  
+  html {
+    scroll-behavior: smooth; /* Smooth scroll to messages */
+  }
+  
+  body{
+    background: 
+      radial-gradient(circle at 50% 20%, #F9F5FF 0%, transparent 40%),
+      radial-gradient(circle at 10% 80%, #FFF5F5 0%, transparent 40%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-attachment: fixed;
+  }
+  
+  /* --- HERO SECTION --- */
+  .hero-section{
+    position:relative;
+    background:url('https://images.unsplash.com/photo-1472120435266-53107fd0c44a?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
+    min-height:440px; 
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    box-shadow: 0 10px 30px rgba(91,50,165,0.05);
+  }
+  .hero-section::before{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0) 100%);
+    z-index:1;
+  }
+  
+  /* Nav */
+  .nav{
+    position:relative; z-index:10;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:24px 48px;
+    max-width:1280px; margin:0 auto; width:100%;
+  }
+  
+  /* Dark Gold Logo with Mint Underline */
+  .logo{ 
+    font-family:'Outfit',sans-serif; 
+    font-size:28px; 
+    font-weight:700; 
+    color:var(--dark-gold); 
+    cursor:pointer; 
+    letter-spacing: -0.03em;
+    padding-bottom: 1px; 
+    border-bottom: 4px solid var(--mint); 
+    display: inline-block;
+  }
+  
+  .nav-links{ display:flex; align-items:center; gap:32px; }
+  .nav-links a{ text-decoration:none; color:var(--ink); font-size:15px; font-weight:500; }
+  .nav-links a:hover{ color:var(--purple); }
+  
+  .nav-actions{ display:flex; align-items:center; gap:12px; }
+  .btn-outline{
+    padding:10px 24px; border:none; border-radius:999px;
+    color:var(--purple); font-weight:600; text-decoration:none; 
+    background:var(--light-purple);
+    transition:all .2s;
+  }
+  .btn-outline:hover{ background:#E5D9F5; }
+  .btn-solid{
+    padding:10px 24px; border:none; border-radius:999px;
+    background:var(--purple); color:white; font-weight:600; text-decoration:none;
+    transition:background .2s;
+  }
+  .btn-solid:hover{ background:var(--purple-hover); }
+
+  /* Hero Content */
+  .hero-content{
+    position:relative; z-index:10;
+    max-width:1280px; margin:0 auto; width:100%;
+    padding:20px 48px 60px; 
+    flex:1;
+    display:flex; flex-direction:column; justify-content:center;
+    max-width: 700px;
+  }
+  .hero-content h1{
+    font-family:'Outfit',sans-serif;
+    font-size:48px; 
+    line-height:1.1; font-weight:700;
+    color:var(--dark-gold);
+    margin-bottom:16px;
+    letter-spacing:-0.02em;
+  }
+  .hero-content p{
+    font-size:18px; color:var(--ink); font-weight:500;
+    margin-bottom:24px; max-width:480px;
+  }
+  .btn-hero{
+    display:inline-flex; align-items:center; gap:12px;
+    background:var(--purple); color:white; text-decoration:none;
+    padding:14px 28px; border-radius:999px;
+    font-size:16px; font-weight:600; width:fit-content;
+    transition:background .2s;
+  }
+  .btn-hero:hover{ background:var(--purple-hover); }
+  .btn-hero svg{ width:18px; height:18px; }
+
+  /* --- SCROLL DOWN INDICATOR --- */
+  .scroll-indicator {
+    position: absolute;
+    right: 48px;
+    bottom: 120px; /* Positioned above the overlapping cards */
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    padding: 10px 18px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--purple);
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(91,50,165,0.1);
+    transition: all 0.3s ease;
+    animation: float 2s infinite ease-in-out;
+  }
+  .scroll-indicator:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(91,50,165,0.15);
+  }
+  .scroll-indicator svg {
+    width: 18px;
+    height: 18px;
+    animation: bounce 1.5s infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  /* --- HOW IT WORKS (PULLED UP) --- */
+  .how-it-works{
+    max-width:1280px; 
+    margin: -50px auto 0; 
+    padding:0 48px 60px;
+    position: relative;
+    z-index: 20; 
+    display:grid; 
+    grid-template-columns:repeat(4,1fr); 
+    gap:24px;
+  }
+  .step-card{
+    background:rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border:1px solid rgba(255,255,255,0.8); border-radius:20px;
+    padding:28px 20px; text-align:center;
+    box-shadow:0 10px 30px rgba(91,50,165,0.08);
+  }
+  .step-icon{
+    width:60px; height:60px; border-radius:50%;
+    background:var(--light-purple); color:var(--purple);
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 16px;
+  }
+  .step-icon svg{ width:28px; height:28px; }
+  .step-card h3{
+    font-family:'Outfit',sans-serif; font-size:17px; color:var(--ink);
+    margin-bottom:10px; font-weight:600;
+  }
+  .step-card p{ font-size:13px; color:var(--muted); line-height:1.5; }
+
+  /* --- MESSAGE FEED --- */
+  .feed-section{
+    max-width:760px; margin:0 auto; padding:20px 24px 80px;
+    position:relative;
+    scroll-margin-top: 40px; /* Adds space when scrolling to it */
+  }
+  .feed-header{
+    text-align:center; margin-bottom:40px;
+  }
+  .feed-header h2{
+    font-family:'Outfit',sans-serif; font-size:36px; color:var(--purple); font-weight:700;
+    margin-bottom:8px;
+  }
+  .feed-header p{ font-size:16px; color:var(--muted); }
+  
+  .feed-list{
+    display:flex; flex-direction:column; gap:24px;
+  }
+  .feed-card{
+    background:white; border:1px solid var(--line); border-radius:20px;
+    padding:32px; box-shadow:0 8px 30px rgba(0,0,0,0.03);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .feed-card:hover{
+    transform:translateY(-3px); box-shadow:0 15px 40px rgba(91,50,165,0.08);
+  }
+  .msg-category{
+    display:inline-block; font-size:12px; font-weight:600;
+    color:var(--purple); background:var(--light-purple);
+    padding:6px 14px; border-radius:999px; margin-bottom:20px;
+    letter-spacing:0.02em;
+  }
+  .msg-text{
+    font-family:'Inter', sans-serif;
+    font-size:18px; line-height:1.7; color:var(--ink);
+    margin-bottom:28px;
+  }
+  .msg-footer{
+    display:flex; justify-content:space-between; align-items:center;
+    border-top:1px solid var(--line); padding-top:20px;
+  }
+  .msg-meta{
+    display:flex; align-items:center; gap:16px;
+  }
+  .msg-time{ font-size:13px; color:var(--muted); }
+  .btn-reply{
+    background:transparent; border:1.5px solid var(--purple);
+    color:var(--purple); padding:10px 20px; border-radius:999px;
+    font-size:14px; font-weight:600; cursor:pointer;
+    transition:all .2s;
+  }
+  .btn-reply:hover{ background:var(--purple); color:white; }
+
+  /* --- BOTTOM BANNER --- */
+  .banner-section{
+    max-width:1280px; margin:0 auto 60px; padding:0 48px;
+  }
+  .banner-inner{
+    background:var(--light-purple); border-radius:24px;
+    display:flex; align-items:center; overflow:hidden;
+    box-shadow:0 10px 40px rgba(91,50,165,0.08);
+  }
+  .banner-images{
+    position:relative; width:300px; height:220px;
+    flex-shrink:0;
+  }
+  .polaroid{
+    position:absolute; background:white; padding:8px 8px 24px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.1); border-radius:4px;
+  }
+  .polaroid img{ width:100%; height:100%; object-fit:cover; border-radius:2px; }
+  .p1{ width:140px; height:160px; left:30px; top:30px; transform:rotate(-6deg); z-index:2; }
+  .p2{ width:120px; height:140px; left:100px; top:50px; transform:rotate(5deg); z-index:1; }
+  
+  .banner-text{
+    padding:40px; flex:1;
+    border-left:1px solid rgba(91,50,165,0.1);
+  }
+  .banner-text h2{
+    font-family:'Outfit',sans-serif; font-size:24px; color:var(--purple);
+    margin-bottom:8px; font-weight:600;
+  }
+  .banner-text p{ font-size:16px; color:var(--ink); max-width:400px; }
+  
+  .banner-script{
+    padding:40px; width:280px; flex-shrink:0;
+    border-left:1px solid rgba(91,50,165,0.1);
+    text-align:center;
+  }
+  .banner-script span{
+    font-family:'Caveat', cursive; font-size:32px; color:var(--purple);
+    line-height:1.1; display:inline-block; transform:rotate(-3deg);
+  }
+
+  /* Responsive */
+  @media(max-width:1024px){
+    .how-it-works{ grid-template-columns:repeat(2,1fr); margin-top: -30px; }
+    .hero-content h1{ font-size:40px; }
+    .scroll-indicator { right: 24px; bottom: 100px; }
+    .banner-inner{ flex-direction:column; }
+    .banner-images{ width:100%; height:200px; }
+    .banner-text{ border-left:none; border-top:1px solid rgba(91,50,165,0.1); width:100%; }
+    .banner-script{ border-left:none; border-top:1px solid rgba(91,50,165,0.1); width:100%; }
+  }
+  @media(max-width:768px){
+    .nav-links, .nav-actions .btn-outline{ display:none; }
+    .nav{ padding:20px 24px; }
+    .hero-content{ padding:20px 24px 60px; }
+    .hero-content h1{ font-size:32px; }
+    .scroll-indicator { right: 20px; bottom: 80px; padding: 8px 14px; font-size: 12px; }
+    .how-it-works{ padding:0 24px 40px; grid-template-columns:1fr; margin-top: -20px; }
+    .feed-card{ padding:24px; }
+    .msg-footer{ flex-direction:column; align-items:flex-start; gap:16px; }
+    .banner-section{ padding:0 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO SECTION -->
+<div class="hero-section">
+  <nav class="nav">
+    <div class="logo">8mellow</div>
+    <div class="nav-links">
+      <a href="#">How It Works</a>
+      <a href="#">Privacy</a>
+      <a href="#">FAQs</a>
+    </div>
+    <div class="nav-actions">
+      <a href="#" class="btn-outline">Log In</a>
+      <a href="#" class="btn-solid">Sign Up</a>
+    </div>
+  </nav>
+
+  <div class="hero-content">
+    <h1>Some things<br>are worth saying.</h1>
+    <p>Find, share, or respond to messages from people in your past — safely and privately.</p>
+    <a href="#" class="btn-hero">
+      Get Started
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+    </a>
+  </div>
+
+  <!-- SCROLL DOWN INDICATOR -->
+  <a href="#messages" class="scroll-indicator">
+    <span>See messages</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <polyline points="19 12 12 19 5 12"></polyline>
+    </svg>
+  </a>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="how-it-works">
+  <div class="step-card">
+    <div class="step-icon">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+    </div>
+    <h3>1. Post a Message</h3>
+    <p>Share what's on your mind for someone from your past.</p>
+  </div>
+
+  <div class="step-card">
+    <div class="step-icon">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    </div>
+    <h3>2. Find the Right Person</h3>
+    <p>Let others discover your message with helpful clues.</p>
+  </div>
+
+  <div class="step-card">
+    <div class="step-icon">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+    </div>
+    <h3>3. Connect Safely</h3>
+    <p>Once they respond, you decide to connect.</p>
+  </div>
+
+  <div class="step-card">
+    <div class="step-icon">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+    </div>
+    <h3>4. Chat Privately</h3>
+    <p>Your conversation stays between you.</p>
+  </div>
+</div>
+
+<!-- MESSAGE FEED -->
+<div class="feed-section" id="messages">
+  <div class="feed-header">
+    <h2>Recent Messages</h2>
+    <p>Words left unsaid, waiting to be found.</p>
+  </div>
+  
+  <div class="feed-list">
+    <!-- Message 1 -->
+    <div class="feed-card">
+      <span class="msg-category">❤️ I'm sorry</span>
+      <p class="msg-text">I'm sorry for how I left things with you. I was scared and I took the easy way out. You deserved better than silence.</p>
+      <div class="msg-footer">
+        <div class="msg-meta">
+          <span class="msg-time">2 hours ago</span>
+        </div>
+        <button class="btn-reply">Reply privately</button>
+      </div>
+    </div>
+
+    <!-- Message 2 -->
+    <div class="feed-card">
+      <span class="msg-category">🕊️ Goodbye</span>
+      <p class="msg-text">I hope wherever you are, you know I loved you. I never got the chance to say it out loud.</p>
+      <div class="msg-footer">
+        <div class="msg-meta">
+          <span class="msg-time">5 hours ago</span>
+        </div>
+        <button class="btn-reply">Reply privately</button>
+      </div>
+    </div>
+
+    <!-- Message 3 -->
+    <div class="feed-card">
+      <span class="msg-category">🙏 I forgive you</span>
+      <p class="msg-text">You probably don't know what it meant that I kept waiting for an answer that never came. I'm letting that go now.</p>
+      <div class="msg-footer">
+        <div class="msg-meta">
+          <span class="msg-time">1 day ago</span>
+        </div>
+        <button class="btn-reply">Reply privately</button>
+      </div>
+    </div>
+
+    <!-- Message 4 -->
+    <div class="feed-card">
+      <span class="msg-category">🌊 This is what it did to me</span>
+      <p class="msg-text">I stopped trusting people after what happened. It took years to say that out loud, and I'm saying it now. Not for you — for me.</p>
+      <div class="msg-footer">
+        <div class="msg-meta">
+          <span class="msg-time">2 days ago</span>
+        </div>
+        <button class="btn-reply">Reply privately</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM BANNER -->
+<div class="banner-section">
+  <div class="banner-inner">
+    <div class="banner-images">
+      <div class="polaroid p1"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=400&auto=format&fit=crop" alt="Memory"></div>
+      <div class="polaroid p2"><img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=400&auto=format&fit=crop" alt="Memory"></div>
+    </div>
+    <div class="banner-text">
+      <h2>A second chance to reconnect</h2>
+      <p>Whether it's an apology, a thank you, or just something left unsaid — 8mellow helps you bridge the distance, on your own terms.</p>
+    </div>
+    <div class="banner-script">
+      <span>Because<br>some connections<br>never fade.</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

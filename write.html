@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — Write a Message</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#5B32A5;
+    --purple-hover:#482680;
+    --light-purple:#F3ECFC;
+    --mint:#7FFFD4; 
+    --dark-gold:#B8860B; 
+    --ink:#1A1A1A;
+    --muted:#666666;
+    --line:#EAEAEA;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  
+  body{
+    /* ORIGINAL WARM BACKGROUND */
+    background: 
+      radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%),
+      #FAF7F2; /* Base warm cream */
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  
+  /* Main Container */
+  .write-container {
+    width: 100%;
+    max-width: 760px;
+    background: white;
+    border-radius: 24px;
+    padding: 48px;
+    box-shadow: 0 20px 60px rgba(91,50,165,0.06);
+    border: 1px solid rgba(255,255,255,0.8);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Decorative top accent */
+  .write-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--purple), var(--mint));
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+  .logo {
+    font-family:'Outfit',sans-serif; 
+    font-size: 24px; 
+    font-weight:700; 
+    color:var(--dark-gold); 
+    letter-spacing: -0.03em;
+    padding-bottom: 2px; 
+    border-bottom: 4px solid var(--mint); 
+    display: inline-block;
+  }
+  .cancel-btn {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .cancel-btn:hover { color: var(--ink); }
+
+  /* Typography */
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 36px;
+    color: var(--purple);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .subtitle {
+    font-family: 'Caveat', cursive;
+    color: var(--mint);
+    font-size: 24px;
+    margin-bottom: 32px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  /* Category Selection */
+  .label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .category-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .category-chip {
+    background: white;
+    border: 1px solid var(--line);
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .category-chip:hover {
+    border-color: var(--purple);
+  }
+  .category-chip.active {
+    background: var(--light-purple);
+    border-color: var(--purple);
+    color: var(--purple);
+    font-weight: 600;
+  }
+
+  /* Category Intro Box */
+  .category-intro {
+    background: var(--light-purple);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 14px;
+    color: var(--purple);
+    margin-bottom: 24px;
+    display: none; 
+  }
+  .category-intro strong {
+    font-weight: 700;
+  }
+
+  /* Textarea */
+  textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: #FAFAFA;
+    resize: vertical;
+    transition: all 0.2s;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--purple);
+    background: white;
+    box-shadow: 0 0 0 3px var(--light-purple);
+  }
+  textarea::placeholder {
+    color: #A0A0A0;
+  }
+
+  /* Character Count */
+  .char-count {
+    text-align: right;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* Safety Warning */
+  .warning {
+    background: #FFF9F0;
+    border: 1px solid #FFE5C2;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 24px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .warning svg {
+    width: 20px;
+    height: 20px;
+    color: #E67E22;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .warning p {
+    font-size: 14px;
+    color: #8B4513;
+    line-height: 1.5;
+  }
+
+  /* Consent Checkbox */
+  .consent-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .consent-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    accent-color: var(--purple);
+    cursor: pointer;
+  }
+  .consent-group label {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  /* Submit Button */
+  .btn-submit {
+    width: 100%;
+    padding: 18px;
+    border: none;
+    border-radius: 12px;
+    background: var(--purple);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-submit:hover {
+    background: var(--purple-hover);
+    transform: translateY(-1px);
+  }
+  .btn-submit:disabled {
+    background: #D1C4E9;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  @media(max-width: 600px) {
+    .write-container { padding: 32px 24px; }
+    h1 { font-size: 28px; }
+    textarea { min-height: 150px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="write-container">
+  
+  <div class="header">
+    <div class="logo">8mellow</div>
+    <a href="#" class="cancel-btn">Cancel</a>
+  </div>
+
+  <h1>Write a message</h1>
+  <p class="subtitle">take your time</p>
+
+  <form onsubmit="event.preventDefault();">
+    
+    <!-- Category Selection -->
+    <span class="label">Choose a category</span>
+    <div class="category-grid">
+      <button type="button" class="category-chip active" onclick="selectCategory(this, '❤️ I\'m sorry', 'For the apology you never got to make.')">❤️ I'm sorry</button>
+      <button type="button" class="category-chip" onclick="selectCategory(this, '⚖️ That wasn\'t fair', 'For expressing how someone treated you unfairly.')">⚖️ That wasn't fair</button>
+      <button type="button" class="category-chip" onclick="selectCategory(this, '🙏 I forgive you', 'For letting go of what they did.')">🙏 I forgive you</button>
+      <button type="button" class="category-chip" onclick="selectCategory(this, '❤️‍🩹 Thank you', 'For what they gave you that stayed.')">❤️‍🩹 Thank you</button>
+      <button type="button" class="category-chip" onclick="selectCategory(this, '💬 Let me explain', 'For something you never got the chance to say.')">💬 Let me explain</button>
+      <button type="button" class="category-chip" onclick="selectCategory(this, '🔗 I want to reconnect', 'For wanting to reach someone again.')">🔗 I want to reconnect</button>
+      <button type="button" class="category-chip" onclick="selectCategory(this, '🕊️ Goodbye', 'For a farewell you never got to say.')">🕊️ Goodbye</button>
+      <button type="button" class="category-chip" onclick="selectCategory(this, '😔 I regret it', 'For sitting with something you did.')">😔 I regret it</button>
+      <button type="button" class="category-chip" onclick="selectCategory(this, '🌊 This is what it did to me', 'For telling someone how their actions affected you.')">🌊 This is what it did to me</button>
+    </div>
+
+    <!-- Dynamic Intro Text -->
+    <div class="category-intro" id="categoryIntro">
+      <strong>❤️ I'm sorry</strong> — For the apology you never got to make.
+    </div>
+
+    <!-- Message Area -->
+    <textarea placeholder="What do you wish you could say to them now?"></textarea>
+    
+    <div class="char-count">0 / 2000</div>
+
+    <!-- Safety Warning -->
+    <div class="warning">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+        <line x1="12" y1="9" x2="12" y2="13"></line>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+      <p>Please do not include real names, contact details, or anything that identifies someone. Keep it about the feelings, not the identity.</p>
+    </div>
+
+    <!-- Consent Checkbox -->
+    <div class="consent-group">
+      <input type="checkbox" id="consent">
+      <label for="consent">I understand this will be posted publicly and anonymously on the wall for everyone to see.</label>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="btn-submit">Post message</button>
+
+  </form>
+
+</div>
+
+<script>
+  function selectCategory(btn, title, desc) {
+    document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const introBox = document.getElementById('categoryIntro');
+    introBox.innerHTML = `<strong>${title}</strong> — ${desc}`;
+    introBox.style.display = 'block';
+  }
+</script>
+
+</body>
+</html>

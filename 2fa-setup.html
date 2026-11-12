@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — Verify Your Email</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#5B32A5;
+    --purple-hover:#482680;
+    --light-purple:#F3ECFC;
+    --mint:#7FFFD4; 
+    --dark-gold:#B8860B; 
+    --ink:#1A1A1A;
+    --muted:#666666;
+    --line:#EAEAEA;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  
+  body{
+    background: 
+      radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%),
+      #FAF7F2;
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .setup-container {
+    width: 100%;
+    max-width: 480px;
+    background: white;
+    border-radius: 24px;
+    padding: 48px;
+    box-shadow: 0 20px 60px rgba(91,50,165,0.06);
+    border: 1px solid rgba(255,255,255,0.8);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .setup-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--purple), var(--mint));
+  }
+
+  .logo {
+    font-family:'Outfit',sans-serif; 
+    font-size:32px; 
+    font-weight:700; 
+    color:var(--dark-gold); 
+    letter-spacing: -0.03em;
+    padding-bottom: 2px; 
+    border-bottom: 4px solid var(--mint); 
+    display: inline-block;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 28px;
+    color: var(--purple);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 32px;
+  }
+
+  /* Email Icon */
+  .email-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--light-purple);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    color: var(--purple);
+  }
+  .email-icon svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Code Input */
+  .input-group {
+    text-align: left;
+    margin-bottom: 24px;
+  }
+  .input-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .code-input {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 24px;
+    text-align: center;
+    letter-spacing: 8px;
+    color: var(--ink);
+    background: #FAFAFA;
+    transition: all 0.2s;
+  }
+  .code-input:focus {
+    outline: none;
+    border-color: var(--purple);
+    background: white;
+    box-shadow: 0 0 0 3px var(--light-purple);
+  }
+
+  .btn-verify {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    background: var(--purple);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-verify:hover {
+    background: var(--purple-hover);
+    transform: translateY(-1px);
+  }
+
+  /* Resend Link */
+  .resend-text {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 24px;
+  }
+  .resend-text a {
+    color: var(--purple);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .resend-text a:hover {
+    text-decoration: underline;
+  }
+
+  @media(max-width: 600px) {
+    .setup-container { padding: 32px 24px; }
+    h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="setup-container">
+  <div class="logo">8mellow</div>
+
+  <div class="email-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+      <polyline points="22,6 12,13 2,6"></polyline>
+    </svg>
+  </div>
+
+  <h1>Check your email</h1>
+  <p class="subtitle">We sent a 6-digit code to your email address.</p>
+
+  <form onsubmit="event.preventDefault();">
+    <div class="input-group">
+      <label for="code">Enter the code</label>
+      <input type="text" id="code" class="code-input" placeholder="000000" maxlength="6" inputmode="numeric">
+    </div>
+
+    <button type="submit" class="btn-verify">Verify Email</button>
+  </form>
+
+  <p class="resend-text">
+    Didn't receive it? <a href="#">Resend code</a>
+  </p>
+
+</div>
+
+</body>
+</html>
