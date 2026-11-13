@@ -336,10 +336,10 @@
   }
 </script>
 <script>
-  // 1. Initialize Supabase
+  // 1. Initialize Supabase (Only once!)
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'sb_publishable_4RVaoPLg6nP_j0UGoZqYCQ_J16cVLV4';
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+  const supabaseKey = 'sb_publishable_4RVaoPLg6nP_j0UGoZqYcQ_J16cVLV4';
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
   // 2. Handle the form submission
   document.querySelector('form').addEventListener('submit', async (e) => {
@@ -348,26 +348,34 @@
     const textarea = document.querySelector('textarea');
     const content = textarea.value;
     
-    // Get the selected category
     const activeCategory = document.querySelector('.category-chip.active');
     const category = activeCategory ? activeCategory.innerText : 'Unknown';
 
     // 3. Send to Supabase
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('posts')
       .insert([{ 
         content: content, 
-        category: category,
-        user_id: '00000000-0000-0000-0000-000000000000' // Temporary dummy ID
+        category: category
+        // We removed the dummy ID for this test
       }]);
 
     if (error) {
       alert('Database Error: ' + error.message);
     } else {
       alert('Success! Your message was saved to the database.');
-      window.location.href = 'index.html'; // Go back to the wall
+      window.location.href = 'index.html';
     }
   });
+
+  // 4. Category Selector Function
+  function selectCategory(btn, title, desc) {
+    document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const introBox = document.getElementById('categoryIntro');
+    introBox.innerHTML = `<strong>${title}</strong> — ${desc}`;
+    introBox.style.display = 'block';
+  }
 </script>
-</body>
 </html>
