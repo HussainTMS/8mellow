@@ -161,6 +161,7 @@
     color: var(--purple);
     font-weight: 600;
     text-decoration: none;
+    cursor: pointer;
   }
   .resend-text a:hover {
     text-decoration: underline;
@@ -187,7 +188,7 @@
   <h1>Check your email</h1>
   <p class="subtitle">We sent a 6-digit code to your email address.</p>
 
-  <form onsubmit="event.preventDefault();">
+  <form>
     <div class="input-group">
       <label for="code">Enter the code</label>
       <input type="text" id="code" class="code-input" placeholder="000000" maxlength="6" inputmode="numeric">
@@ -199,18 +200,20 @@
   <p class="resend-text">
     Didn't receive it? <a href="#">Resend code</a>
   </p>
-
 </div>
+
+<!-- SUPABASE SCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // Initialize Supabase
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'PASTE_YOUR_LEGACY_ANON_KEY_HERE'; 
+  const supabaseKey = 'sb_publishable_4RVaoPLg6nP_j0UGoZqYCQ_J16cVLV4'; // <--- MAKE SURE YOUR KEY IS HERE
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
   // 1. Send the code when the page loads
   async function sendEmailCode() {
     const { data: { user } } = await supabaseClient.auth.getUser();
+    
     if (!user) {
       window.location.href = 'auth.html'; // Kick them out if not logged in
       return;
@@ -219,7 +222,7 @@
     // Send a 6-digit OTP to the user's email
     const { error } = await supabaseClient.auth.signInWithOtp({
       email: user.email,
-      options: { shouldCreateUser: false } // Don't create a new user, just log this one in
+      options: { shouldCreateUser: false }
     });
 
     if (error) {
@@ -227,8 +230,7 @@
     }
   }
 
-  // Run this when the page loads
-  sendEmailCode();
+  sendEmailCode(); // Run when page loads
 
   // 2. Verify the code when they click the button
   document.querySelector('form').addEventListener('submit', async (e) => {
@@ -252,5 +254,6 @@
     }
   });
 </script>
+
 </body>
 </html>
