@@ -342,7 +342,7 @@
     charCount.textContent = `${textarea.value.length} / 2000`;
   });
 
-  // 3. Handle the form submission
+   // 3. Handle the form submission
   document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -350,19 +350,31 @@
     const activeCategory = document.querySelector('.category-chip.active');
     const category = activeCategory ? activeCategory.innerText : 'Unknown';
 
-    // TEMPORARY DUMMY USER ID FOR TESTING
+    // --- NEW LOGIN CHECK ---
+    // Get the currently logged-in user
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    // If no user is logged in, send them to the login page
+    if (!user) {
+      alert('You must be logged in to post a message.');
+      window.location.href = 'auth.html';
+      return;
+    }
+
+    // Send to Supabase with the REAL user ID
     const { data, error } = await supabaseClient
       .from('posts')
       .insert([{ 
         content: content, 
         category: category,
-        user_id: '00000000-0000-0000-0000-000000000000' 
+        user_id: user.id // <--- This uses the real ID!
       }]);
 
+    // Handle success or error
     if (error) {
       alert('Database Error: ' + error.message);
     } else {
-      alert('Success! Your message was saved to the database.');
+      alert('Success! Your message was saved.');
       window.location.href = 'index.html';
     }
   });

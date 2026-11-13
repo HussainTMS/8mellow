@@ -332,6 +332,56 @@
     }
   }
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // 1. Initialize Supabase (Use your Legacy API Key)
+  const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
+  const supabaseKey = 'PASTE_YOUR_LEGACY_ANON_KEY_HERE'; 
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+  // 2. Handle Sign Up
+  document.getElementById('signup-form').querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    const name = document.getElementById('signup-name').value; // Optional
+
+    const { data, error } = await supabaseClient.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: { display_name: name } // Saves the optional display name
+      }
+    });
+
+    if (error) {
+      alert('Signup Error: ' + error.message);
+    } else {
+      alert('Account created! You can now log in.');
+      toggleForms(); // Switches to the login form
+    }
+  });
+
+  // 3. Handle Log In
+  document.getElementById('login-form').querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (error) {
+      alert('Login Error: ' + error.message);
+    } else {
+      alert('Logged in successfully!');
+      window.location.href = 'write.html'; // Send them to the write page
+    }
+  });
+</script>
 </body>
 </html>
