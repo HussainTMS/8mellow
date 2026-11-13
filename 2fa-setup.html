@@ -193,37 +193,41 @@
   </div>>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'PASTE_YOUR_LEGACY_ANON_KEY_HERE'; 
+  const supabaseKey = 'PASTE_YOUR_LEGACY_ANON_KEY_HERE'; // <-- Ensure your key is here
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  async function sendEmailLink() {
-    // 1. Get the user who just logged in
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    
-    if (!user) {
-      window.location.href = 'auth.html';
-      return;
-    }
+  let emailSent = false;
 
-    // 2. Send the email link
+  // Listen for the login session to be ready
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (session && session.user) {
+      // If we have a user, send the email (only once)
+      if (!emailSent) {
+        emailSent = true;
+        sendEmailLink(session.user.email);
+      }
+    } else if (event === 'INITIAL_SESSION' && !session) {
+      // If there is definitely no session, send them back to login
+      window.location.href = 'auth.html?mode=login';
+    }
+  });
+
+  async function sendEmailLink(email) {
     const { error } = await supabaseClient.auth.signInWithOtp({
-      email: user.email,
+      email: email,
       options: { shouldCreateUser: false }
     });
 
     if (error) {
       alert('Error sending email: ' + error.message);
+      emailSent = false; // Allow retry
     } else {
-      // We DO NOT auto-redirect here anymore. We let them sit on the page.
-      console.log('Email sent to: ' + user.email);
+      alert('Verification link sent to ' + email + '. Please check your inbox.');
     }
   }
-
-  // Run this when the page loads
-  sendEmailLink();
 </script>
-
 </body>
 </html>
