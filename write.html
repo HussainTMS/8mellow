@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -334,6 +335,39 @@
     introBox.style.display = 'block';
   }
 </script>
+<script>
+  // 1. Initialize Supabase
+  const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
+  const supabaseKey = 'sb_publishable_4RVaoPLg6nP_j0UGoZqYCQ_J16cVLV4';
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+  // 2. Handle the form submission
+  document.querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const textarea = document.querySelector('textarea');
+    const content = textarea.value;
+    
+    // Get the selected category
+    const activeCategory = document.querySelector('.category-chip.active');
+    const category = activeCategory ? activeCategory.innerText : 'Unknown';
+
+    // 3. Send to Supabase
+    const { data, error } = await supabase
+      .from('posts')
+      .insert([{ 
+        content: content, 
+        category: category,
+        user_id: '00000000-0000-0000-0000-000000000000' // Temporary dummy ID
+      }]);
+
+    if (error) {
+      alert('Database Error: ' + error.message);
+    } else {
+      alert('Success! Your message was saved to the database.');
+      window.location.href = 'index.html'; // Go back to the wall
+    }
+  });
+</script>
 </body>
 </html>
