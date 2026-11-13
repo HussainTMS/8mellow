@@ -378,4 +378,16 @@
     introBox.style.display = 'block';
   }
 </script>
+  // Character Counter Logic
+  const textarea = document.querySelector('textarea');
+  const charCount = document.querySelector('.char-count');
+
+  // Add the 2000 max length to the textarea
+  textarea.setAttribute('maxlength', '2000');
+
+  textarea.addEventListener('input', () => {
+    const currentLength = textarea.value.length;
+    charCount.textContent = `${currentLength} / 2000`;
+  });
+</body>
 </html>
