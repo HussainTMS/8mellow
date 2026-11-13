@@ -386,13 +386,12 @@
       password: password,
     });
 
-         if (error) {
-      alert('Login Error: ' + error.message);
-    } else {
-      alert('Logged in successfully!');
-      // This MUST say 2fa-setup.html, not write.html
-      window.location.replace('2fa-setup.html'); 
-    }
+   if (error) {
+   alert('Login Error: ' + error.message);
+   } else {
+   alert('Password verified. Proceeding to 2FA...');
+   window.location.replace('2fa-setup.html'); 
+ }
   });
 </script>
 </body>
