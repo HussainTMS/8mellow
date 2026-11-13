@@ -195,16 +195,34 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'sb_publishable_4RVaoPLg6nP_j0UGoZqYCQ_J16cVLV4'; 
+  const supabaseKey = 'PASTE_YOUR_LEGACY_ANON_KEY_HERE'; 
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  // This listens for the moment Supabase logs the user in (when they click the email link)
-  supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN' && session) {
-      // Once logged in, send them straight to the app!
-      window.location.href = 'write.html'; 
+  async function sendEmailLink() {
+    // 1. Get the user who just logged in
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    
+    if (!user) {
+      window.location.href = 'auth.html';
+      return;
     }
-  });
+
+    // 2. Send the email link
+    const { error } = await supabaseClient.auth.signInWithOtp({
+      email: user.email,
+      options: { shouldCreateUser: false }
+    });
+
+    if (error) {
+      alert('Error sending email: ' + error.message);
+    } else {
+      // We DO NOT auto-redirect here anymore. We let them sit on the page.
+      console.log('Email sent to: ' + user.email);
+    }
+  }
+
+  // Run this when the page loads
+  sendEmailLink();
 </script>
 
 </body>

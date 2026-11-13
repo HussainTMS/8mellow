@@ -386,11 +386,11 @@
       password: password,
     });
 
-       if (error) {
+         if (error) {
       alert('Login Error: ' + error.message);
     } else {
       alert('Logged in successfully!');
-      // FORCE the redirect to the 2FA page
+      // This MUST say 2fa-setup.html, not write.html
       window.location.replace('2fa-setup.html'); 
     }
   });
