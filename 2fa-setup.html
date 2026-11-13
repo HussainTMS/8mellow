@@ -217,9 +217,12 @@
 
   async function sendEmailLink(email) {
     const { error } = await supabaseClient.auth.signInWithOtp({
-      email: email,
-      options: { shouldCreateUser: false }
-    });
+  email: email,
+  options: {
+    shouldCreateUser: false,
+    emailRedirectTo: window.location.origin + '/8mellow/index.html'
+  }
+});
 
     if (error) {
       alert('Error sending email: ' + error.message);
