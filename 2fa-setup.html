@@ -84,7 +84,6 @@
     margin-bottom: 32px;
   }
 
-  /* Email Icon */
   .email-icon {
     width: 80px;
     height: 80px;
@@ -101,7 +100,6 @@
     height: 36px;
   }
 
-  /* Code Input */
   .input-group {
     text-align: left;
     margin-bottom: 24px;
@@ -151,7 +149,6 @@
     transform: translateY(-1px);
   }
 
-  /* Resend Link */
   .resend-text {
     font-size: 14px;
     color: var(--muted);
@@ -202,55 +199,58 @@
   </p>
 </div>
 
-<!-- SUPABASE SCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // Initialize Supabase
+  // 1. Initialize Supabase 
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'sb_publishable_4RVaoPLg6nP_j0UGoZqYCQ_J16cVLV4'; // <--- MAKE SURE YOUR KEY IS HERE
+  // PASTE YOUR LEGACY ANON KEY HERE (Starts with eyJ...)
+  const supabaseKey = 'sb_publishable_4RVaoPLg6nP_j0UGoZqYCQ_J16cVLV4'; 
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  // 1. Send the code when the page loads
-  async function sendEmailCode() {
-    const { data: { user } } = await supabaseClient.auth.getUser();
+  // 2. Check if user is logged in and send code
+  async function checkUserAndSendCode() {
+    const { data: { user }, error } = await supabaseClient.auth.getUser();
     
-    if (!user) {
-      window.location.href = 'auth.html'; // Kick them out if not logged in
+    if (error || !user) {
+      // If it fails, we ALERT the error instead of bouncing immediately
+      alert('Debug: You are not logged in. Error: ' + (error ? error.message : 'No user found'));
+      window.location.href = 'auth.html';
       return;
     }
 
-    // Send a 6-digit OTP to the user's email
-    const { error } = await supabaseClient.auth.signInWithOtp({
+    // Send the code
+    const { error: otpError } = await supabaseClient.auth.signInWithOtp({
       email: user.email,
       options: { shouldCreateUser: false }
     });
 
-    if (error) {
-      alert('Error sending code: ' + error.message);
+    if (otpError) {
+      alert('Error sending code: ' + otpError.message);
+    } else {
+      alert('Code sent to ' + user.email + '! Check your inbox.');
     }
   }
 
-  sendEmailCode(); // Run when page loads
+  // Run the check when page loads
+  checkUserAndSendCode();
 
-  // 2. Verify the code when they click the button
+  // 3. Verify the code
   document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
     const code = document.getElementById('code').value;
     const { data: { user } } = await supabaseClient.auth.getUser();
 
-    // Verify the OTP
-    const { data, error } = await supabaseClient.auth.verifyOtp({
+    const { error } = await supabaseClient.auth.verifyOtp({
       email: user.email,
       token: code,
       type: 'email'
     });
 
     if (error) {
-      alert('Invalid code. Please try again.');
+      alert('Invalid code: ' + error.message);
     } else {
       alert('2FA Verified successfully!');
-      window.location.href = 'write.html'; // Success! Go to write page
+      window.location.href = 'write.html'; 
     }
   });
 </script>
