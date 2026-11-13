@@ -183,73 +183,25 @@
   </div>
 
   <h1>Check your email</h1>
-  <p class="subtitle">We sent a 6-digit code to your email address.</p>
-
-  <form>
-    <div class="input-group">
-      <label for="code">Enter the code</label>
-      <input type="text" id="code" class="code-input" placeholder="000000" maxlength="6" inputmode="numeric">
-    </div>
-
-    <button type="submit" class="btn-verify">Verify Email</button>
-  </form>
-
-  <p class="resend-text">
-    Didn't receive it? <a href="#">Resend code</a>
+  <p class="subtitle">We sent a secure sign-in link to your email address.</p>
+  <p style="font-size: 16px; color: var(--purple); font-weight: 600; margin-bottom: 24px;">
+    Click the link in your email to verify your identity and finish logging in.
   </p>
-</div>
+  
+  <div style="background: #FAFAFA; border: 1px solid var(--line); border-radius: 12px; padding: 16px; font-size: 14px; color: var(--muted);">
+    You can close this tab once you have clicked the link. If you didn't receive it, check your spam folder or wait a minute to try again.
+  </div>>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // 1. Initialize Supabase 
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  // PASTE YOUR LEGACY ANON KEY HERE (Starts with eyJ...)
   const supabaseKey = 'sb_publishable_4RVaoPLg6nP_j0UGoZqYCQ_J16cVLV4'; 
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  // 2. Check if user is logged in and send code
-  async function checkUserAndSendCode() {
-    const { data: { user }, error } = await supabaseClient.auth.getUser();
-    
-    if (error || !user) {
-      // If it fails, we ALERT the error instead of bouncing immediately
-      alert('Debug: You are not logged in. Error: ' + (error ? error.message : 'No user found'));
-      window.location.href = 'auth.html';
-      return;
-    }
-
-    // Send the code
-    const { error: otpError } = await supabaseClient.auth.signInWithOtp({
-      email: user.email,
-      options: { shouldCreateUser: false }
-    });
-
-    if (otpError) {
-      alert('Error sending code: ' + otpError.message);
-    } else {
-      alert('Code sent to ' + user.email + '! Check your inbox.');
-    }
-  }
-
-  // Run the check when page loads
-  checkUserAndSendCode();
-
-  // 3. Verify the code
-  document.querySelector('form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const code = document.getElementById('code').value;
-    const { data: { user } } = await supabaseClient.auth.getUser();
-
-    const { error } = await supabaseClient.auth.verifyOtp({
-      email: user.email,
-      token: code,
-      type: 'email'
-    });
-
-    if (error) {
-      alert('Invalid code: ' + error.message);
-    } else {
-      alert('2FA Verified successfully!');
+  // This listens for the moment Supabase logs the user in (when they click the email link)
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      // Once logged in, send them straight to the app!
       window.location.href = 'write.html'; 
     }
   });
