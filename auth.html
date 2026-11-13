@@ -331,6 +331,17 @@
       login.style.display = 'block';
     }
   }
+  // Check which button was clicked on the Wall page
+  const urlParams = new URLSearchParams(window.location.search);
+  const mode = urlParams.get('mode');
+  
+  if (mode === 'login') {
+    document.getElementById('signup-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'block';
+  } else {
+    document.getElementById('signup-form').style.display = 'block';
+    document.getElementById('login-form').style.display = 'none';
+  }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -379,7 +390,7 @@
       alert('Login Error: ' + error.message);
     } else {
       alert('Logged in successfully!');
-      // This line sends them to the 2FA page
+      // FORCE the redirect to the 2FA page
       window.location.replace('2fa-setup.html'); 
     }
   });
