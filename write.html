@@ -298,6 +298,7 @@
     </div>
 
     <!-- Message Area -->
+        <!-- Message Area -->
     <textarea placeholder="What do you wish you could say to them now?"></textarea>
     
     <div class="char-count">0 / 2000</div>
@@ -325,39 +326,37 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  function selectCategory(btn, title, desc) {
-    document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    
-    const introBox = document.getElementById('categoryIntro');
-    introBox.innerHTML = `<strong>${title}</strong> — ${desc}`;
-    introBox.style.display = 'block';
-  }
-</script>
-<script>
-  // 1. Initialize Supabase (Only once!)
+  // 1. Initialize Supabase (Make sure your keys are here!)
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4';
+  const supabaseKey = 'sb_publishable_4RVaoPLg6nP_j0UGoZqYCQ_J16cVLV4'; 
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  // 2. Handle the form submission
+  // 2. Character Counter Logic
+  const textarea = document.querySelector('textarea');
+  const charCount = document.querySelector('.char-count');
+  
+  textarea.setAttribute('maxlength', '2000');
+  textarea.addEventListener('input', () => {
+    charCount.textContent = `${textarea.value.length} / 2000`;
+  });
+
+  // 3. Handle the form submission
   document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const textarea = document.querySelector('textarea');
     const content = textarea.value;
-    
     const activeCategory = document.querySelector('.category-chip.active');
     const category = activeCategory ? activeCategory.innerText : 'Unknown';
 
-    // 3. Send to Supabase
+    // TEMPORARY DUMMY USER ID FOR TESTING
     const { data, error } = await supabaseClient
       .from('posts')
       .insert([{ 
         content: content, 
-        category: category
-        // We removed the dummy ID for this test
+        category: category,
+        user_id: '00000000-0000-0000-0000-000000000000' 
       }]);
 
     if (error) {
@@ -368,26 +367,15 @@
     }
   });
 
-  // 4. Category Selector Function
+  // 4. Category Selector
   function selectCategory(btn, title, desc) {
     document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
-    
     const introBox = document.getElementById('categoryIntro');
     introBox.innerHTML = `<strong>${title}</strong> — ${desc}`;
     introBox.style.display = 'block';
   }
 </script>
-  // Character Counter Logic
-  const textarea = document.querySelector('textarea');
-  const charCount = document.querySelector('.char-count');
 
-  // Add the 2000 max length to the textarea
-  textarea.setAttribute('maxlength', '2000');
-
-  textarea.addEventListener('input', () => {
-    const currentLength = textarea.value.length;
-    charCount.textContent = `${currentLength} / 2000`;
-  });
 </body>
 </html>
