@@ -146,7 +146,7 @@
 
   .chat-details {
     flex: 1;
-    min-width: 0; /* allows text truncation */
+    min-width: 0;
   }
   .chat-title {
     font-weight: 600;
@@ -184,18 +184,6 @@
     box-shadow: 0 0 0 3px rgba(127, 255, 212, 0.2);
   }
 
-  /* Empty State */
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--muted);
-  }
-  .empty-state p {
-    font-size: 15px;
-    max-width: 300px;
-    margin: 0 auto;
-  }
-
   @media(max-width: 600px) {
     .inbox-container { padding: 32px 24px; }
     h1 { font-size: 28px; }
@@ -210,10 +198,11 @@
   
   <div class="header">
     <div class="logo">8mellow</div>
+    <!-- THIS IS THE FIXED LINK -->
     <a href="dashboard.html" class="back-btn">
-  <svg viewBox="0 0 24 24" ...>...</svg>
-  Back to Dashboard
-  </a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Dashboard
+    </a>
   </div>
 
   <h1>Inbox</h1>
@@ -221,7 +210,6 @@
   <!-- SECTION 1: CHATS FROM MY MESSAGES -->
   <div class="section-label">Chats from my messages</div>
   
-  <!-- Chat Row 1 -->
   <a href="chat.html" class="chat-row">
     <div class="chat-icon">❤️</div>
     <div class="chat-details">
@@ -234,7 +222,6 @@
     </div>
   </a>
 
-  <!-- Chat Row 2 -->
   <a href="chat.html" class="chat-row">
     <div class="chat-icon">🕊️</div>
     <div class="chat-details">
@@ -246,11 +233,9 @@
     </div>
   </a>
 
-
   <!-- SECTION 2: CHATS I STARTED -->
   <div class="section-label">Chats I started</div>
 
-  <!-- Chat Row 3 -->
   <a href="chat.html" class="chat-row">
     <div class="chat-icon">🙏</div>
     <div class="chat-details">
@@ -261,13 +246,6 @@
       <div class="chat-time">3d ago</div>
     </div>
   </a>
-
-  <!-- Chat Row 4 (Empty State Example - remove if you want) -->
-  <!--
-  <div class="empty-state">
-    <p>No chats here yet. When you reply to a message on the wall, it will appear here.</p>
-  </div>
-  -->
 
 </div>
 
