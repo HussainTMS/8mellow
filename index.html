@@ -265,9 +265,10 @@
     const feedContainer = document.getElementById('message-feed');
     
     const { data: posts, error } = await supabaseClient
-      .from('posts')
-      .select('*')
-      .order('created_at', { ascending: false });
+  .from('posts')
+  .select('*')
+  .neq('status', 'hidden') // <--- Only fetch public posts
+  .order('created_at', { ascending: false });
 
     if (error) {
       feedContainer.innerHTML = '<p style="text-align:center; color:#666;">Error loading messages.</p>';

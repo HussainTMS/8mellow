@@ -17,227 +17,70 @@
     --ink:#1A1A1A;
     --muted:#666666;
     --line:#EAEAEA;
+    --danger: #C97064;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   
   body{
-    background: 
-      radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%),
-      radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%),
-      radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%),
-      #FAF7F2;
-    color:var(--ink);
-    font-family:'Inter', sans-serif;
-    line-height:1.6;
-    -webkit-font-smoothing:antialiased;
-    background-attachment: fixed;
-    min-height: 100vh;
-    padding: 40px 20px;
+    background: radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%),
+                radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%), #FAF7F2;
+    color:var(--ink); font-family:'Inter', sans-serif; line-height:1.6;
+    -webkit-font-smoothing:antialiased; background-attachment: fixed; min-height: 100vh; padding: 40px 20px;
   }
   
-  /* Main Container */
   .messages-container {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 24px;
-    padding: 48px;
-    box-shadow: 0 20px 60px rgba(91,50,165,0.06);
-    border: 1px solid rgba(255,255,255,0.8);
-    position: relative;
-    overflow: hidden;
+    width: 100%; max-width: 800px; margin: 0 auto; background: white;
+    border-radius: 24px; padding: 48px; box-shadow: 0 20px 60px rgba(91,50,165,0.06);
+    border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: hidden;
   }
-
-  /* Decorative top accent */
   .messages-container::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 6px;
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
     background: linear-gradient(90deg, var(--purple), var(--mint));
   }
-
-  /* Header */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 32px;
-  }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
   .logo {
-    font-family:'Outfit',sans-serif; 
-    font-size: 24px; 
-    font-weight:700; 
-    color:var(--dark-gold); 
-    letter-spacing: -0.03em;
-    padding-bottom: 2px; 
-    border-bottom: 4px solid var(--mint); 
-    display: inline-block;
+    font-family:'Outfit',sans-serif; font-size: 24px; font-weight:700; color:var(--dark-gold); 
+    letter-spacing: -0.03em; padding-bottom: 2px; border-bottom: 4px solid var(--mint); display: inline-block;
   }
-  .new-btn {
-    background: var(--purple);
-    color: white;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 600;
-    transition: background 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  
+  .nav-links { display: flex; gap: 16px; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.2s;
   }
-  .new-btn:hover { background: var(--purple-hover); }
-  .new-btn svg { width: 16px; height: 16px; }
+  .nav-links a:hover { color: var(--purple); }
 
-  /* Typography */
-  h1 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 32px;
-    color: var(--purple);
-    margin-bottom: 32px;
-    font-weight: 700;
-  }
+  h1 { font-family: 'Outfit', sans-serif; font-size: 32px; color: var(--purple); margin-bottom: 32px; font-weight: 700; }
 
   /* Message Cards */
-  .message-card {
-    border: 1px solid var(--line);
-    border-radius: 20px;
-    padding: 24px;
-    background: #FAFAFA;
-    margin-bottom: 20px;
-    transition: all 0.2s;
-  }
-  .message-card:hover {
-    border-color: var(--purple);
-    background: white;
-    box-shadow: 0 10px 30px rgba(91,50,165,0.05);
-  }
-
-  /* Card Header (Meta & Status) */
-  .card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  .card-meta {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .category-badge {
-    background: var(--light-purple);
-    color: var(--purple);
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-weight: 600;
-    font-size: 12px;
-  }
+  .message-card { border: 1px solid var(--line); border-radius: 20px; padding: 24px; background: #FAFAFA; margin-bottom: 20px; transition: all 0.2s; }
+  .message-card:hover { border-color: var(--purple); background: white; box-shadow: 0 10px 30px rgba(91,50,165,0.05); }
   
-  /* Status Badges */
-  .status-badge {
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  .status-public {
-    background: #E8F5E9;
-    color: #2E7D32;
-  }
-  .status-hidden {
-    background: #FFF3E0;
-    color: #E65100;
-  }
-
-  /* Card Content */
-  .card-text {
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--ink);
-    margin-bottom: 20px;
-  }
-
-  /* Card Footer (Stats & Actions) */
-  .card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid var(--line);
-    padding-top: 16px;
-  }
-  .card-stats {
-    display: flex;
-    gap: 16px;
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .stat {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+  .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .card-meta { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); }
+  .category-badge { background: var(--light-purple); color: var(--purple); padding: 4px 12px; border-radius: 999px; font-weight: 600; font-size: 12px; }
   
-  /* Action Buttons */
-  .card-actions {
-    display: flex;
-    gap: 8px;
-  }
+  .status-badge { padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: capitalize;}
+  .status-public { background: #E8F5E9; color: #2E7D32; }
+  .status-hidden { background: #FFF3E0; color: #E65100; }
+
+  .card-text { font-size: 16px; line-height: 1.6; color: var(--ink); margin-bottom: 20px; }
+
+  .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); padding-top: 16px; }
+  .card-stats { display: flex; gap: 16px; font-size: 13px; color: var(--muted); }
+  
+  .card-actions { display: flex; gap: 8px; }
   .action-btn {
-    background: white;
-    border: 1px solid var(--line);
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--ink);
-    cursor: pointer;
-    transition: all 0.2s;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
+    background: white; border: 1px solid var(--line); padding: 8px 14px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; transition: all 0.2s;
   }
-  .action-btn:hover {
-    border-color: var(--purple);
-    color: var(--purple);
-  }
-  .action-btn.primary {
-    background: var(--light-purple);
-    border-color: var(--light-purple);
-    color: var(--purple);
-  }
-  .action-btn.primary:hover {
-    background: var(--purple);
-    color: white;
-  }
-
-  /* Empty State */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    background: #FAFAFA;
-    border-radius: 20px;
-    border: 1px dashed var(--line);
-  }
-  .empty-state h3 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 20px;
-    color: var(--ink);
-    margin-bottom: 8px;
-  }
-  .empty-state p {
-    font-size: 14px;
-    color: var(--muted);
-    margin-bottom: 24px;
-  }
+  .action-btn:hover { border-color: var(--purple); color: var(--purple); }
+  .action-btn.danger:hover { border-color: var(--danger); color: var(--danger); background: #FFF5F5;}
+  
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
 
   @media(max-width: 600px) {
     .messages-container { padding: 32px 24px; }
-    h1 { font-size: 28px; }
     .card-footer { flex-direction: column; align-items: flex-start; gap: 16px; }
     .card-actions { width: 100%; justify-content: flex-end; }
   }
@@ -249,76 +92,128 @@
   
   <div class="header">
     <div class="logo">8mellow</div>
-    <a href="write.html" class="new-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-      New Message
-    </a>
+    <div class="nav-links">
+      <a href="dashboard.html">← Dashboard</a>
+      <a href="write.html">+ New Message</a>
+    </div>
   </div>
 
   <h1>My Messages</h1>
 
-  <!-- MESSAGE 1: PUBLIC -->
-  <div class="message-card">
-    <div class="card-top">
-      <div class="card-meta">
-        <span class="category-badge">❤️ I'm sorry</span>
-        <span>2 hours ago</span>
-      </div>
-      <span class="status-badge status-public">Public</span>
-    </div>
-    
-    <p class="card-text">
-      I'm sorry for how I left things with you. I was scared and I took the easy way out. You deserved better than silence.
-    </p>
-
-    <div class="card-footer">
-      <div class="card-stats">
-        <div class="stat">♥ 24 me too</div>
-        <div class="stat">💬 3 replies</div>
-      </div>
-      <div class="card-actions">
-        <button class="action-btn">Hide</button>
-        <a href="inbox.html" class="action-btn primary">View Chats</a>
-      </div>
-    </div>
+  <!-- Container where messages will load -->
+  <div id="messages-list">
+    <p style="text-align:center; color:var(--muted);">Loading your messages...</p>
   </div>
-
-  <!-- MESSAGE 2: HIDDEN -->
-  <div class="message-card">
-    <div class="card-top">
-      <div class="card-meta">
-        <span class="category-badge">🕊️ Goodbye</span>
-        <span>2 days ago</span>
-      </div>
-      <span class="status-badge status-hidden">Hidden</span>
-    </div>
-    
-    <p class="card-text">
-      I hope wherever you are, you know I loved you. I never got the chance to say it out loud.
-    </p>
-
-    <div class="card-footer">
-      <div class="card-stats">
-        <div class="stat">♥ 63 me too</div>
-        <div class="stat">💬 1 reply</div>
-      </div>
-      <div class="card-actions">
-        <button class="action-btn">Delete</button>
-        <button class="action-btn primary">Make Public</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- OPTIONAL: EMPTY STATE (Remove if not needed) -->
-  <!--
-  <div class="empty-state">
-    <h3>No messages yet</h3>
-    <p>When you write a message and post it to the wall, it will appear here so you can manage it.</p>
-    <a href="write.html" class="new-btn" style="display: inline-flex;">Write your first message</a>
-  </div>
-  -->
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE YOUR KEY IS HERE
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+  let currentUser = null;
+
+  async function loadMyMessages() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    
+    if (!user) {
+      window.location.href = 'auth.html?mode=login';
+      return;
+    }
+    currentUser = user;
+
+    const container = document.getElementById('messages-list');
+
+    // Fetch ONLY posts where user_id matches the logged-in user
+    const { data: posts, error } = await supabaseClient
+      .from('posts')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      container.innerHTML = '<p>Error loading messages.</p>';
+      return;
+    }
+
+    if (posts.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <h3>No messages yet</h3>
+          <p>When you post a message, it will appear here.</p>
+        </div>`;
+      return;
+    }
+
+    // Render the messages
+    container.innerHTML = posts.map(post => `
+      <div class="message-card" id="post-${post.id}">
+        <div class="card-top">
+          <div class="card-meta">
+            <span class="category-badge">${post.category}</span>
+            <span>${new Date(post.created_at).toLocaleDateString()}</span>
+          </div>
+          <span class="status-badge status-${post.status || 'public'}">${post.status || 'public'}</span>
+        </div>
+        
+        <p class="card-text">${post.content}</p>
+
+        <div class="card-footer">
+          <div class="card-stats">
+            <div>♥ 0 me too</div>
+            <div>💬 0 replies</div>
+          </div>
+          <div class="card-actions">
+            <button onclick="toggleStatus('${post.id}', '${post.status || 'public'}')" class="action-btn">
+              ${post.status === 'hidden' ? 'Make Public' : 'Hide'}
+            </button>
+            <button onclick="deleteMessage('${post.id}')" class="action-btn danger">Delete</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Function to Hide/Show a post
+  async function toggleStatus(postId, currentStatus) {
+    const newStatus = currentStatus === 'hidden' ? 'public' : 'hidden';
+    
+    const { error } = await supabaseClient
+      .from('posts')
+      .update({ status: newStatus })
+      .eq('id', postId)
+      .eq('user_id', currentUser.id);
+
+    if (error) {
+      alert('Error updating status: ' + error.message);
+    } else {
+      loadMyMessages(); // Reload the list
+    }
+  }
+
+  // Function to Delete a post
+  async function deleteMessage(postId) {
+    if (!confirm('Are you sure you want to delete this message? This cannot be undone.')) return;
+
+    const { error } = await supabaseClient
+      .from('posts')
+      .delete()
+      .eq('id', postId)
+      .eq('user_id', currentUser.id);
+
+    if (error) {
+      alert('Error deleting message: ' + error.message);
+    } else {
+      // Remove the card from the screen immediately
+      document.getElementById(`post-${postId}`).remove();
+    }
+  }
+
+  // Run on page load
+  loadMyMessages();
+</script>
 
 </body>
 </html>
