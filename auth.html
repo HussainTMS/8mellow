@@ -4,241 +4,29 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>8mellow — Sign Up / Log In</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --purple:#5B32A5;
-    --purple-hover:#482680;
-    --light-purple:#F3ECFC;
-    --mint:#7FFFD4; 
-    --dark-gold:#B8860B; 
-    --bg:#FAFAFA;
-    --ink:#1A1A1A;
-    --muted:#666666;
-    --line:#EAEAEA;
-  }
+  :root{ --purple:#5B32A5; --light-purple:#F3ECFC; --mint:#7FFFD4; --dark-gold:#B8860B; --ink:#1A1A1A; --muted:#666666; --line:#EAEAEA; }
   *{box-sizing:border-box; margin:0; padding:0;}
-  
-  body{
-    background: 
-      radial-gradient(circle at 50% 20%, #F9F5FF 0%, transparent 40%),
-      radial-gradient(circle at 10% 80%, #FFF5F5 0%, transparent 40%),
-      var(--bg);
-    color:var(--ink);
-    font-family:'Inter', sans-serif;
-    line-height:1.6;
-    -webkit-font-smoothing:antialiased;
-    background-attachment: fixed;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  
-  /* Auth Container */
-  .auth-container {
-    width: 100%;
-    max-width: 480px;
-    background: white;
-    border-radius: 24px;
-    padding: 48px;
-    box-shadow: 0 20px 60px rgba(91,50,165,0.08);
-    border: 1px solid rgba(255,255,255,0.8);
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* Decorative top accent */
-  .auth-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 6px;
-    background: linear-gradient(90deg, var(--purple), var(--mint));
-  }
-
-  /* Logo */
-  .logo {
-    font-family:'Outfit',sans-serif; 
-    font-size:32px; 
-    font-weight:700; 
-    color:var(--dark-gold); 
-    letter-spacing: -0.03em;
-    padding-bottom: 2px; 
-    border-bottom: 4px solid var(--mint); 
-    display: inline-block;
-    margin-bottom: 32px;
-  }
-
-  /* Typography */
-  h1 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 28px;
-    color: var(--purple);
-    margin-bottom: 8px;
-    font-weight: 700;
-  }
-  .subtitle {
-    color: var(--muted);
-    font-size: 15px;
-    margin-bottom: 32px;
-  }
-
-  /* Form Elements */
-  .form-group {
-    margin-bottom: 20px;
-  }
-  label {
-    display: block;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 8px;
-  }
-  .label-hint {
-    font-weight: 400;
-    color: var(--muted);
-    font-size: 13px;
-    margin-left: 4px;
-  }
-  input {
-    width: 100%;
-    padding: 14px 16px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    color: var(--ink);
-    background: #FAFAFA;
-    transition: all 0.2s;
-  }
-  input:focus {
-    outline: none;
-    border-color: var(--purple);
-    background: white;
-    box-shadow: 0 0 0 3px var(--light-purple);
-  }
-  
-  /* Helper text for anonymous note */
-  .helper-text {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 6px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .helper-text svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  /* Checkbox group */
-  .checkbox-group {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin: 24px 0;
-  }
-  .checkbox-group input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    margin-top: 3px;
-    accent-color: var(--purple);
-    cursor: pointer;
-  }
-  .checkbox-group label {
-    font-size: 14px;
-    color: var(--muted);
-    font-weight: 400;
-    line-height: 1.4;
-    margin: 0;
-    cursor: pointer;
-  }
-
-  /* Buttons */
-  .btn {
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: 12px;
-    font-family: 'Outfit', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-  }
-  .btn-primary {
-    background: var(--purple);
-    color: white;
-    margin-top: 8px;
-  }
-  .btn-primary:hover {
-    background: var(--purple-hover);
-    transform: translateY(-1px);
-  }
-  .btn-primary:disabled {
-    background: #D1C4E9;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  /* Toggle Link */
-  .toggle-text {
-    text-align: center;
-    font-size: 14px;
-    color: var(--muted);
-    margin-top: 24px;
-  }
-  .toggle-text a {
-    color: var(--purple);
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  .toggle-text a:hover {
-    text-decoration: underline;
-  }
-
-  /* Security Note */
-  .security-note {
-    background: var(--light-purple);
-    border-radius: 12px;
-    padding: 16px;
-    margin-top: 24px;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-  .security-note svg {
-    width: 20px;
-    height: 20px;
-    color: var(--purple);
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-  .security-note p {
-    font-size: 13px;
-    color: var(--purple);
-    line-height: 1.5;
-  }
-
-  /* Hide Login Form by default */
+  body{ background: radial-gradient(circle at 50% 20%, #F9F5FF 0%, transparent 40%), radial-gradient(circle at 10% 80%, #FFF5F5 0%, transparent 40%), #FAF7F2; color:var(--ink); font-family:'Inter', sans-serif; line-height:1.6; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .auth-container { width: 100%; max-width: 480px; background: white; border-radius: 24px; padding: 48px; box-shadow: 0 20px 60px rgba(91,50,165,0.08); position: relative; overflow: hidden; }
+  .auth-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--purple), var(--mint)); }
+  .logo { font-family:'Outfit',sans-serif; font-size:32px; font-weight:700; color:var(--dark-gold); padding-bottom: 2px; border-bottom: 4px solid var(--mint); display: inline-block; margin-bottom: 32px; }
+  h1 { font-family: 'Outfit', sans-serif; font-size: 28px; color: var(--purple); margin-bottom: 8px; font-weight: 700; }
+  .subtitle { color: var(--muted); font-size: 15px; margin-bottom: 32px; }
+  .form-group { margin-bottom: 20px; }
+  label { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+  input { width: 100%; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; font-size: 15px; background: #FAFAFA; transition: all 0.2s; }
+  input:focus { outline: none; border-color: var(--purple); background: white; box-shadow: 0 0 0 3px var(--light-purple); }
+  .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; background: var(--purple); color: white; font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+  .btn:hover { background: #482680; transform: translateY(-1px); }
+  .toggle-text { text-align: center; font-size: 14px; color: var(--muted); margin-top: 24px; }
+  .toggle-text a { color: var(--purple); font-weight: 600; text-decoration: none; cursor: pointer; }
+  .security-note { background: var(--light-purple); border-radius: 12px; padding: 16px; margin-top: 24px; font-size: 13px; color: var(--purple); text-align: center; }
+  .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0; }
+  .checkbox-group input { width: 18px; height: 18px; margin-top: 3px; }
+  .checkbox-group label { font-size: 14px; color: var(--muted); font-weight: 400; }
   #login-form { display: none; }
-
-  @media(max-width: 600px) {
-    .auth-container { padding: 32px 24px; }
-    h1 { font-size: 24px; }
-  }
 </style>
 </head>
 <body>
@@ -250,103 +38,52 @@
   <div id="signup-form">
     <h1>Create an account</h1>
     <p class="subtitle">Join 8mellow to connect safely and privately.</p>
-
-    <form onsubmit="event.preventDefault();">
-      
+    <form onsubmit="handleSignup(event)">
       <div class="form-group">
-        <label for="signup-email">Email address</label>
+        <label>Email address</label>
         <input type="email" id="signup-email" placeholder="you@example.com" required>
       </div>
-      
       <div class="form-group">
-        <label for="signup-password">Password</label>
+        <label>Password</label>
         <input type="password" id="signup-password" placeholder="Create a strong password" required>
       </div>
-
       <div class="form-group">
-        <label for="signup-name">Display Name <span class="label-hint">(optional)</span></label>
+        <label>Display Name (optional)</label>
         <input type="text" id="signup-name" placeholder="e.g. MellowSoul">
-        <div class="helper-text">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          Leave blank to stay fully anonymous.
-        </div>
       </div>
-
       <div class="checkbox-group">
         <input type="checkbox" id="age-check" required>
         <label for="age-check">I confirm that I am 18 years or older.</label>
       </div>
-      
-      <button type="submit" class="btn btn-primary">Continue to 2FA Setup</button>
+      <button type="submit" class="btn">Continue to 2FA Setup</button>
     </form>
-
-    <div class="security-note">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-      </svg>
-      <p>We require Two-Factor Authentication (2FA) to keep your private conversations safe. No phone number needed.</p>
-    </div>
-
-    <p class="toggle-text">
-      Already have an account? <a onclick="toggleForms()">Log in</a>
-    </p>
+    <div class="security-note">We require Two-Factor Authentication (2FA) to keep your private conversations safe.</div>
+    <p class="toggle-text">Already have an account? <a onclick="toggleForms()">Log in</a></p>
   </div>
 
   <!-- LOG IN FORM -->
   <div id="login-form">
     <h1>Welcome back</h1>
     <p class="subtitle">Log in to your 8mellow account.</p>
-
-    <form onsubmit="event.preventDefault();">
+    <form onsubmit="handleLogin(event)">
       <div class="form-group">
-        <label for="login-email">Email address</label>
+        <label>Email address</label>
         <input type="email" id="login-email" placeholder="you@example.com" required>
       </div>
       <div class="form-group">
-        <label for="login-password">Password</label>
+        <label>Password</label>
         <input type="password" id="login-password" placeholder="Your password" required>
       </div>
-      
-      <button type="submit" class="btn btn-primary">Log In</button>
+      <button type="submit" class="btn">Log In</button>
     </form>
-
-    <p class="toggle-text">
-      Don't have an account? <a onclick="toggleForms()">Sign up</a>
-    </p>
+    <p class="toggle-text">Don't have an account? <a onclick="toggleForms()">Sign up</a></p>
   </div>
-
 </div>
 
-<script>
-  function toggleForms() {
-    const signup = document.getElementById('signup-form');
-    const login = document.getElementById('login-form');
-    
-    if (signup.style.display === 'none') {
-      signup.style.display = 'block';
-      login.style.display = 'none';
-    } else {
-      signup.style.display = 'none';
-      login.style.display = 'block';
-    }
-  }
-  // Check which button was clicked on the Wall page
-  const urlParams = new URLSearchParams(window.location.search);
-  const mode = urlParams.get('mode');
-  
-  if (mode === 'login') {
-    document.getElementById('signup-form').style.display = 'none';
-    document.getElementById('login-form').style.display = 'block';
-  } else {
-    document.getElementById('signup-form').style.display = 'block';
-    document.getElementById('login-form').style.display = 'none';
-  }
-</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE KEY IS HERE
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE YOUR KEY IS HERE
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
   // Check URL for mode (login or signup) and reply_to
