@@ -70,8 +70,11 @@
   .hero-content p{ font-size:18px; color:var(--ink); font-weight:500; margin-bottom:24px; max-width:480px; }
   
   .btn-hero{
-    display:inline-flex; align-items:center; gap:12px; background:var(--purple); color:white; 
-    text-decoration:none; padding:14px 28px; border-radius:999px; font-size:16px; font-weight:600; width:fit-content; transition:background .2s;
+  display:inline-flex; align-items:center; gap:12px; background:var(--purple); color:white; 
+  text-decoration:none; padding:14px 28px; border-radius:999px; font-size:16px; font-weight:600; 
+  width:fit-content; transition:background .2s;
+  white-space: nowrap; /* <--- THIS FIXES IT */
+}
   }
   .btn-hero:hover{ background:var(--purple-hover); }
 
