@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#5B32A5;
+    --purple-hover:#482680;
+    --light-purple:#F3ECFC;
+    --mint:#7FFFD4; 
+    --dark-gold:#B8860B; 
+    --ink:#1A1A1A;
+    --muted:#666666;
+    --line:#EAEAEA;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background: radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%),
+                radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%), #FAF7F2;
+    color:var(--ink); font-family:'Inter', sans-serif; line-height:1.6;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  
+  .dashboard-container {
+    width: 100%; max-width: 500px; background: white; border-radius: 24px;
+    padding: 40px; box-shadow: 0 20px 60px rgba(91,50,165,0.06);
+    border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: hidden;
+  }
+  .dashboard-container::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+    background: linear-gradient(90deg, var(--purple), var(--mint));
+  }
+  .logo {
+    font-family:'Outfit',sans-serif; font-size:32px; font-weight:700; 
+    color:var(--dark-gold); padding-bottom: 2px; border-bottom: 4px solid var(--mint); 
+    display: inline-block; margin-bottom: 24px;
+  }
+  h1 { font-family: 'Outfit', sans-serif; font-size: 26px; color: var(--purple); margin-bottom: 8px; }
+  .subtitle { color: var(--muted); font-size: 15px; margin-bottom: 32px; }
+
+  /* Menu Options */
+  .menu-item {
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px; border: 1px solid var(--line); border-radius: 16px;
+    margin-bottom: 16px; text-decoration: none; color: var(--ink);
+    transition: all 0.2s; background: #FAFAFA;
+  }
+  .menu-item:hover {
+    border-color: var(--purple); background: white;
+    transform: translateY(-2px); box-shadow: 0 8px 20px rgba(91,50,165,0.05);
+  }
+  .menu-icon {
+    width: 48px; height: 48px; background: var(--light-purple); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 24px;
+  }
+  .menu-text h3 { font-size: 16px; margin-bottom: 4px; }
+  .menu-text p { font-size: 13px; color: var(--muted); }
+
+  /* Sign Out Button */
+  .btn-signout {
+    width: 100%; padding: 16px; margin-top: 16px; border: none; border-radius: 12px;
+    background: transparent; color: #C97064; font-weight: 600; font-size: 15px;
+    cursor: pointer; transition: background 0.2s; border: 1px solid #C97064;
+  }
+  .btn-signout:hover { background: #FFF5F5; }
+</style>
+</head>
+<body>
+
+<div class="dashboard-container">
+  <div class="logo">8mellow</div>
+  <h1>Welcome back</h1>
+  <p class="subtitle">What would you like to do today?</p>
+
+  <a href="write.html" class="menu-item">
+    <div class="menu-icon">✍️</div>
+    <div class="menu-text">
+      <h3>Write a Message</h3>
+      <p>Share what's on your mind anonymously.</p>
+    </div>
+  </a>
+
+  <a href="my-messages.html" class="menu-item">
+    <div class="menu-icon">📝</div>
+    <div class="menu-text">
+      <h3>My Messages</h3>
+      <p>Manage your public posts and see replies.</p>
+    </div>
+  </a>
+
+  <a href="inbox.html" class="menu-item">
+    <div class="menu-icon">💬</div>
+    <div class="menu-text">
+      <h3>Inbox</h3>
+      <p>Check your private conversations.</p>
+    </div>
+  </a>
+
+  <button onclick="signOut()" class="btn-signout">Sign Out</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; 
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+  async function signOut() {
+    await supabaseClient.auth.signOut();
+    window.location.href = 'index.html'; // Send back to the wall after logout
+  }
+</script>
+
+</body>
+</html>

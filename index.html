@@ -495,7 +495,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'YOUR_LEGACY_ANON_KEY_HERE'; // <-- Paste your key here
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- Paste your key here
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
   // Check if the user is already logged in when they land on the homepage
@@ -504,7 +504,7 @@
     
     // If they have a session (they clicked the email link), send them to the app!
     if (session) {
-      window.location.href = 'write.html';
+      window.location.href = 'dashboard.html';
     }
   }
   checkLogin();
