@@ -345,66 +345,70 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // 1. Initialize Supabase (Use your Legacy API Key)
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'sb_publishable_4RVaoPLg6nP_j0UGoZqYCQ_J16cVLV4'; 
+  const supabaseKey = 'PASTE_YOUR_LEGACY_ANON_KEY_HERE'; // <-- MAKE SURE KEY IS HERE
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  // 2. Handle Sign Up
-  document.getElementById('signup-form').querySelector('form').addEventListener('submit', async (e) => {
+  // Check URL for mode (login or signup) and reply_to
+  const urlParams = new URLSearchParams(window.location.search);
+  const mode = urlParams.get('mode');
+  const replyTo = urlParams.get('reply_to');
+
+  if (mode === 'login') {
+    document.getElementById('signup-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'block';
+  }
+
+  // Save reply_to if it exists
+  if (replyTo) {
+    localStorage.setItem('reply_to_post', replyTo);
+  }
+
+  function toggleForms() {
+    const signup = document.getElementById('signup-form');
+    const login = document.getElementById('login-form');
+    signup.style.display = signup.style.display === 'none' ? 'block' : 'none';
+    login.style.display = login.style.display === 'none' ? 'block' : 'none';
+  }
+
+  async function handleSignup(e) {
     e.preventDefault();
-    
     const email = document.getElementById('signup-email').value;
     const password = document.getElementById('signup-password').value;
-    const name = document.getElementById('signup-name').value; // Optional
+    const name = document.getElementById('signup-name').value;
 
-    const { data, error } = await supabaseClient.auth.signUp({
+    const { error } = await supabaseClient.auth.signUp({
       email: email,
       password: password,
-      options: {
-        data: { display_name: name } // Saves the optional display name
-      }
+      options: { data: { display_name: name } }
     });
 
-     if (error) {
+    if (error) {
       alert('Signup Error: ' + error.message);
     } else {
-      alert('Account created successfully!');
-            // Save the post ID if they clicked "Reply privately" on the wall
-      const urlParams = new URLSearchParams(window.location.search);
-      const replyTo = urlParams.get('reply_to');
-      if (replyTo) {
-        localStorage.setItem('reply_to_post', replyTo);
-      }
-            // Save the post ID if they clicked "Reply privately" on the wall
-      const urlParams = new URLSearchParams(window.location.search);
-      const replyTo = urlParams.get('reply_to');
-      if (replyTo) {
-        localStorage.setItem('reply_to_post', replyTo);
-      }
-      window.location.replace('2fa-setup.html'); 
+      alert('Password verified. Proceeding to 2FA...');
+      window.location.href = '2fa-setup.html';
     }
-  });
+  }
 
-  // 3. Handle Log In
-  document.getElementById('login-form').querySelector('form').addEventListener('submit', async (e) => {
+  async function handleLogin(e) {
     e.preventDefault();
-    
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
 
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
+    const { error } = await supabaseClient.auth.signInWithPassword({
       email: email,
       password: password,
     });
 
-     if (error) {
+    if (error) {
       alert('Login Error: ' + error.message);
     } else {
       alert('Password verified. Proceeding to 2FA...');
-      window.location.replace('2fa-setup.html'); 
+      window.location.href = '2fa-setup.html';
     }
-  });
+  }
 </script>
+
 </body>
 </html>
