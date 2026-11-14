@@ -286,7 +286,7 @@
         <p class="msg-text">${post.content}</p>
         <div class="msg-footer">
           <span class="msg-time">${new Date(post.created_at).toLocaleDateString()}</span>
-          <a href="auth.html?mode=login" class="btn-reply">Reply privately</a>
+          <a href="auth.html?mode=login&reply_to=${post.id}" class="btn-reply">Reply privately</a>
         </div>
       </div>
     `).join('');

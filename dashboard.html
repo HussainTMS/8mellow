@@ -115,6 +115,12 @@
     await supabaseClient.auth.signOut();
     window.location.href = 'index.html'; // Send back to the wall after logout
   }
+  // Check if they were trying to reply to a post before logging in
+  const replyToPost = localStorage.getItem('reply_to_post');
+  if (replyToPost) {
+    localStorage.removeItem('reply_to_post'); // Clear it so it doesn't loop
+    window.location.href = `chat.html?post_id=${replyToPost}`; // Send them to the chat!
+  }
 </script>
 
 </body>

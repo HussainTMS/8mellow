@@ -370,6 +370,18 @@
       alert('Signup Error: ' + error.message);
     } else {
       alert('Account created successfully!');
+            // Save the post ID if they clicked "Reply privately" on the wall
+      const urlParams = new URLSearchParams(window.location.search);
+      const replyTo = urlParams.get('reply_to');
+      if (replyTo) {
+        localStorage.setItem('reply_to_post', replyTo);
+      }
+            // Save the post ID if they clicked "Reply privately" on the wall
+      const urlParams = new URLSearchParams(window.location.search);
+      const replyTo = urlParams.get('reply_to');
+      if (replyTo) {
+        localStorage.setItem('reply_to_post', replyTo);
+      }
       window.location.replace('2fa-setup.html'); 
     }
   });
