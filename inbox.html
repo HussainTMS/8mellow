@@ -6,35 +6,83 @@
 <title>8mellow — Inbox</title>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{ --purple:#5B32A5; --light-purple:#F3ECFC; --mint:#7FFFD4; --dark-gold:#B8860B; --ink:#1A1A1A; --muted:#666666; --line:#EAEAEA; }
+  :root{ 
+    --purple:#5B32A5; 
+    --light-purple:#F3ECFC; 
+    --mint:#7FFFD4; 
+    --dark-gold:#B8860B; 
+    --ink:#1A1A1A; 
+    --muted:#666666; 
+    --line:#EAEAEA; 
+  }
   *{box-sizing:border-box; margin:0; padding:0;}
-  body{ background: radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%), radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%), radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%), #FAF7F2; color:var(--ink); font-family:'Inter', sans-serif; line-height:1.6; min-height: 100vh; padding: 40px 20px; }
-  .inbox-container { width: 100%; max-width: 800px; margin: 0 auto; background: white; border-radius: 24px; padding: 48px; box-shadow: 0 20px 60px rgba(91,50,165,0.06); position: relative; overflow: hidden; }
-  .inbox-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--purple), var(--mint)); }
+  
+  body{
+    background: radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%),
+                radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%), #FAF7F2;
+    color:var(--ink); font-family:'Inter', sans-serif; line-height:1.6; 
+    min-height: 100vh; padding: 40px 20px;
+  }
+  
+  .inbox-container {
+    width: 100%; max-width: 800px; margin: 0 auto; background: white;
+    border-radius: 24px; padding: 48px; box-shadow: 0 20px 60px rgba(91,50,165,0.06);
+    position: relative; overflow: hidden;
+  }
+  .inbox-container::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+    background: linear-gradient(90deg, var(--purple), var(--mint));
+  }
+  
   .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
-  .logo { font-family:'Outfit',sans-serif; font-size: 24px; font-weight:700; color:var(--dark-gold); padding-bottom: 2px; border-bottom: 4px solid var(--mint); display: inline-block; }
-  .back-btn { color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 500; }
+  .logo { 
+    font-family:'Outfit',sans-serif; font-size: 24px; font-weight:700; color:var(--dark-gold); 
+    padding-bottom: 2px; border-bottom: 4px solid var(--mint); display: inline-block; 
+  }
+  .back-btn { color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.2s; }
   .back-btn:hover { color: var(--ink); }
+  
   h1 { font-family: 'Outfit', sans-serif; font-size: 32px; color: var(--purple); margin-bottom: 32px; font-weight: 700; }
-  .section-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; margin-bottom: 16px; margin-top: 32px; }
-  .chat-row { display: flex; align-items: center; gap: 16px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: #FAFAFA; margin-bottom: 12px; text-decoration: none; color: inherit; transition: all 0.2s; }
-  .chat-row:hover { border-color: var(--purple); background: white; transform: translateY(-2px); }
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+  
+  /* Empty State Styling */
+  .empty-state { 
+    text-align: center; 
+    padding: 60px 20px; 
+    color: var(--muted); 
+    background: #FAFAFA;
+    border-radius: 20px;
+    border: 1px dashed var(--line);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-state h3 { font-family: 'Outfit', sans-serif; font-size: 20px; color: var(--ink); margin-bottom: 8px; }
+  .empty-state p { font-size: 15px; max-width: 300px; margin: 0 auto; }
+
+  @media(max-width: 600px) {
+    .inbox-container { padding: 32px 24px; }
+    h1 { font-size: 28px; }
+  }
 </style>
 </head>
 <body>
+
 <div class="inbox-container">
+  
   <div class="header">
     <div class="logo">8mellow</div>
     <a href="dashboard.html" class="back-btn">← Dashboard</a>
   </div>
+
   <h1>Inbox</h1>
-  
+
+  <!-- Clean Empty State (No more demo messages) -->
   <div class="empty-state">
-    <div style="font-size: 40px; margin-bottom: 16px;">✉️</div>
+    <div class="icon">✉️</div>
     <h3>No conversations yet</h3>
     <p>When someone replies to your public messages, or you reply to theirs, it will appear here.</p>
   </div>
+
 </div>
+
 </body>
 </html>
