@@ -11,20 +11,27 @@
   body{ background: radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%), radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%), radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%), #FAF7F2; color:var(--ink); font-family:'Inter', sans-serif; line-height:1.6; min-height: 100vh; padding: 40px 20px; }
   .inbox-container { width: 100%; max-width: 800px; margin: 0 auto; background: white; border-radius: 24px; padding: 48px; box-shadow: 0 20px 60px rgba(91,50,165,0.06); position: relative; overflow: hidden; }
   .inbox-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--purple), var(--mint)); }
+  
   .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
   .logo { font-family:'Outfit',sans-serif; font-size: 24px; font-weight:700; color:var(--dark-gold); padding-bottom: 2px; border-bottom: 4px solid var(--mint); display: inline-block; }
-  .back-btn { color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 500; }
+  .back-btn { color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.2s; }
   .back-btn:hover { color: var(--ink); }
-  h1 { font-family: 'Outfit', sans-serif; font-size: 32px; color: var(--purple); margin-bottom: 32px; font-weight: 700; }
   
-  .section-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; margin-bottom: 16px; margin-top: 32px; }
+  h1 { font-family: 'Outfit', sans-serif; font-size: 32px; color: var(--purple); margin-bottom: 24px; font-weight: 700; }
+  
+  /* Section Labels */
+  .section-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; margin-top: 32px; }
+  .section-label:first-of-type { margin-top: 0; }
+
+  /* Chat Rows */
   .chat-row { display: flex; align-items: center; gap: 16px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: #FAFAFA; margin-bottom: 12px; text-decoration: none; color: inherit; transition: all 0.2s; }
   .chat-row:hover { border-color: var(--purple); background: white; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(91,50,165,0.05); }
-  .chat-icon { font-size: 24px; width: 48px; height: 48px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line); }
+  .chat-icon { font-size: 24px; width: 48px; height: 48px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--line); }
   .chat-details { flex: 1; min-width: 0; }
-  .chat-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chat-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
   .chat-preview { font-size: 14px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+  
+  .empty-text { font-size: 14px; color: var(--muted); font-style: italic; padding: 10px 0; }
 </style>
 </head>
 <body>
@@ -34,10 +41,19 @@
     <div class="logo">8mellow</div>
     <a href="dashboard.html" class="back-btn">← Dashboard</a>
   </div>
+  
   <h1>Inbox</h1>
 
-  <div id="inbox-list">
-    <p style="text-align:center; color:var(--muted);">Loading conversations...</p>
+  <!-- Section 1: Chats from my messages -->
+  <div class="section-label">Chats from my messages</div>
+  <div id="author-chats">
+    <p class="empty-text">Loading...</p>
+  </div>
+
+  <!-- Section 2: Chats I started -->
+  <div class="section-label">Chats I started</div>
+  <div id="replier-chats">
+    <p class="empty-text">Loading...</p>
   </div>
 </div>
 
@@ -51,44 +67,51 @@
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) { window.location.href = 'auth.html?mode=login'; return; }
 
-    const container = document.getElementById('inbox-list');
+    const authorContainer = document.getElementById('author-chats');
+    const replierContainer = document.getElementById('replier-chats');
 
-    // Fetch threads where I am either the author or the replier
+    // Fetch all threads where I am either the author or the replier
     const { data: threads, error } = await supabaseClient
       .from('threads')
       .select(`
         id,
-        post_id,
+        author_id,
+        replier_id,
         posts ( category, content )
       `)
       .or(`author_id.eq.${user.id},replier_id.eq.${user.id}`);
 
     if (error) {
-      container.innerHTML = '<p>Error loading chats.</p>';
+      authorContainer.innerHTML = '<p class="empty-text">Error loading chats.</p>';
       console.error(error);
       return;
     }
 
-    if (threads.length === 0) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <div style="font-size: 40px; margin-bottom: 16px;">✉️</div>
-          <h3>No conversations yet</h3>
-          <p>When someone replies to your public messages, it will appear here.</p>
-        </div>`;
-      return;
+    // Split the threads into two arrays based on my role
+    const chatsFromMyMessages = threads.filter(t => t.author_id === user.id);
+    const chatsIStarted = threads.filter(t => t.replier_id === user.id);
+
+    // Helper function to render a list of chats
+    function renderChatList(container, chatArray) {
+      if (chatArray.length === 0) {
+        container.innerHTML = '<p class="empty-text">No chats here yet.</p>';
+        return;
+      }
+      
+      container.innerHTML = chatArray.map(thread => `
+        <a href="chat.html?thread_id=${thread.id}" class="chat-row">
+          <div class="chat-icon">💬</div>
+          <div class="chat-details">
+            <div class="chat-title">Re: "${thread.posts.content.substring(0, 45)}..."</div>
+            <div class="chat-preview">${thread.posts.category}</div>
+          </div>
+        </a>
+      `).join('');
     }
 
-    // Render the list
-    container.innerHTML = threads.map(thread => `
-      <a href="chat.html?thread_id=${thread.id}" class="chat-row">
-        <div class="chat-icon">💬</div>
-        <div class="chat-details">
-          <div class="chat-title">Re: "${thread.posts.content.substring(0, 40)}..."</div>
-          <div class="chat-preview">${thread.posts.category}</div>
-        </div>
-      </a>
-    `).join('');
+    // Render both sections
+    renderChatList(authorContainer, chatsFromMyMessages);
+    renderChatList(replierContainer, chatsIStarted);
   }
 
   loadInbox();
