@@ -159,16 +159,30 @@
     messages.forEach(msg => appendMessage(msg));
   }
 
-  function appendMessage(msg) {
+   function appendMessage(msg) {
     const isMe = msg.sender_id === currentUser.id;
     const bubble = document.createElement('div');
     bubble.className = `bubble ${isMe ? 'you' : 'them'}`;
+    
+    const dateObj = new Date(msg.created_at);
+    const currentYear = new Date().getFullYear();
+    
+    // Smart formatting: If it's this year, don't show the year.
+    let options = {};
+    if (dateObj.getFullYear() === currentYear) {
+      options = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    } else {
+      options = { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+    }
+    
+    const formattedDate = dateObj.toLocaleString([], options);
+
     bubble.innerHTML = `
       ${msg.content}
-      <span class="bubble-time">${new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+      <span class="bubble-time">${formattedDate}</span>
     `;
     chatArea.appendChild(bubble);
-    chatArea.scrollTop = chatArea.scrollHeight; // Auto-scroll to bottom
+    chatArea.scrollTop = chatArea.scrollHeight;
   }
 
   // Handle sending messages
