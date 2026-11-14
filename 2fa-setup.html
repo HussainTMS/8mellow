@@ -81,7 +81,7 @@
   .subtitle {
     color: var(--muted);
     font-size: 15px;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
   }
 
   .email-icon {
@@ -100,68 +100,47 @@
     height: 36px;
   }
 
-  .input-group {
-    text-align: left;
+  .instruction-text {
+    font-size: 16px; 
+    color: var(--purple); 
+    font-weight: 600; 
     margin-bottom: 24px;
-  }
-  .input-group label {
-    display: block;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 8px;
-  }
-  .code-input {
-    width: 100%;
-    padding: 16px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    font-family: 'Inter', sans-serif;
-    font-size: 24px;
-    text-align: center;
-    letter-spacing: 8px;
-    color: var(--ink);
-    background: #FAFAFA;
-    transition: all 0.2s;
-  }
-  .code-input:focus {
-    outline: none;
-    border-color: var(--purple);
-    background: white;
-    box-shadow: 0 0 0 3px var(--light-purple);
+    line-height: 1.5;
   }
 
-  .btn-verify {
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: 12px;
-    background: var(--purple);
-    color: white;
-    font-family: 'Outfit', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-verify:hover {
-    background: var(--purple-hover);
-    transform: translateY(-1px);
+  .info-box {
+    background: #FAFAFA; 
+    border: 1px solid var(--line); 
+    border-radius: 12px; 
+    padding: 16px; 
+    font-size: 14px; 
+    color: var(--muted);
+    margin-bottom: 32px;
   }
 
-  .resend-text {
+  /* Back Button Area */
+  .back-area {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+  }
+  .back-text {
     font-size: 14px;
     color: var(--muted);
-    margin-top: 24px;
+    margin-bottom: 8px;
   }
-  .resend-text a {
+  .btn-back {
+    background: transparent;
+    border: none;
     color: var(--purple);
+    font-family: 'Inter', sans-serif;
     font-weight: 600;
-    text-decoration: none;
+    font-size: 14px;
     cursor: pointer;
-  }
-  .resend-text a:hover {
     text-decoration: underline;
+    transition: color 0.2s;
+  }
+  .btn-back:hover {
+    color: var(--purple-hover);
   }
 
   @media(max-width: 600px) {
@@ -184,43 +163,48 @@
 
   <h1>Check your email</h1>
   <p class="subtitle">We sent a secure sign-in link to your email address.</p>
-  <p style="font-size: 16px; color: var(--purple); font-weight: 600; margin-bottom: 24px;">
+  
+  <p class="instruction-text">
     Click the link in your email to verify your identity and finish logging in.
   </p>
   
-  <div style="background: #FAFAFA; border: 1px solid var(--line); border-radius: 12px; padding: 16px; font-size: 14px; color: var(--muted);">
+  <div class="info-box">
     You can close this tab once you have clicked the link. If you didn't receive it, check your spam folder or wait a minute to try again.
-  </div>>
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- New Back Button Area -->
+  <div class="back-area">
+    <p class="back-text">Entered the wrong email?</p>
+    <button onclick="goBackToLogin()" class="btn-back">Back to Log In</button>
+  </div>
+
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- Ensure your key is here
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE YOUR KEY IS HERE
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
   let emailSent = false;
 
-  // Listen for the login session to be ready
+  // Listen for the login session
   supabaseClient.auth.onAuthStateChange((event, session) => {
     if (session && session.user) {
-      // If we have a user, send the email (only once)
       if (!emailSent) {
         emailSent = true;
         sendEmailLink(session.user.email);
       }
     } else if (event === 'INITIAL_SESSION' && !session) {
-      // If there is definitely no session, send them back to login
       window.location.href = 'auth.html?mode=login';
     }
   });
 
-   async function sendEmailLink(email) {
+  async function sendEmailLink(email) {
     const { error } = await supabaseClient.auth.signInWithOtp({
       email: email,
       options: { 
         shouldCreateUser: false,
-        // This forces the email link to open the write page directly
         emailRedirectTo: 'https://hussaintms.github.io/8mellow/write.html' 
       }
     });
@@ -229,9 +213,19 @@
       alert('Error sending email: ' + error.message);
       emailSent = false; 
     } else {
-      alert('Verification link sent to ' + email + '. Please check your inbox.');
+      // Removed the alert here so it doesn't annoy the user every time they load the page
+      console.log('Verification link sent to ' + email);
     }
   }
+
+  // New function to log out and go back
+  async function goBackToLogin() {
+    // Sign out to clear the partial session
+    await supabaseClient.auth.signOut();
+    // Redirect back to the login page
+    window.location.href = 'auth.html?mode=login';
+  }
 </script>
+
 </body>
 </html>
