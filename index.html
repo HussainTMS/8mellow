@@ -117,7 +117,48 @@
   .banner-text p{ font-size:16px; color:var(--ink); max-width:400px; }
   .banner-script{ padding:40px; width:280px; flex-shrink:0; border-left:1px solid rgba(91,50,165,0.1); text-align:center; }
   .banner-script span{ font-family:'Caveat', cursive; font-size:32px; color:var(--purple); line-height:1.1; display:inline-block; transform:rotate(-3deg); }
-
+  /* --- SCROLL DOWN INDICATOR --- */
+  .scroll-indicator {
+    position: absolute;
+    right: 48px;
+    bottom: 120px; 
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    padding: 10px 18px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--purple);
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(91,50,165,0.1);
+    transition: all 0.3s ease;
+    animation: float 2s infinite ease-in-out;
+  }
+  .scroll-indicator:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(91,50,165,0.15);
+  }
+  .scroll-indicator svg {
+    width: 18px;
+    height: 18px;
+    animation: bounce 1.5s infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+  @media(max-width: 768px){
+    .scroll-indicator { right: 20px; bottom: 80px; padding: 8px 14px; font-size: 12px; }
+  }
   @media(max-width:1024px){
     .how-it-works{ grid-template-columns:repeat(2,1fr); margin-top: -30px; }
     .hero-content h1{ font-size:40px; }
@@ -164,6 +205,14 @@
       Get Started
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
     </a>
+  <!-- SCROLL DOWN INDICATOR -->
+  <a href="#messages" class="scroll-indicator">
+    <span>See messages</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <polyline points="19 12 12 19 5 12"></polyline>
+    </svg>
+  </a>
   </div>
 </div>
 
