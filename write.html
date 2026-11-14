@@ -315,7 +315,7 @@
 
     <!-- Consent Checkbox -->
     <div class="consent-group">
-      <input type="checkbox" id="consent">
+      <input type="checkbox" id="consent" required>
       <label for="consent">I understand this will be posted publicly and anonymously on the wall for everyone to see.</label>
     </div>
 
@@ -342,22 +342,26 @@
     charCount.textContent = `${textarea.value.length} / 2000`;
   });
 
-   // 3. Handle the form submission
+  // 3. Handle the form submission
   document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
+    // Check if the consent box is checked
+    if (!document.getElementById('consent').checked) {
+      alert('Please confirm that you understand this will be posted publicly.');
+      return;
+    }
+
     const content = textarea.value;
     const activeCategory = document.querySelector('.category-chip.active');
     const category = activeCategory ? activeCategory.innerText : 'Unknown';
 
-    // --- NEW LOGIN CHECK ---
     // Get the currently logged-in user
     const { data: { user } } = await supabaseClient.auth.getUser();
 
-    // If no user is logged in, send them to the login page
     if (!user) {
       alert('You must be logged in to post a message.');
-      window.location.href = 'auth.html';
+      window.location.href = 'auth.html?mode=login';
       return;
     }
 
@@ -367,15 +371,15 @@
       .insert([{ 
         content: content, 
         category: category,
-        user_id: user.id // <--- This uses the real ID!
+        user_id: user.id 
       }]);
 
-    // Handle success or error
     if (error) {
       alert('Database Error: ' + error.message);
     } else {
       alert('Success! Your message was saved.');
-      window.location.href = 'index.html';
+      // CHANGED: Go to dashboard instead of the public wall
+      window.location.href = 'dashboard.html'; 
     }
   });
 
