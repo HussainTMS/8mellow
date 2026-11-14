@@ -408,52 +408,9 @@
     <p>Words left unsaid, waiting to be found.</p>
   </div>
   
-  <div class="feed-list">
-    <!-- Message 1 -->
-    <div class="feed-card">
-      <span class="msg-category">❤️ I'm sorry</span>
-      <p class="msg-text">I'm sorry for how I left things with you. I was scared and I took the easy way out. You deserved better than silence.</p>
-      <div class="msg-footer">
-        <div class="msg-meta">
-          <span class="msg-time">2 hours ago</span>
-        </div>
-        <a href="auth.html" class="btn-reply">Reply privately</a>
-      </div>
-    </div>
-
-    <!-- Message 2 -->
-    <div class="feed-card">
-      <span class="msg-category">🕊️ Goodbye</span>
-      <p class="msg-text">I hope wherever you are, you know I loved you. I never got the chance to say it out loud.</p>
-      <div class="msg-footer">
-        <div class="msg-meta">
-          <span class="msg-time">5 hours ago</span>
-        </div>
-        <a href="auth.html" class="btn-reply">Reply privately</a>
-      </div>
-    </div>
-
-    <!-- Message 3 -->
-    <div class="feed-card">
-      <span class="msg-category">🙏 I forgive you</span>
-      <p class="msg-text">You probably don't know what it meant that I kept waiting for an answer that never came. I'm letting that go now.</p>
-      <div class="msg-footer">
-        <div class="msg-meta">
-          <span class="msg-time">1 day ago</span>
-        </div>
-        <a href="auth.html" class="btn-reply">Reply privately</a>
-      </div>
-    </div>
-
-    <!-- Message 4 -->
-    <div class="feed-card">
-      <span class="msg-category">🌊 This is what it did to me</span>
-      <p class="msg-text">I stopped trusting people after what happened. It took years to say that out loud, and I'm saying it now. Not for you — for me.</p>
-      <div class="msg-footer">
-        <div class="msg-meta">
-          <span class="msg-time">2 days ago</span>
-        </div>
-        <a href="auth.html" class="btn-reply">Reply privately</a>
+  <div <div class="feed-list" id="message-feed">
+   <!-- We will load messages here dynamically -->
+</div>>
       </div>
     </div>
   </div>
@@ -508,6 +465,55 @@
     }
   }
   checkLogin();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Initialize Supabase
+  const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
+  const supabaseKey = 'PASTE_YOUR_LEGACY_ANON_KEY_HERE'; // <-- Make sure your key is here
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+  async function loadMessages() {
+    const feedContainer = document.getElementById('message-feed');
+    
+    // Show a loading message
+    feedContainer.innerHTML = '<p style="text-align:center; color:#666;">Loading messages...</p>';
+
+    // Fetch from the 'posts' table
+    const { data: posts, error } = await supabaseClient
+      .from('posts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error(error);
+      feedContainer.innerHTML = '<p style="text-align:center; color:#666;">Error loading messages.</p>';
+      return;
+    }
+
+    if (posts.length === 0) {
+      feedContainer.innerHTML = '<p style="text-align:center; color:#666;">No messages yet. Be the first to share something.</p>';
+      return;
+    }
+
+    // Build the HTML for each message
+    feedContainer.innerHTML = posts.map(post => `
+      <div class="message-card">
+        <div class="msg-header">
+          <span>${post.category}</span>
+          <span>${new Date(post.created_at).toLocaleDateString()}</span>
+        </div>
+        <p>${post.content}</p>
+        <div class="msg-footer">
+          <span style="font-size: 13px; color: var(--muted);">♥ 0 me too</span>
+          <a href="auth.html" class="btn-reply">Reply privately</a>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Run the function when the page loads
+  loadMessages();
 </script>
 </body>
 </html>
