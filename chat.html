@@ -200,40 +200,10 @@
       }
     }
   }
-  async function reportChat() {
-    const confirmReport = confirm("Are you sure you want to report this conversation? Our safety team will review it.");
-    if (!confirmReport) return;
-
-    // We need to find out who the other person in the chat is
-    const { data: thread } = await supabaseClient
-      .from('threads')
-      .select('author_id, replier_id')
-      .eq('id', currentThreadId)
-      .single();
-
-    if (thread) {
-      const otherUserId = thread.author_id === currentUser.id ? thread.replier_id : thread.author_id;
-
-      // Insert the report into the database
-      const { error } = await supabaseClient
-        .from('reports')
-        .insert([{
-          reporter_id: currentUser.id,
-          reported_user_id: otherUserId,
-          thread_id: currentThreadId,
-          reason: 'User reported from chat'
-        }]);
-
-      if (error) {
-        alert('Error submitting report: ' + error.message);
-      } else {
-        alert('Thank you. This conversation has been reported to the safety team.');
-      }
-    }
-    
-    // Close the dropdown menu
-    document.getElementById('dropdown-menu').classList.remove('show');
-  } {
+  function reportChat() {
+  alert("Report feature coming next!");
+  document.getElementById('dropdown-menu').classList.remove('show');
+} {
     alert("Report feature coming next!");
     document.getElementById('dropdown-menu').classList.remove('show');
   }
