@@ -37,10 +37,18 @@
   .send-btn svg { width: 20px; height: 20px; margin-left: -2px; }
   /* Dropdown Menu Styles */
   .options-btn {
-    background: none; border: none; font-size: 28px; color: var(--muted);
-    cursor: pointer; padding: 0 10px; line-height: 1; transition: color 0.2s;
+    background: var(--light-purple); 
+    border: none; 
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--purple);
+    cursor: pointer; 
+    padding: 8px 14px; 
+    border-radius: 999px;
+    transition: all 0.2s;
   }
-  .options-btn:hover { color: var(--purple); }
+  .options-btn:hover { background: #E5D9F5; }
   
   .dropdown-menu {
     display: none; position: absolute; right: 24px; top: 70px;
@@ -71,7 +79,10 @@
       <h2>🔒 Private Conversation</h2>
       <p>Only you two can see this</p>
     <!-- ADD THIS FOR THE MENU -->
-    <button class="options-btn" id="options-btn" onclick="toggleMenu(event)">⋯</button>
+        <!-- The updated Safety Button -->
+    <button class="options-btn" id="options-btn" onclick="toggleMenu(event)">
+      🛡️ Safety
+    </button>
   </div>
 
   <!-- The Dropdown Menu -->
@@ -97,6 +108,11 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
     </button>
   </form>
+  <div style="text-align: center; margin-top: 8px;">
+    <button onclick="toggleMenu(event)" style="background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; text-decoration: underline;">
+      Report or Block this user
+    </button>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
