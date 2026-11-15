@@ -19,17 +19,18 @@
   
   h1 { font-family: 'Outfit', sans-serif; font-size: 32px; color: var(--purple); margin-bottom: 24px; font-weight: 700; }
   
-  /* Section Labels */
   .section-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; margin-top: 32px; }
   .section-label:first-of-type { margin-top: 0; }
 
-  /* Chat Rows */
   .chat-row { display: flex; align-items: center; gap: 16px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: #FAFAFA; margin-bottom: 12px; text-decoration: none; color: inherit; transition: all 0.2s; }
   .chat-row:hover { border-color: var(--purple); background: white; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(91,50,165,0.05); }
   .chat-icon { font-size: 24px; width: 48px; height: 48px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--line); }
   .chat-details { flex: 1; min-width: 0; }
   .chat-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
-  .chat-preview { font-size: 14px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  
+  /* Updated Preview to hold Date */
+  .chat-preview { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .chat-date { color: var(--dark-gold); font-weight: 500; }
   
   .empty-text { font-size: 14px; color: var(--muted); font-style: italic; padding: 10px 0; }
 </style>
@@ -44,13 +45,11 @@
   
   <h1>Inbox</h1>
 
-  <!-- Section 1: Chats from my messages -->
   <div class="section-label">Chats from my messages</div>
   <div id="author-chats">
     <p class="empty-text">Loading...</p>
   </div>
 
-  <!-- Section 2: Chats I started -->
   <div class="section-label">Chats I started</div>
   <div id="replier-chats">
     <p class="empty-text">Loading...</p>
@@ -70,16 +69,18 @@
     const authorContainer = document.getElementById('author-chats');
     const replierContainer = document.getElementById('replier-chats');
 
-    // Fetch all threads where I am either the author or the replier
+    // Fetch threads and include created_at
     const { data: threads, error } = await supabaseClient
       .from('threads')
       .select(`
         id,
         author_id,
         replier_id,
+        created_at,
         posts ( category, content )
       `)
-      .or(`author_id.eq.${user.id},replier_id.eq.${user.id}`);
+      .or(`author_id.eq.${user.id},replier_id.eq.${user.id}`)
+      .order('created_at', { ascending: false }); // Newest chats at the top
 
     if (error) {
       authorContainer.innerHTML = '<p class="empty-text">Error loading chats.</p>';
@@ -87,29 +88,34 @@
       return;
     }
 
-    // Split the threads into two arrays based on my role
     const chatsFromMyMessages = threads.filter(t => t.author_id === user.id);
     const chatsIStarted = threads.filter(t => t.replier_id === user.id);
 
-    // Helper function to render a list of chats
     function renderChatList(container, chatArray) {
       if (chatArray.length === 0) {
         container.innerHTML = '<p class="empty-text">No chats here yet.</p>';
         return;
       }
       
-      container.innerHTML = chatArray.map(thread => `
+      container.innerHTML = chatArray.map(thread => {
+        // Format Date: "14 Nov 2026"
+        const dateObj = new Date(thread.created_at);
+        const formattedDate = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+        return `
         <a href="chat.html?thread_id=${thread.id}" class="chat-row">
           <div class="chat-icon">💬</div>
           <div class="chat-details">
             <div class="chat-title">Re: "${thread.posts.content.substring(0, 45)}..."</div>
-            <div class="chat-preview">${thread.posts.category}</div>
+            <div class="chat-preview">
+              <span>${thread.posts.category}</span>
+              <span class="chat-date">· ${formattedDate}</span>
+            </div>
           </div>
         </a>
-      `).join('');
+      `}).join('');
     }
 
-    // Render both sections
     renderChatList(authorContainer, chatsFromMyMessages);
     renderChatList(replierContainer, chatsIStarted);
   }
