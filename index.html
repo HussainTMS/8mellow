@@ -192,10 +192,10 @@
       <a href="privacy.html">Privacy</a>
       <a href="faq.html">FAQs</a>
     </div>
-    <div class="nav-actions">
-      <a href="auth.html?mode=login" class="btn-outline">Log In</a>
-      <a href="auth.html?mode=signup" class="btn-solid">Sign Up</a>
-    </div>
+    <div class="nav-actions" id="nav-actions">
+  <a href="auth.html?mode=login" class="btn-outline" id="nav-login">Log In</a>
+  <a href="auth.html?mode=signup" class="btn-solid" id="nav-signup">Sign Up</a>
+</div>
   </nav>
 
   <div class="hero-content">
@@ -204,8 +204,8 @@
     <p style="font-size: 15px; color: var(--muted); max-width: 480px; margin-bottom: 24px; line-height: 1.7;">
       <strong style="color: var(--dark-gold);">8mellow</strong> is a safe, anonymous space to say the things you never got to say—or were hesitant to say. Whether it's an apology, a forgiveness, a goodbye, a thank you, or something else entirely—write it here. Someone might read it and reply privately. Or you might just find peace in letting it out.
     </p>
-    <a href="auth.html?mode=signup" class="btn-hero">
-      Get Started
+    <a href="auth.html?mode=signup" class="btn-hero" id="hero-btn">
+  Get Started
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
     </a>
   <!-- SCROLL DOWN INDICATOR -->
@@ -292,6 +292,32 @@
     `).join('');
   }
 
+  async function checkLoggedInUser() {
+    // Get the current session
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    
+    if (session) {
+      // 1. Update the top right navigation
+      document.getElementById('nav-login').style.display = 'none';
+      document.getElementById('nav-signup').style.display = 'none';
+      
+      // Create a new Dashboard button and add it to the nav
+      const navActions = document.getElementById('nav-actions');
+      const dashBtn = document.createElement('a');
+      dashBtn.href = 'dashboard.html';
+      dashBtn.className = 'btn-solid'; // Use the same purple button styling
+      dashBtn.innerText = 'My Dashboard';
+      navActions.appendChild(dashBtn);
+
+      // 2. Update the Hero "Get Started" button
+      const heroBtn = document.getElementById('hero-btn');
+      heroBtn.href = 'dashboard.html';
+      heroBtn.innerHTML = `Go to Dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+    }
+  }
+
+  // Call the function when the page loads
+  checkLoggedInUser();
   loadMessages();
 </script>
 
