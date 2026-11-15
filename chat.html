@@ -4,59 +4,68 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>8mellow — Private Chat</title>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{ --purple:#5B32A5; --light-purple:#F3ECFC; --surface-alt:#F2EDF7; --ink:#1A1A1A; --muted:#666666; --line:#EAEAEA; }
+  :root{ 
+    --purple:#5B32A5; 
+    --purple-hover:#482680;
+    --light-purple:#F3ECFC; 
+    --surface-alt:#F2EDF7; 
+    --ink:#1A1A1A; 
+    --muted:#666666; 
+    --line:#EAEAEA; 
+    --danger:#C97064;
+  }
   *{box-sizing:border-box; margin:0; padding:0;}
-  body{ background: var(--surface-alt); color:var(--ink); font-family:'Inter', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
   
-  .chat-header { background: rgba(255,255,255,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+  body{ 
+    background: var(--surface-alt); 
+    color:var(--ink); 
+    font-family:'Inter', sans-serif; 
+    height: 100vh; 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden; 
+  }
+  
+  /* Header Layout */
+  .chat-header { 
+    background: rgba(255,255,255,0.9); 
+    border-bottom: 1px solid var(--line); 
+    padding: 16px 24px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    z-index: 10; 
+  }
   .header-left { display: flex; align-items: center; gap: 16px; }
-  .back-btn { color: var(--muted); text-decoration: none; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; transition: background 0.2s; }
+  .back-btn { 
+    color: var(--muted); text-decoration: none; display: flex; align-items: center; 
+    justify-content: center; width: 36px; height: 36px; border-radius: 50%; transition: background 0.2s; 
+  }
   .back-btn:hover { background: var(--light-purple); color: var(--purple); }
   .back-btn svg { width: 20px; height: 20px; }
-  .header-info h2 { font-family: 'Outfit', sans-serif; font-size: 18px; color: var(--purple); font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 2px;}
+  .header-info h2 { 
+    font-family: 'Outfit', sans-serif; font-size: 18px; color: var(--purple); 
+    font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 2px;
+  }
   .header-info p { font-size: 12px; color: var(--muted); }
 
-  .chat-area { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; max-width: 800px; margin: 0 auto; width: 100%; }
-  .system-message { text-align: center; margin-bottom: 24px; }
-  .system-badge { display: inline-block; background: rgba(255,255,255,0.7); border: 1px solid var(--line); padding: 8px 16px; border-radius: 999px; font-size: 13px; color: var(--muted); }
-  .system-badge strong { color: var(--purple); }
-
-  .bubble { max-width: 75%; padding: 14px 18px; border-radius: 20px; font-size: 15px; line-height: 1.5; position: relative; }
-  .bubble.them { background: white; border: 1px solid var(--line); color: var(--ink); align-self: flex-start; border-bottom-left-radius: 4px; }
-  .bubble.you { background: var(--purple); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-  .bubble-time { font-size: 11px; margin-top: 6px; display: block; opacity: 0.7; text-align: right; }
-
-  .chat-input-area { background: rgba(255,255,255,0.9); backdrop-filter: blur(12px); border-top: 1px solid var(--line); padding: 16px 24px; }
-  .input-container { max-width: 800px; margin: 0 auto; display: flex; gap: 12px; align-items: center; }
-  .chat-input { flex: 1; padding: 14px 20px; border: 1px solid var(--line); border-radius: 999px; font-family: 'Inter', sans-serif; font-size: 15px; background: white; outline: none; }
-  .chat-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px var(--light-purple); }
-  .send-btn { background: var(--purple); color: white; border: none; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
-  .send-btn:hover { background: #482680; transform: scale(1.05); }
-  .send-btn svg { width: 20px; height: 20px; margin-left: -2px; }
-  /* Dropdown Menu Styles */
+  /* Safety Button */
   .options-btn {
-    background: var(--light-purple); 
-    border: none; 
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--purple);
-    cursor: pointer; 
-    padding: 8px 14px; 
-    border-radius: 999px;
-    transition: all 0.2s;
+    background: var(--light-purple); border: none; font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 600; color: var(--purple); cursor: pointer; 
+    padding: 8px 14px; border-radius: 999px; transition: all 0.2s;
   }
   .options-btn:hover { background: #E5D9F5; }
-  
+
+  /* Dropdown Menu */
   .dropdown-menu {
     display: none; position: absolute; right: 24px; top: 70px;
     background: white; border: 1px solid var(--line); border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 100; overflow: hidden; flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 100; flex-direction: column;
   }
   .dropdown-menu.show { display: flex; }
-  
   .dropdown-menu button {
     display: block; width: 100%; padding: 14px 24px; text-align: left;
     background: none; border: none; font-family: 'Inter', sans-serif; 
@@ -64,8 +73,63 @@
     border-bottom: 1px solid var(--line); transition: background 0.2s;
   }
   .dropdown-menu button:hover { background: #FAFAFA; }
-  .dropdown-menu button:last-child { border-bottom: none; color: #C97064; }
+  .dropdown-menu button:last-child { border-bottom: none; color: var(--danger); }
   .dropdown-menu button:last-child:hover { background: #FFF5F5; }
+
+  /* Chat Area */
+  .chat-area { 
+    flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; 
+    gap: 16px; max-width: 800px; margin: 0 auto; width: 100%; 
+  }
+  .system-message { text-align: center; margin-bottom: 24px; }
+  .system-badge { 
+    display: inline-block; background: rgba(255,255,255,0.7); border: 1px solid var(--line); 
+    padding: 8px 16px; border-radius: 999px; font-size: 13px; color: var(--muted); 
+  }
+  .system-badge strong { color: var(--purple); }
+
+  /* Message Bubbles */
+  .bubble { 
+    max-width: 75%; padding: 14px 18px; border-radius: 20px; font-size: 15px; 
+    line-height: 1.5; position: relative; 
+  }
+  .bubble.them { 
+    background: white; border: 1px solid var(--line); color: var(--ink); 
+    align-self: flex-start; border-bottom-left-radius: 4px; 
+  }
+  .bubble.you { 
+    background: var(--purple); color: white; align-self: flex-end; border-bottom-right-radius: 4px; 
+  }
+  .bubble-time { font-size: 11px; margin-top: 6px; display: block; opacity: 0.7; text-align: right; }
+
+  /* Chat Input Area */
+  .chat-input-area { 
+    background: rgba(255,255,255,0.9); 
+    border-top: 1px solid var(--line); 
+    padding: 16px 24px; 
+  }
+  .input-container { 
+    max-width: 800px; margin: 0 auto; display: flex; gap: 12px; align-items: center; 
+  }
+  .chat-input { 
+    flex: 1; padding: 14px 20px; border: 1px solid var(--line); border-radius: 999px; 
+    font-family: 'Inter', sans-serif; font-size: 15px; background: white; outline: none; 
+  }
+  .chat-input:focus { border-color: var(--purple); }
+  
+  .send-btn { 
+    background: var(--purple); color: white; border: none; width: 48px; height: 48px; 
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+    cursor: pointer; flex-shrink: 0;
+  }
+  .send-btn svg { width: 20px; height: 20px; margin-left: -2px; }
+
+  /* Bottom Safety Link */
+  .bottom-safety-link { text-align: center; margin-top: 8px; }
+  .bottom-safety-link button {
+    background: none; border: none; color: var(--muted); font-size: 12px; 
+    cursor: pointer; text-decoration: underline;
+  }
 </style>
 </head>
 <body>
@@ -78,19 +142,16 @@
     <div class="header-info">
       <h2>🔒 Private Conversation</h2>
       <p>Only you two can see this</p>
-    <!-- ADD THIS FOR THE MENU -->
-        <!-- The updated Safety Button -->
-    <button class="options-btn" id="options-btn" onclick="toggleMenu(event)">
-      🛡️ Safety
-    </button>
+    </div>
   </div>
 
-  <!-- The Dropdown Menu -->
+  <button class="options-btn" id="options-btn" onclick="toggleMenu(event)">
+    🛡️ Safety
+  </button>
+
   <div class="dropdown-menu" id="dropdown-menu">
     <button onclick="reportChat()">🚩 Report this chat</button>
     <button onclick="blockChat()">🚫 Block this user</button>
-  </div>
-    </div>
   </div>
 </div>
 
@@ -98,7 +159,6 @@
   <div class="system-message">
     <div class="system-badge" id="post-context">Loading original message...</div>
   </div>
-  <!-- Messages will load here -->
 </div>
 
 <div class="chat-input-area">
@@ -108,17 +168,16 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
     </button>
   </form>
-  <div style="text-align: center; margin-top: 8px;">
-    <button onclick="toggleMenu(event)" style="background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; text-decoration: underline;">
-      Report or Block this user
-    </button>
+  
+  <div class="bottom-safety-link">
+    <button onclick="toggleMenu(event)">Report or Block this user</button>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE KEY IS HERE
+  const supabaseKey = 'PASTE_YOUR_LEGACY_ANON_KEY_HERE'; // <-- MAKE SURE KEY IS HERE
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
   let currentUser = null;
@@ -128,55 +187,61 @@
   const chatArea = document.getElementById('chat-area');
   const postContext = document.getElementById('post-context');
 
+  function toggleMenu(event) {
+    event.stopPropagation();
+    document.getElementById('dropdown-menu').classList.toggle('show');
+  }
+
+  window.onclick = function(event) {
+    if (!event.target.matches('.options-btn') && !event.target.matches('.bottom-safety-link button')) {
+      const dropdown = document.getElementById('dropdown-menu');
+      if (dropdown.classList.contains('show')) {
+        dropdown.classList.remove('show');
+      }
+    }
+  }
+
+  function reportChat() {
+    alert("Report feature coming next!");
+    document.getElementById('dropdown-menu').classList.remove('show');
+  }
+
+  function blockChat() {
+    alert("Block feature coming next!");
+    document.getElementById('dropdown-menu').classList.remove('show');
+  }
+
   async function initChat() {
-    // 1. Check User
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) { window.location.href = 'auth.html?mode=login'; return; }
     currentUser = user;
 
-    // 2. Get Post ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     currentPostId = urlParams.get('post_id');
     const threadIdParam = urlParams.get('thread_id');
 
     if (threadIdParam) {
-      // Load existing thread
       currentThreadId = threadIdParam;
       await loadThreadData();
     } else if (currentPostId) {
-      // Started from "Reply Privately"
       await startOrLoadThread();
     } else {
       window.location.href = 'inbox.html';
       return;
     }
 
-    // 3. Load Messages
     await loadMessages();
-
-    // 4. Listen for New Messages in Real-Time
-    supabaseClient.channel('custom-all-channel')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `thread_id=eq.${currentThreadId}` }, payload => {
-        // If the message is not from me, add it to the screen
-        if (payload.new.sender_id !== currentUser.id) {
-          appendMessage(payload.new);
-        }
-      })
-      .subscribe();
   }
 
   async function startOrLoadThread() {
-    // Fetch post details for context
     const { data: post } = await supabaseClient.from('posts').select('*').eq('id', currentPostId).single();
     if (post) { postContext.innerHTML = `Replying to: <strong>${post.category}</strong> · "${post.content.substring(0, 40)}..."`; }
 
-    // Check if thread exists
     const { data: existingThread } = await supabaseClient.from('threads').select('id').eq('post_id', currentPostId).eq('replier_id', currentUser.id).single();
 
     if (existingThread) {
       currentThreadId = existingThread.id;
     } else {
-      // Create a new thread
       const { data: postData } = await supabaseClient.from('posts').select('user_id').eq('id', currentPostId).single();
       const { data: newThread, error } = await supabaseClient.from('threads').insert([{
         post_id: currentPostId,
@@ -201,29 +266,17 @@
     const { data: messages, error } = await supabaseClient.from('messages').select('*').eq('thread_id', currentThreadId).order('created_at', { ascending: true });
     if (error) { console.error(error); return; }
     
-    // Clear existing messages (except system badge)
     document.querySelectorAll('.bubble').forEach(el => el.remove());
-    
     messages.forEach(msg => appendMessage(msg));
   }
 
-   function appendMessage(msg) {
+  function appendMessage(msg) {
     const isMe = msg.sender_id === currentUser.id;
     const bubble = document.createElement('div');
     bubble.className = `bubble ${isMe ? 'you' : 'them'}`;
     
     const dateObj = new Date(msg.created_at);
-    const currentYear = new Date().getFullYear();
-    
-    // Smart formatting: If it's this year, don't show the year.
-    let options = {};
-    if (dateObj.getFullYear() === currentYear) {
-      options = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    } else {
-      options = { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-    }
-    
-    const formattedDate = dateObj.toLocaleString([], options);
+    const formattedDate = dateObj.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
     bubble.innerHTML = `
       ${msg.content}
@@ -233,14 +286,13 @@
     chatArea.scrollTop = chatArea.scrollHeight;
   }
 
-  // Handle sending messages
   document.getElementById('chat-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const input = document.getElementById('message-input');
     const content = input.value.trim();
     if (!content) return;
 
-    input.value = ''; // Clear input immediately
+    input.value = '';
 
     const { data, error } = await supabaseClient.from('messages').insert([{
       thread_id: currentThreadId,
@@ -251,35 +303,10 @@
     if (error) {
       alert('Error sending message: ' + error.message);
     } else {
-      appendMessage(data); // Show it immediately on my screen
+      appendMessage(data);
     }
   });
-  // Toggle the 3-dot menu
-  function toggleMenu(event) {
-    event.stopPropagation();
-    document.getElementById('dropdown-menu').classList.toggle('show');
-  }
 
-  // Close menu if user clicks anywhere else on the screen
-  window.onclick = function(event) {
-    if (!event.target.matches('.options-btn')) {
-      const dropdown = document.getElementById('dropdown-menu');
-      if (dropdown.classList.contains('show')) {
-        dropdown.classList.remove('show');
-      }
-    }
-  }
-
-  // Placeholder functions for the buttons
-  function reportChat() {
-    alert("Report feature coming next!");
-    document.getElementById('dropdown-menu').classList.remove('show');
-  }
-
-  function blockChat() {
-    alert("Block feature coming next!");
-    document.getElementById('dropdown-menu').classList.remove('show');
-  }
   initChat();
 </script>
 </body>
