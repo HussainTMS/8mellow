@@ -40,6 +40,7 @@
   .chat-date { color: var(--dark-gold); font-weight: 500; }
   
   .empty-text { font-size: 14px; color: var(--muted); font-style: italic; padding: 10px 0; }
+
   .unread-dot {
     width: 10px;
     height: 10px;
@@ -100,6 +101,8 @@
         author_id,
         replier_id,
         created_at,
+        unread_author,
+        unread_replier,
         posts ( category, content )
       `)
       .or(`author_id.eq.${user.id},replier_id.eq.${user.id}`)
