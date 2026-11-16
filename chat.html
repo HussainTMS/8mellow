@@ -224,8 +224,17 @@
   }
 
   async function loadThreadData() {
-    const { data: thread } = await supabaseClient.from('threads').select('post_id').eq('id', currentThreadId).single();
+    const { data: thread } = await supabaseClient.from('threads').select('post_id, author_id, replier_id').eq('id', currentThreadId).single();
     if (thread) {
+       // 1. Mark as read based on who we are
+       const isAuthor = thread.author_id === currentUser.id;
+       if (isAuthor) {
+         await supabaseClient.from('threads').update({ unread_author: false }).eq('id', currentThreadId);
+       } else {
+         await supabaseClient.from('threads').update({ unread_replier: false }).eq('id', currentThreadId);
+       }
+
+       // 2. Load the context badge
        const { data: post } = await supabaseClient.from('posts').select('*').eq('id', thread.post_id).single();
        if (post) { postContext.innerHTML = `Replying to: <strong>${post.category}</strong> · "${post.content.substring(0, 40)}..."`; }
     }

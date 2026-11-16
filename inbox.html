@@ -40,6 +40,14 @@
   .chat-date { color: var(--dark-gold); font-weight: 500; }
   
   .empty-text { font-size: 14px; color: var(--muted); font-style: italic; padding: 10px 0; }
+  .unread-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--purple);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px var(--light-purple);
+    flex-shrink: 0;
+  }
 </style>
 </head>
 <body>
@@ -112,31 +120,37 @@
     const chatsFromMyMessages = safeThreads.filter(t => t.author_id === user.id);
     const chatsIStarted = safeThreads.filter(t => t.replier_id === user.id);
 
-    function renderChatList(container, chatArray) {
+    function renderChatList(container, chatArray, isAuthorView) {
       if (chatArray.length === 0) {
         container.innerHTML = '<p class="empty-text">No chats here yet.</p>';
         return;
       }
       
       container.innerHTML = chatArray.map(thread => {
-        // Format Date: "14 Nov 2026"
         const dateObj = new Date(thread.created_at);
         const formattedDate = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
-             return `
-     <a href="chat.html?thread_id=${thread.id}" class="chat-row">
-       <div class="chat-icon">💬</div>
-       <div class="chat-details">
-         <div class="chat-title">Re: "${thread.posts.content.substring(0, 45)}..."</div>
-         <div class="chat-preview">${thread.posts.category}</div>
-       </div>
-       <div class="chat-date-side">${formattedDate}</div>
-     </a>
-   `}).join('');
+        // Check if the thread is unread for the current user
+        const isUnread = isAuthorView ? thread.unread_author : thread.unread_replier;
+
+        return `
+        <a href="chat.html?thread_id=${thread.id}" class="chat-row">
+          <div class="chat-icon">💬</div>
+          <div class="chat-details">
+            <div class="chat-title">Re: "${thread.posts.content.substring(0, 45)}..."</div>
+            <div class="chat-preview">
+              <span>${thread.posts.category}</span>
+            </div>
+          </div>
+          ${isUnread ? '<div class="unread-dot"></div>' : ''}
+          <div class="chat-date-side">${formattedDate}</div>
+        </a>
+      `}).join('');
     }
 
-    renderChatList(authorContainer, chatsFromMyMessages);
-    renderChatList(replierContainer, chatsIStarted);
+    // Call the function with the correct role
+    renderChatList(authorContainer, chatsFromMyMessages, true);
+    renderChatList(replierContainer, chatsIStarted, false);
   }
 
   loadInbox();
