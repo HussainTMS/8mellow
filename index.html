@@ -171,8 +171,10 @@
     .banner-script{ border-left:none; border-top:1px solid rgba(91,50,165,0.1); width:100%; }
   }
   @media(max-width:768px){
-    .nav-links, .nav-actions .btn-outline{ display:none; }
-    .nav{ padding:20px 24px; }
+    .nav-links { display:none; } /* Only hide the text links (How It Works, etc) */
+    .nav { padding: 16px 16px; } /* Reduce padding slightly */
+    .nav-actions { gap: 8px; } /* Bring buttons closer together */
+    .btn-outline, .btn-solid { padding: 8px 14px; font-size: 13px; } /* Make buttons smaller */
     .hero-content{ padding:20px 24px 60px; }
     .hero-content h1{ font-size:32px; }
     .how-it-works{ padding:0 24px 40px; grid-template-columns:1fr; margin-top: -20px; }
