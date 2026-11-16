@@ -26,6 +26,9 @@
   .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0; }
   .checkbox-group input { width: 18px; height: 18px; margin-top: 3px; }
   .checkbox-group label { font-size: 14px; color: var(--muted); font-weight: 400; }
+  
+  /* Crucial: Explicitly set display */
+  #signup-form { display: block; }
   #login-form { display: none; }
 </style>
 </head>
@@ -83,10 +86,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE YOUR KEY IS HERE
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE KEY IS HERE
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  // Check URL for mode (login or signup) and reply_to
   const urlParams = new URLSearchParams(window.location.search);
   const mode = urlParams.get('mode');
   const replyTo = urlParams.get('reply_to');
@@ -96,7 +98,6 @@
     document.getElementById('login-form').style.display = 'block';
   }
 
-  // Save reply_to if it exists
   if (replyTo) {
     localStorage.setItem('reply_to_post', replyTo);
   }
@@ -104,8 +105,13 @@
   function toggleForms() {
     const signup = document.getElementById('signup-form');
     const login = document.getElementById('login-form');
-    signup.style.display = signup.style.display === 'none' ? 'block' : 'none';
-    login.style.display = login.style.display === 'none' ? 'block' : 'none';
+    if (signup.style.display === 'none') {
+      signup.style.display = 'block';
+      login.style.display = 'none';
+    } else {
+      signup.style.display = 'none';
+      login.style.display = 'block';
+    }
   }
 
   async function handleSignup(e) {
