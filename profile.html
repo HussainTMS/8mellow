@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — My Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --purple:#5B32A5; --light-purple:#F3ECFC; --mint:#7FFFD4; --dark-gold:#B8860B; --ink:#1A1A1A; --muted:#666666; --line:#EAEAEA; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background: radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%), radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%), #FAF7F2; color:var(--ink); font-family:'Inter', sans-serif; line-height:1.6; min-height: 100vh; padding: 40px 20px; display:flex; align-items:center; justify-content:center; }
+  .container { width: 100%; max-width: 600px; background: white; border-radius: 24px; padding: 48px; box-shadow: 0 20px 60px rgba(91,50,165,0.06); position: relative; overflow: hidden; }
+  .container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--purple), var(--mint)); }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+  .logo { font-family:'Outfit',sans-serif; font-size: 24px; font-weight:700; color:var(--dark-gold); padding-bottom: 2px; border-bottom: 4px solid var(--mint); display: inline-block; }
+  .back-btn { color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 500; }
+  .back-btn:hover { color: var(--ink); }
+  
+  h1 { font-family: 'Outfit', sans-serif; font-size: 28px; color: var(--purple); margin-bottom: 8px; font-weight: 700; }
+  .subtitle { color: var(--muted); font-size: 15px; margin-bottom: 32px; }
+
+  .form-group { margin-bottom: 20px; }
+  label { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+  .optional { color: var(--muted); font-weight: 400; font-size: 12px; }
+  input, textarea { width: 100%; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 15px; background: #FAFAFA; }
+  input:focus, textarea:focus { outline: none; border-color: var(--purple); background: white; box-shadow: 0 0 0 3px var(--light-purple); }
+  
+  .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; background: var(--purple); color: white; font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 16px; }
+  .btn:hover { background: #482680; transform: translateY(-1px); }
+  .status-msg { text-align: center; font-size: 14px; margin-top: 16px; font-weight: 600; display: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="logo">8mellow</div>
+    <a href="dashboard.html" class="back-btn">← Dashboard</a>
+  </div>
+
+  <h1>My Profile</h1>
+  <p class="subtitle">Add a User ID so people can find you, and share some clues about your past.</p>
+
+  <form id="profile-form">
+    <div class="form-group">
+      <label>User ID (Username) <span class="optional">(Required to post)</span></label>
+      <input type="text" id="username" placeholder="e.g. MellowSoul92" required>
+    </div>
+
+    <div class="form-group">
+      <label>Short Bio <span class="optional">(Optional)</span></label>
+      <textarea id="bio" rows="3" placeholder="A little about who you are..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Where do you currently live? <span class="optional">(Optional)</span></label>
+      <input type="text" id="current_location" placeholder="e.g. London, UK">
+    </div>
+
+    <div class="form-group">
+      <label>Where did you live before? <span class="optional">(Optional)</span></label>
+      <input type="text" id="past_locations" placeholder="e.g. Dubai, Toronto">
+    </div>
+
+    <div class="form-group">
+      <label>Where did you study? <span class="optional">(Optional)</span></label>
+      <input type="text" id="education" placeholder="e.g. University of Dundee">
+    </div>
+
+    <button type="submit" class="btn">Save Profile</button>
+    <p class="status-msg" id="status-msg">Profile saved successfully!</p>
+  </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE KEY IS HERE
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+  let currentUser = null;
+
+  async function loadProfile() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) { window.location.href = 'auth.html?mode=login'; return; }
+    currentUser = user;
+
+    // Try to load existing profile
+    const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
+    
+    if (profile) {
+      document.getElementById('username').value = profile.username || '';
+      document.getElementById('bio').value = profile.bio || '';
+      document.getElementById('current_location').value = profile.current_location || '';
+      document.getElementById('past_locations').value = profile.past_locations || '';
+      document.getElementById('education').value = profile.education || '';
+    }
+  }
+
+  document.getElementById('profile-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusMsg = document.getElementById('status-msg');
+    statusMsg.style.display = 'none';
+
+    const username = document.getElementById('username').value.trim().toLowerCase();
+    const bio = document.getElementById('bio').value.trim();
+    const current_location = document.getElementById('current_location').value.trim();
+    const past_locations = document.getElementById('past_locations').value.trim();
+    const education = document.getElementById('education').value.trim();
+
+    // Remove spaces from username
+    const cleanUsername = username.replace(/\s+/g, '');
+
+    // Upsert (Insert or Update) the profile
+    const { error } = await supabaseClient.from('profiles').upsert({
+      id: currentUser.id,
+      username: cleanUsername,
+      bio: bio,
+      current_location: current_location,
+      past_locations: past_locations,
+      education: education
+    });
+
+    if (error) {
+      if (error.code === '23505') {
+        alert("That User ID is already taken. Please choose another one.");
+      } else {
+        alert("Error saving profile: " + error.message);
+      }
+    } else {
+      statusMsg.style.color = "#2E7D32";
+      statusMsg.innerText = "Profile saved successfully!";
+      statusMsg.style.display = 'block';
+    }
+  });
+
+  loadProfile();
+</script>
+
+</body>
+</html>
