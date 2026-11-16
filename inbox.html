@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,7 +76,15 @@
     const authorContainer = document.getElementById('author-chats');
     const replierContainer = document.getElementById('replier-chats');
 
-    // Fetch threads and include created_at
+    // 1. Fetch the users I have blocked
+    const { data: blocks } = await supabaseClient
+      .from('blocks')
+      .select('blocked_id')
+      .eq('blocker_id', user.id);
+      
+    const blockedUserIds = blocks ? blocks.map(b => b.blocked_id) : [];
+
+    // 2. Fetch threads
     const { data: threads, error } = await supabaseClient
       .from('threads')
       .select(`
@@ -94,8 +103,14 @@
       return;
     }
 
-    const chatsFromMyMessages = threads.filter(t => t.author_id === user.id);
-    const chatsIStarted = threads.filter(t => t.replier_id === user.id);
+    // Filter out threads where the other person is blocked
+    const safeThreads = threads.filter(t => {
+      const otherUserId = t.author_id === user.id ? t.replier_id : t.author_id;
+      return !blockedUserIds.includes(otherUserId);
+    });
+
+    const chatsFromMyMessages = safeThreads.filter(t => t.author_id === user.id);
+    const chatsIStarted = safeThreads.filter(t => t.replier_id === user.id);
 
     function renderChatList(container, chatArray) {
       if (chatArray.length === 0) {

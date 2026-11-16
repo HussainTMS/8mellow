@@ -145,9 +145,31 @@
     document.getElementById('dropdown-menu').classList.remove('show');
   }
 
-  function blockChat() {
-    alert("Block feature coming next!");
-    document.getElementById('dropdown-menu').classList.remove('show');
+   async function blockChat() {
+    const confirmBlock = confirm("Are you sure you want to block this user? They will no longer be able to contact you, and this chat will be removed from your inbox.");
+    if (!confirmBlock) return;
+
+    // 1. Find out who the other person is
+    const { data: thread } = await supabaseClient.from('threads').select('author_id, replier_id').eq('id', currentThreadId).single();
+
+    if (thread) {
+      const otherUserId = thread.author_id === currentUser.id ? thread.replier_id : thread.author_id;
+
+      // 2. Insert into blocks table
+      const { error } = await supabaseClient
+        .from('blocks')
+        .insert([{
+          blocker_id: currentUser.id,
+          blocked_id: otherUserId
+        }]);
+
+      if (error) {
+        alert('Error blocking user: ' + error.message);
+      } else {
+        alert('User blocked successfully.');
+        window.location.href = 'inbox.html'; // Send them back to the inbox
+      }
+    }
   }
 
   async function initChat() {
