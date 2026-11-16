@@ -46,8 +46,8 @@
 
   .menu-item {
     display: flex; align-items: center; gap: 16px;
-    padding: 20px; border: 1px solid var(--line); border-radius: 16px;
-    margin-bottom: 16px; text-decoration: none; color: var(--ink);
+    padding: 16px; border: 1px solid var(--line); border-radius: 16px;
+    margin-bottom: 12px; text-decoration: none; color: var(--ink);
     transition: all 0.2s; background: #FAFAFA;
   }
   .menu-item:hover {
@@ -55,28 +55,32 @@
     transform: translateY(-2px); box-shadow: 0 8px 20px rgba(91,50,165,0.05);
   }
   .menu-icon {
-    width: 48px; height: 48px; background: var(--light-purple); border-radius: 12px;
-    display: flex; align-items: center; justify-content: center; font-size: 24px;
+    width: 44px; height: 44px; background: var(--light-purple); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
   }
-  .menu-text h3 { font-size: 16px; margin-bottom: 4px; }
+  .menu-text h3 { font-size: 16px; margin-bottom: 2px; }
   .menu-text p { font-size: 13px; color: var(--muted); }
 
+  /* DARKER SIGN OUT BUTTON */
   .btn-signout {
     width: 100%; padding: 16px; margin-top: 16px; border: none; border-radius: 12px;
-    background: transparent; color: #C97064; font-weight: 600; font-size: 15px;
-    cursor: pointer; transition: background 0.2s; border: 1px solid #C97064;
+    background: transparent; color: #A84136; 
+    font-weight: 600; font-size: 15px;
+    cursor: pointer; transition: all 0.2s; border: 1px solid #A84136; 
   }
-  .btn-signout:hover { background: #FFF5F5; }
+  .btn-signout:hover { 
+    background: #A84136; 
+    color: white;
+  }
 </style>
 </head>
 <body>
 
-<!-- THE FIX: Check for redirect BEFORE the dashboard renders -->
+<!-- Redirect check before page renders -->
 <script>
   const replyToPost = localStorage.getItem('reply_to_post');
   if (replyToPost) {
     localStorage.removeItem('reply_to_post');
-    // Redirect instantly to the chat page
     window.location.replace(`chat.html?post_id=${replyToPost}`);
   }
 </script>
@@ -94,11 +98,11 @@
     </div>
   </a>
 
-    <a href="profile.html" class="menu-item">
-    <div class="menu-icon">👤</div>
+  <a href="my-messages.html" class="menu-item">
+    <div class="menu-icon">📝</div>
     <div class="menu-text">
-      <h3>My Profile</h3>
-      <p>Update your User ID, location, and education.</p>
+      <h3>My Messages</h3>
+      <p>Manage your public posts and see replies.</p>
     </div>
   </a>
 
@@ -110,18 +114,34 @@
     </div>
   </a>
 
+  <a href="profile.html" class="menu-item">
+    <div class="menu-icon">👤</div>
+    <div class="menu-text">
+      <h3>My Profile</h3>
+      <p>Update your User ID, location, and education.</p>
+    </div>
+  </a>
+
+  <a href="safety.html" class="menu-item" style="border-color: #FFE5C2; background: #FFF9F0;">
+    <div class="menu-icon" style="background: #FFE5C2; color: #E67E22;">🕊️</div>
+    <div class="menu-text">
+      <h3 style="color: #8B4513;">Crisis & Support</h3>
+      <p style="color: #A06A3F;">Find someone to talk to if you need help.</p>
+    </div>
+  </a>
+
   <button onclick="signOut()" class="btn-signout">Sign Out</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'PASTE_YOUR_LEGACY_ANON_KEY_HERE'; // <-- Make sure your key is here
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- Make sure your key is here
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
   async function signOut() {
     await supabaseClient.auth.signOut();
-    window.location.href = 'index.html'; // Send back to the wall after logout
+    window.location.href = 'index.html';
   }
 </script>
 
