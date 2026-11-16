@@ -30,6 +30,13 @@
   .btn-dismiss { background: #E0E0E0; color: var(--ink); }
   
   .empty-state { text-align: center; padding: 40px; color: var(--muted); }
+  /* Fixes for mobile screens */
+  @media(max-width: 600px) {
+    .report-header { flex-direction: column; gap: 8px; }
+    .report-meta { font-size: 11px; word-break: break-all; } /* Prevents UUIDs from overflowing */
+    .actions { flex-direction: column; }
+    .btn { width: 100%; }
+  }
 </style>
 </head>
 <body>
