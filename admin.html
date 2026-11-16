@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --purple:#5B32A5; --light-purple:#F3ECFC; --mint:#7FFFD4; --dark-gold:#B8860B; --ink:#1A1A1A; --muted:#666666; --line:#EAEAEA; --danger:#C97064; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background: #FAF7F2; color:var(--ink); font-family:'Inter', sans-serif; line-height:1.6; min-height: 100vh; padding: 40px 20px; }
+  .container { width: 100%; max-width: 900px; margin: 0 auto; background: white; border-radius: 24px; padding: 48px; box-shadow: 0 20px 60px rgba(91,50,165,0.06); }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; border-bottom: 2px solid var(--line); padding-bottom: 16px; }
+  .logo { font-family:'Outfit',sans-serif; font-size: 24px; font-weight:700; color:var(--dark-gold); }
+  .badge { background: var(--danger); color: white; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: bold; }
+  h1 { font-family: 'Outfit', sans-serif; font-size: 28px; color: var(--purple); margin-bottom: 24px; }
+  
+  .report-card { border: 1px solid var(--line); border-radius: 16px; padding: 24px; margin-bottom: 20px; background: #FAFAFA; }
+  .report-header { display: flex; justify-content: space-between; margin-bottom: 16px; }
+  .report-meta { font-size: 13px; color: var(--muted); }
+  
+  .chat-log { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 16px; max-height: 300px; overflow-y: auto; display: none; }
+  .log-bubble { margin-bottom: 8px; font-size: 14px; }
+  .log-bubble strong { color: var(--purple); }
+  
+  .actions { display: flex; gap: 12px; }
+  .btn { padding: 10px 16px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; }
+  .btn-view { background: var(--light-purple); color: var(--purple); }
+  .btn-delete { background: var(--danger); color: white; }
+  .btn-dismiss { background: #E0E0E0; color: var(--ink); }
+  
+  .empty-state { text-align: center; padding: 40px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="logo">8mellow</div>
+    <div class="badge">ADMIN ONLY</div>
+  </div>
+  
+  <h1>Reported Conversations</h1>
+  <div id="reports-list">
+    <p>Loading reports...</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; 
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+  // CHANGE THIS TO YOUR EMAIL ADDRESS
+  const ADMIN_EMAIL = 'info@otkltd.ca'; 
+
+  async function loadReports() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    
+    // Check if logged in and if it's the admin
+    if (!user || user.email !== ADMIN_EMAIL) {
+      alert("Access Denied. You are not the admin.");
+      window.location.href = 'index.html';
+      return;
+    }
+
+    const container = document.getElementById('reports-list');
+    
+    // Fetch reports
+    const { data: reports, error } = await supabaseClient
+      .from('reports')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error || reports.length === 0) {
+      container.innerHTML = '<div class="empty-state">No pending reports. The community is safe!</div>';
+      return;
+    }
+
+    container.innerHTML = reports.map(report => `
+      <div class="report-card" id="report-${report.id}">
+        <div class="report-header">
+          <div>
+            <strong>Thread ID:</strong> ${report.thread_id} <br>
+            <span class="report-meta">Reported by User: ${report.reporter_id}</span> <br>
+            <span class="report-meta">Reported User: ${report.reported_user_id}</span>
+          </div>
+          <div class="report-meta">${new Date(report.created_at).toLocaleString()}</div>
+        </div>
+        
+        <div class="chat-log" id="log-${report.id}">
+          Loading messages...
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-view" onclick="viewChat(${report.thread_id}, ${report.id})">View Chat Log</button>
+          <button class="btn btn-delete" onclick="deleteThread(${report.thread_id}, ${report.id})">Delete Thread</button>
+          <button class="btn btn-dismiss" onclick="dismissReport(${report.id})">Dismiss</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function viewChat(threadId, reportId) {
+    const logBox = document.getElementById(`log-${reportId}`);
+    
+    if (logBox.style.display === 'block') {
+      logBox.style.display = 'none';
+      return;
+    }
+
+    logBox.style.display = 'block';
+    logBox.innerHTML = 'Loading...';
+
+    const { data: messages } = await supabaseClient
+      .from('messages')
+      .select('*')
+      .eq('thread_id', threadId)
+      .order('created_at', { ascending: true });
+
+    if (messages.length === 0) {
+      logBox.innerHTML = 'No messages in this thread.';
+      return;
+    }
+
+    logBox.innerHTML = messages.map(msg => `
+      <div class="log-bubble">
+        <strong>User ${msg.sender_id.substring(0,6)}:</strong> ${msg.content}
+      </div>
+    `).join('');
+  }
+
+  async function deleteThread(threadId, reportId) {
+    if (!confirm("Are you sure? This will permanently delete the chat and all messages.")) return;
+
+    // Delete thread (cascades to messages)
+    const { error } = await supabaseClient.from('threads').delete().eq('id', threadId);
+    
+    if (!error) {
+      // Also delete the report
+      await supabaseClient.from('reports').delete().eq('id', reportId);
+      document.getElementById(`report-${reportId}`).remove();
+      alert("Thread deleted successfully.");
+    } else {
+      alert("Error deleting thread.");
+    }
+  }
+
+  async function dismissReport(reportId) {
+    const { error } = await supabaseClient.from('reports').delete().eq('id', reportId);
+    if (!error) {
+      document.getElementById(`report-${reportId}`).remove();
+    }
+  }
+
+  loadReports();
+</script>
+
+</body>
+</html>
