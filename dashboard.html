@@ -10,7 +10,7 @@
 <style>
   :root{
     --purple:#5B32A5; --purple-hover:#482680; --light-purple:#F3ECFC;
-    --mint:#7FFFD4; --dark-gold:#B8860B; --ink:#1A1A1A; --muted:#666666; --line:#EAEAEA;
+    --mint:#7FFFD4; --dark-gold:#B8860B; --ink:#1A1A1A; --muted:#666666; --line:#F0EAE1;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   
@@ -25,16 +25,19 @@
   }
   
   .dashboard-container {
-    width: 100%; max-width: 1000px; background: white; border-radius: 24px;
-    padding: 48px; box-shadow: 0 20px 60px rgba(139, 69, 19, 0.08);
-    border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: hidden;
+    width: 100%; max-width: 1000px; 
+    background: #FFFDF9; /* WARM PAPER BACKGROUND */
+    border-radius: 24px;
+    padding: 48px; 
+    box-shadow: 0 20px 60px rgba(139, 69, 19, 0.05); /* Softer shadow */
+    border: 1px solid rgba(255,255,255,0.9); position: relative; overflow: hidden;
   }
   .dashboard-container::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
     background: linear-gradient(90deg, var(--purple), var(--mint));
   }
 
-  /* NEW TOP HEADER */
+  /* TOP HEADER */
   .top-header {
     display: flex; justify-content: space-between; align-items: center;
     margin-bottom: 32px;
@@ -78,31 +81,33 @@
 
   .menu-column { display: flex; flex-direction: column; }
 
+  /* WHITE MENU ITEMS ON CREAM BACKGROUND */
   .menu-item {
     display: flex; align-items: center; gap: 16px;
     padding: 16px 20px; border: 1px solid var(--line); border-radius: 16px;
     margin-bottom: 12px; text-decoration: none; color: var(--ink);
-    transition: all 0.2s; background: #FAFAFA;
+    transition: all 0.2s; background: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
   }
-  .menu-item:hover { border-color: var(--purple); background: white; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(91,50,165,0.05); }
+  .menu-item:hover { border-color: var(--purple); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(91,50,165,0.06); }
   .menu-icon { width: 48px; height: 48px; background: var(--light-purple); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
   .menu-text h3 { font-size: 16px; margin-bottom: 2px; }
   .menu-text p { font-size: 13px; color: var(--muted); }
 
   /* LINKED MESSAGES COLUMN */
   .linked-column {
-    background: #FAFFF9; border: 1px solid var(--mint); border-radius: 20px; padding: 24px;
-    min-height: 100%;
+    background: #FFFFFF; border: 1px solid var(--mint); border-radius: 20px; padding: 24px;
+    min-height: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
   }
   .linked-column h3 { font-family: 'Outfit', sans-serif; font-size: 20px; color: var(--purple); margin-bottom: 16px; }
   .linked-column p.empty-msg { font-size: 14px; color: var(--muted); font-style: italic; }
   
   .match-card {
-    display: flex; gap: 16px; padding: 16px; background: white; border: 1px solid var(--line);
+    display: flex; gap: 16px; padding: 16px; background: #FAFFF9; border: 1px solid var(--line);
     border-radius: 12px; margin-bottom: 12px; text-decoration: none; color: var(--ink);
     transition: all 0.2s;
   }
-  .match-card:hover { border-color: var(--purple); box-shadow: 0 4px 12px rgba(91,50,165,0.08); }
+  .match-card:hover { border-color: var(--purple); box-shadow: 0 4px 12px rgba(91,50,165,0.06); }
   .match-icon { font-size: 24px; }
   .match-content h4 { font-size: 14px; color: var(--purple); margin-bottom: 4px; }
   .match-content p { font-size: 13px; font-style: italic; color: var(--muted); margin-bottom: 8px; }
@@ -140,7 +145,6 @@
 
 <div class="dashboard-container">
   
-  <!-- TOP HEADER WITH PROFILE & SIGN OUT -->
   <div class="top-header">
     <div class="logo">8mellow</div>
     <div class="header-actions">
@@ -156,7 +160,7 @@
 
   <div class="dashboard-grid">
     
-    <!-- LEFT COLUMN: CORE ACTIONS ONLY -->
+    <!-- LEFT COLUMN: CORE ACTIONS -->
     <div class="menu-column">
       <a href="write.html" class="menu-item">
         <div class="menu-icon">✍️</div>
@@ -182,7 +186,6 @@
 
   </div>
 
-  <!-- SUBTLE CRISIS FOOTER -->
   <div class="crisis-footer">
     <a href="safety.html">
       🕊️ Need someone to talk to? Find Crisis & Support here.
