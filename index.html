@@ -351,9 +351,10 @@
   let currentFilter = 'All';
 
   // 1. SIMPLIFIED FETCH: Removed the profiles join to ensure the wall loads
-   async function loadMessages() {
+  async function loadMessages() {
     const feedContainer = document.getElementById('message-feed');
     
+    // 1. Fetch the posts (without the join to avoid crashes)
     const { data: posts, error } = await supabaseClient
       .from('posts')
       .select('*')
@@ -361,17 +362,40 @@
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error(error);
-      // THIS WILL PRINT THE REAL ERROR ON YOUR SCREEN
-      feedContainer.innerHTML = `<p style="text-align:center; color:red; font-weight:bold; padding: 20px;">Database Error: ${error.message}</p>`;
+      feedContainer.innerHTML = `<p style="text-align:center; color:red;">Error: ${error.message}</p>`;
       return;
     }
+
+    if (posts.length === 0) {
+      feedContainer.innerHTML = '<p style="text-align:center; color:#666;">No messages yet.</p>';
+      return;
+    }
+
+    // 2. Get all unique user_ids from the posts
+    const userIds = [...new Set(posts.map(p => p.user_id))];
+
+    // 3. Fetch the profiles for those specific users
+    const { data: profiles } = await supabaseClient
+      .from('profiles')
+      .select('id, username, education, current_location, bio')
+      .in('id', userIds);
+
+    // 4. Create a map (dictionary) to easily look up profiles by ID
+    const profileMap = {};
+    if (profiles) {
+      profiles.forEach(p => { profileMap[p.id] = p; });
+    }
+
+    // 5. Attach the profile data to each post
+    posts.forEach(post => {
+      post.profile = profileMap[post.user_id] || null;
+    });
 
     allPosts = posts; 
     renderPosts();    
   }
 
-  function renderPosts() {
+   function renderPosts() {
     const feedContainer = document.getElementById('message-feed');
     
     let filteredPosts = allPosts;
@@ -384,8 +408,22 @@
       return;
     }
 
-    feedContainer.innerHTML = filteredPosts.slice(0, 20).map(post => `
+    feedContainer.innerHTML = filteredPosts.slice(0, 20).map(post => {
+      // Extract profile info safely
+      const username = post.profile?.username || 'Anonymous';
+      const edu = post.profile?.education ? `<span style="margin-left: 8px;">🎓 ${post.profile.education}</span>` : '';
+      const loc = post.profile?.current_location ? `<span style="margin-left: 8px;">📍 ${post.profile.current_location}</span>` : '';
+      const bio = post.profile?.bio ? `<div style="font-style: italic; margin-top: 4px; font-size: 11px; color: #888;">"${post.profile.bio}"</div>` : '';
+
+      return `
       <div class="feed-card">
+        
+        <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">
+          Posted by: <strong>@${username}</strong>
+          ${edu} ${loc}
+          ${bio}
+        </div>
+
         <span class="msg-category">${post.category}</span>
         <p class="msg-text">${post.content}</p>
         <div class="msg-footer">
@@ -393,7 +431,7 @@
           <a href="auth.html?mode=login&reply_to=${post.id}" class="btn-reply">Reply privately</a>
         </div>
       </div>
-    `).join('');
+    `}).join('');
   }
 
   function filterMessages(category, btnElement) {
