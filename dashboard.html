@@ -144,73 +144,84 @@
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- Make sure your key is here
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  // Function to find messages matching the user's profile
+    // Helper function to extract meaningful words from text
+  function getKeywords(text) {
+    if (!text) return [];
+    // Convert to lowercase, replace punctuation with spaces, split into words
+    const words = text.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/);
+    // Ignore very short words or common words to prevent false matches
+    const stopWords = ['the', 'and', 'of', 'to', 'in', 'at', 'for', 'with', 'on', 'a', 'an', 'my', 'is', 'was', 'i'];
+    return words.filter(w => w.length > 2 && !stopWords.includes(w));
+  }
+
   async function loadSuggestedMessages() {
-    // 1. Get current user
+    const list = document.getElementById('suggested-list');
+
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) return;
 
-    // 2. Get current user's profile
-    const { data: myProfile } = await supabaseClient.from('profiles').select('education, current_location').eq('id', user.id).single();
+    // Fetch current user's profile (including bio this time)
+    const { data: myProfile } = await supabaseClient.from('profiles').select('education, current_location, bio').eq('id', user.id).single();
     
-    // If they haven't filled out their profile, we can't match them yet
-    if (!myProfile || (!myProfile.education && !myProfile.current_location)) return;
+    if (!myProfile || (!myProfile.education && !myProfile.current_location && !myProfile.bio)) {
+      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">Add your University, City, or Bio in <a href="profile.html" style="color: var(--purple);">My Profile</a> to see linked messages here.</p>';
+      return;
+    }
 
-    // 3. Fetch all public posts (excluding their own posts)
+    // Combine all of the current user's info and extract keywords
+    const myKeywords = getKeywords(`${myProfile.education} ${myProfile.current_location} ${myProfile.bio}`);
+
+    if (myKeywords.length === 0) return;
+
+    // Fetch all public posts
     const { data: posts } = await supabaseClient
       .from('posts')
       .select('*')
       .neq('status', 'hidden')
-      .neq('user_id', user.id); // Don't show their own messages
+      .neq('user_id', user.id); 
 
-    if (!posts || posts.length === 0) return;
+    if (!posts || posts.length === 0) {
+      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">No other messages found on the wall yet.</p>';
+      return;
+    }
 
-    // 4. Get the profiles of everyone who posted
+    // Get profiles of everyone who posted
     const userIds = [...new Set(posts.map(p => p.user_id))];
-    const { data: profiles } = await supabaseClient.from('profiles').select('id, education, current_location, username').in('id', userIds);
+    const { data: profiles } = await supabaseClient.from('profiles').select('id, education, current_location, bio, username').in('id', userIds);
 
     if (!profiles) return;
 
-    // 5. Match logic
     const matches = [];
     posts.forEach(post => {
       const posterProfile = profiles.find(p => p.id === post.user_id);
       if (!posterProfile) return;
 
-      let isMatch = false;
-      
-      // Match by University
-      if (myProfile.education && posterProfile.education && myProfile.education.trim().toLowerCase() === posterProfile.education.trim().toLowerCase()) {
-        isMatch = true;
-      }
-      // Match by Current Location
-      if (myProfile.current_location && posterProfile.current_location && myProfile.current_location.trim().toLowerCase() === posterProfile.current_location.trim().toLowerCase()) {
-        isMatch = true;
-      }
+      // Combine poster's info and extract keywords
+      const posterKeywords = getKeywords(`${posterProfile.education} ${posterProfile.current_location} ${posterProfile.bio}`);
 
-      if (isMatch) {
-        matches.push({ post, posterProfile });
+      // Check if there is ANY overlap between the two sets of keywords
+      const sharedWord = myKeywords.find(word => posterKeywords.includes(word));
+
+      if (sharedWord) {
+        matches.push({ post, posterProfile, sharedWord });
       }
     });
 
-    // 6. Render the matches
     if (matches.length > 0) {
-      const section = document.getElementById('suggested-section');
-      const list = document.getElementById('suggested-list');
-      section.style.display = 'block';
-
       list.innerHTML = matches.slice(0, 3).map(match => `
-        <a href="auth.html?mode=login&reply_to=${match.post.id}" class="menu-item" style="border-color: var(--mint); background: #FAFFF9;">
+        <!-- FIXED LINK: Goes straight to chat! -->
+        <a href="chat.html?post_id=${match.post.id}" class="menu-item" style="border-color: var(--mint); background: #FAFFF9;">
           <div class="menu-icon" style="background: var(--mint); color: var(--purple);">✨</div>
           <div class="menu-text">
-            <h3>Shared Clue: ${match.posterProfile.education || match.posterProfile.current_location}</h3>
+            <h3>Linked by: "${match.sharedWord}"</h3>
             <p style="font-style: italic;">"${match.post.content.substring(0, 50)}..."</p>
           </div>
         </a>
       `).join('');
+    } else {
+      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">No linked messages found yet.</p>';
     }
   }
-
   // Call this when the page loads
   loadSuggestedMessages();
 
