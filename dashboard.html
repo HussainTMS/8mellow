@@ -51,9 +51,6 @@
     cursor: pointer; transition: all 0.2s; border: 1px solid #A84136; 
   }
   .btn-signout:hover { background: #A84136; color: white; }
-
-  /* Debug Box */
-  .debug-box { margin-top: 20px; padding: 16px; background: #FFF9F0; border: 1px solid #FFE5C2; border-radius: 12px; font-size: 13px; color: #8B4513; }
 </style>
 </head>
 <body>
@@ -71,16 +68,10 @@
   <h1>Welcome back</h1>
   <p class="subtitle">What would you like to do today?</p>
 
-  <!-- MATCHING SECTION -->
+  <!-- LINKED MESSAGES SECTION -->
   <div id="suggested-section" style="margin-bottom: 24px; display: none;">
-    <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; color: var(--purple); margin-bottom: 12px;">🔍 Linked Messages</h3>
+    <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; color: var(--purple); margin-bottom: 12px;">🔍 Messages Linked to You</h3>
     <div id="suggested-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
-  </div>
-
-  <!-- DEBUG BOX (Will be removed later) -->
-  <div id="debug-box" class="debug-box" style="display: none;">
-    <strong>Debug Info:</strong><br>
-    <div id="debug-text"></div>
   </div>
 
   <a href="write.html" class="menu-item">
@@ -118,65 +109,50 @@
     window.location.href = 'index.html';
   }
 
+  // MASSIVE STOP WORDS LIST TO PREVENT FALSE MATCHES
   function getKeywords(text) {
     if (!text) return [];
     const cleanText = text.toLowerCase().replace(/[^\w\s]/g, '');
     const words = cleanText.split(/\s+/);
-    const stopWords = ['the', 'and', 'of', 'to', 'in', 'at', 'for', 'with', 'on', 'a', 'an', 'my', 'is', 'was', 'i', 'null', 'undefined'];
+    const stopWords = [
+      'the', 'and', 'of', 'to', 'in', 'at', 'for', 'with', 'on', 'a', 'an', 'my', 'is', 'was', 'i',
+      'null', 'undefined', 'studied', 'study', 'university', 'uni', 'college', 'school', 'lived', 'live',
+      'living', 'moved', 'born', 'raised', 'from', 'about', 'that', 'this', 'have', 'has', 'had', 'but',
+      'not', 'are', 'were', 'you', 'your', 'they', 'their', 'them', 'we', 'us', 'want', 'need', 'see',
+      'next', 'week', 'time', 'day', 'today', 'tomorrow', 'yesterday', 'good', 'bye', 'yes', 'no', 'okay'
+    ];
     return words.filter(w => w.length > 2 && !stopWords.includes(w));
   }
 
   async function loadSuggestedMessages() {
     const list = document.getElementById('suggested-list');
     const section = document.getElementById('suggested-section');
-    const debugBox = document.getElementById('debug-box');
-    const debugText = document.getElementById('debug-text');
 
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) return;
 
     // 1. Fetch my profile
-    const { data: myProfile, error: profileErr } = await supabaseClient.from('profiles').select('education, current_location, bio').eq('id', user.id).maybeSingle();
+    const { data: myProfile } = await supabaseClient.from('profiles').select('education, current_location, bio').eq('id', user.id).maybeSingle();
     
-    if (profileErr) {
-       debugBox.style.display = 'block';
-       debugText.innerHTML = `Error fetching your profile: ${profileErr.message}`;
-       return;
-    }
+    if (!myProfile) return;
 
-    if (!myProfile) {
-       section.style.display = 'block';
-       list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">Please create a profile to see matches.</p>';
-       return;
-    }
-
+    // Combine all my info (Bio, Location, Education)
     const myText = `${myProfile.education || ''} ${myProfile.current_location || ''} ${myProfile.bio || ''}`;
     const myKeywords = getKeywords(myText);
 
-    // 2. Fetch all other posts
-    const { data: posts, error: postErr } = await supabaseClient.from('posts').select('*').neq('status', 'hidden').neq('user_id', user.id); 
+    // If I haven't filled out my profile, don't show the section
+    if (myKeywords.length === 0) return;
 
-    if (postErr) {
-       debugBox.style.display = 'block';
-       debugText.innerHTML = `Error fetching posts: ${postErr.message}`;
-       return;
-    }
+    // 2. Fetch other posts
+    const { data: posts } = await supabaseClient.from('posts').select('*').neq('status', 'hidden').neq('user_id', user.id); 
 
-    if (!posts || posts.length === 0) {
-      section.style.display = 'block';
-      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">No other messages on the wall yet.</p>';
-      return;
-    }
+    if (!posts || posts.length === 0) return;
 
-    // 3. Fetch profiles of posters
+    // 3. Fetch profiles of the people who posted
     const userIds = [...new Set(posts.map(p => p.user_id))];
-    const { data: profiles, error: profilesErr } = await supabaseClient.from('profiles').select('id, education, current_location, bio').in('id', userIds);
+    const { data: profiles } = await supabaseClient.from('profiles').select('id, education, current_location, bio').in('id', userIds);
 
-    if (profilesErr) {
-       debugBox.style.display = 'block';
-       debugText.innerHTML = `Error fetching other profiles: ${profilesErr.message}`;
-       return;
-    }
+    if (!profiles) return;
 
     const matches = [];
     
@@ -186,6 +162,8 @@
 
       const posterText = `${posterProfile.education || ''} ${posterProfile.current_location || ''} ${posterProfile.bio || ''}`;
       const posterKeywords = getKeywords(posterText);
+
+      // Find ANY shared word (e.g., "mississauga", "dundee", "hiking")
       const sharedWord = myKeywords.find(word => posterKeywords.includes(word));
 
       if (sharedWord) {
@@ -193,28 +171,18 @@
       }
     });
 
-    // Show Debug Info
-    debugBox.style.display = 'block';
-    debugText.innerHTML = `
-      <strong>My Keywords:</strong> ${myKeywords.join(', ') || 'None found'}<br>
-      <strong>Other Posters Found:</strong> ${profiles.length}<br>
-      <strong>Matches Found:</strong> ${matches.length}
-    `;
-
-    // Render Matches
-    section.style.display = 'block';
+    // 4. Show the matches
     if (matches.length > 0) {
+      section.style.display = 'block';
       list.innerHTML = matches.slice(0, 3).map(match => `
         <a href="chat.html?post_id=${match.post.id}" class="menu-item" style="border-color: var(--mint); background: #FAFFF9;">
           <div class="menu-icon" style="background: var(--mint); color: var(--purple);">✨</div>
           <div class="menu-text">
-            <h3>Linked by: "${match.sharedWord}"</h3>
+            <h3>Shared Clue: "${match.sharedWord}"</h3>
             <p style="font-style: italic;">"${match.post.content.substring(0, 50)}..."</p>
           </div>
         </a>
       `).join('');
-    } else {
-      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">No matches found.</p>';
     }
   }
 
