@@ -140,11 +140,14 @@
     const container = document.getElementById('messages-list');
 
     // Fetch ONLY posts where user_id matches the logged-in user
-    const { data: posts, error } = await supabaseClient
-      .from('posts')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+     const { data: posts, error } = await supabaseClient
+   .from('posts')
+   .select(`
+     *,
+     threads ( id )
+   `)
+   .eq('user_id', user.id)
+   .order('created_at', { ascending: false });
 
     if (error) {
       container.innerHTML = '<p>Error loading messages.</p>';
@@ -174,10 +177,10 @@
         <p class="card-text">${post.content}</p>
 
         <div class="card-footer">
-          <div class="card-stats">
-            <div>♥ 0 me too</div>
-            <div>💬 0 replies</div>
-          </div>
+                 <div class="card-stats">
+         <div>♥ 0 me too</div>
+         <div>💬 ${post.threads ? post.threads.length : 0} ${post.threads && post.threads.length === 1 ? 'reply' : 'replies'}</div>
+       </div>
           <div class="card-actions">
             <button onclick="toggleStatus('${post.id}', '${post.status || 'public'}')" class="action-btn">
               ${post.status === 'hidden' ? 'Make Public' : 'Hide'}
