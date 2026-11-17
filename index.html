@@ -303,7 +303,7 @@
         <span class="msg-category">${post.category}</span>
         <p class="msg-text">${post.content}</p>
         <div class="msg-footer">
-          <span class="msg-time">${new Date(post.created_at).toLocaleDateString()}</span>
+          <span class="msg-time">${timeAgo(post.created_at)}</span>
           <a href="auth.html?mode=login" class="btn-reply">Reply privately</a>
         </div>
       </div>
@@ -336,6 +336,23 @@
 
   // Call the function when the page loads
   checkLoggedInUser();
+    function timeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
+    if (diffHours < 24) return `${diffHours} hr${diffHours > 1 ? 's' : ''} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+
+    // Older than 7 days
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
   loadMessages();
 </script>
 
