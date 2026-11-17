@@ -144,36 +144,44 @@
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- Make sure your key is here
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Helper function to extract meaningful words from text
+      // Helper function to extract meaningful words from text
   function getKeywords(text) {
     if (!text) return [];
-    // Convert to lowercase, replace punctuation with spaces, split into words
-    const words = text.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/);
-    // Ignore very short words or common words to prevent false matches
-    const stopWords = ['the', 'and', 'of', 'to', 'in', 'at', 'for', 'with', 'on', 'a', 'an', 'my', 'is', 'was', 'i'];
+    // Convert to lowercase, replace punctuation with spaces
+    const cleanText = text.toLowerCase().replace(/[^\w\s]/g, '');
+    const words = cleanText.split(/\s+/);
+    // Ignore short words, common words, and nulls
+    const stopWords = ['the', 'and', 'of', 'to', 'in', 'at', 'for', 'with', 'on', 'a', 'an', 'my', 'is', 'was', 'i', 'null', 'undefined'];
     return words.filter(w => w.length > 2 && !stopWords.includes(w));
   }
 
   async function loadSuggestedMessages() {
     const list = document.getElementById('suggested-list');
+    if (!list) return;
 
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) return;
 
-    // Fetch current user's profile (including bio this time)
-    const { data: myProfile } = await supabaseClient.from('profiles').select('education, current_location, bio').eq('id', user.id).single();
+    // Use maybeSingle() so it doesn't crash if the profile is completely missing
+    const { data: myProfile } = await supabaseClient.from('profiles').select('education, current_location, bio').eq('id', user.id).maybeSingle();
     
-    if (!myProfile || (!myProfile.education && !myProfile.current_location && !myProfile.bio)) {
-      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">Add your University, City, or Bio in <a href="profile.html" style="color: var(--purple);">My Profile</a> to see linked messages here.</p>';
+    if (!myProfile) {
+      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">Please set up your profile to see linked messages.</p>';
       return;
     }
 
-    // Combine all of the current user's info and extract keywords
-    const myKeywords = getKeywords(`${myProfile.education} ${myProfile.current_location} ${myProfile.bio}`);
+    // Combine all of the current user's info safely
+    const myText = `${myProfile.education || ''} ${myProfile.current_location || ''} ${myProfile.bio || ''}`;
+    const myKeywords = getKeywords(myText);
 
-    if (myKeywords.length === 0) return;
+    console.log("My Keywords:", myKeywords); // Debugging
 
-    // Fetch all public posts
+    if (myKeywords.length === 0) {
+      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">Add details to your profile to see matches.</p>';
+      return;
+    }
+
+    // Fetch all public posts (excluding the user's own posts)
     const { data: posts } = await supabaseClient
       .from('posts')
       .select('*')
@@ -192,14 +200,16 @@
     if (!profiles) return;
 
     const matches = [];
+    
     posts.forEach(post => {
       const posterProfile = profiles.find(p => p.id === post.user_id);
       if (!posterProfile) return;
 
-      // Combine poster's info and extract keywords
-      const posterKeywords = getKeywords(`${posterProfile.education} ${posterProfile.current_location} ${posterProfile.bio}`);
+      // Combine poster's info safely
+      const posterText = `${posterProfile.education || ''} ${posterProfile.current_location || ''} ${posterProfile.bio || ''}`;
+      const posterKeywords = getKeywords(posterText);
 
-      // Check if there is ANY overlap between the two sets of keywords
+      // Check for ANY shared word
       const sharedWord = myKeywords.find(word => posterKeywords.includes(word));
 
       if (sharedWord) {
@@ -207,9 +217,10 @@
       }
     });
 
+    console.log("Found Matches:", matches); // Debugging
+
     if (matches.length > 0) {
       list.innerHTML = matches.slice(0, 3).map(match => `
-        <!-- FIXED LINK: Goes straight to chat! -->
         <a href="chat.html?post_id=${match.post.id}" class="menu-item" style="border-color: var(--mint); background: #FAFFF9;">
           <div class="menu-icon" style="background: var(--mint); color: var(--purple);">✨</div>
           <div class="menu-text">
