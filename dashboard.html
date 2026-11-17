@@ -9,14 +9,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --purple:#5B32A5;
-    --purple-hover:#482680;
-    --light-purple:#F3ECFC;
-    --mint:#7FFFD4; 
-    --dark-gold:#B8860B; 
-    --ink:#1A1A1A;
-    --muted:#666666;
-    --line:#EAEAEA;
+    --purple:#5B32A5; --purple-hover:#482680; --light-purple:#F3ECFC;
+    --mint:#7FFFD4; --dark-gold:#B8860B; --ink:#1A1A1A; --muted:#666666; --line:#EAEAEA;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
@@ -36,11 +30,7 @@
     content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
     background: linear-gradient(90deg, var(--purple), var(--mint));
   }
-  .logo {
-    font-family:'Outfit',sans-serif; font-size:32px; font-weight:700; 
-    color:var(--dark-gold); padding-bottom: 2px; border-bottom: 4px solid var(--mint); 
-    display: inline-block; margin-bottom: 24px;
-  }
+  .logo { font-family:'Outfit',sans-serif; font-size:32px; font-weight:700; color:var(--dark-gold); padding-bottom: 2px; border-bottom: 4px solid var(--mint); display: inline-block; margin-bottom: 24px; }
   h1 { font-family: 'Outfit', sans-serif; font-size: 26px; color: var(--purple); margin-bottom: 8px; }
   .subtitle { color: var(--muted); font-size: 15px; margin-bottom: 32px; }
 
@@ -50,33 +40,24 @@
     margin-bottom: 12px; text-decoration: none; color: var(--ink);
     transition: all 0.2s; background: #FAFAFA;
   }
-  .menu-item:hover {
-    border-color: var(--purple); background: white;
-    transform: translateY(-2px); box-shadow: 0 8px 20px rgba(91,50,165,0.05);
-  }
-  .menu-icon {
-    width: 44px; height: 44px; background: var(--light-purple); border-radius: 12px;
-    display: flex; align-items: center; justify-content: center; font-size: 20px;
-  }
+  .menu-item:hover { border-color: var(--purple); background: white; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(91,50,165,0.05); }
+  .menu-icon { width: 44px; height: 44px; background: var(--light-purple); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
   .menu-text h3 { font-size: 16px; margin-bottom: 2px; }
   .menu-text p { font-size: 13px; color: var(--muted); }
 
-  /* DARKER SIGN OUT BUTTON */
   .btn-signout {
     width: 100%; padding: 16px; margin-top: 16px; border: none; border-radius: 12px;
-    background: transparent; color: #A84136; 
-    font-weight: 600; font-size: 15px;
+    background: transparent; color: #A84136; font-weight: 600; font-size: 15px;
     cursor: pointer; transition: all 0.2s; border: 1px solid #A84136; 
   }
-  .btn-signout:hover { 
-    background: #A84136; 
-    color: white;
-  }
+  .btn-signout:hover { background: #A84136; color: white; }
+
+  /* Debug Box */
+  .debug-box { margin-top: 20px; padding: 16px; background: #FFF9F0; border: 1px solid #FFE5C2; border-radius: 12px; font-size: 13px; color: #8B4513; }
 </style>
 </head>
 <body>
 
-<!-- Redirect check before page renders -->
 <script>
   const replyToPost = localStorage.getItem('reply_to_post');
   if (replyToPost) {
@@ -89,50 +70,38 @@
   <div class="logo">8mellow</div>
   <h1>Welcome back</h1>
   <p class="subtitle">What would you like to do today?</p>
-  <!-- SUGGESTED MESSAGES SECTION (Hidden by default) -->
-  <div id="suggested-section" style="display: none; margin-bottom: 24px;">
-    <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; color: var(--purple); margin-bottom: 12px;">🔍 Messages that might be linked to you</h3>
+
+  <!-- MATCHING SECTION -->
+  <div id="suggested-section" style="margin-bottom: 24px; display: none;">
+    <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; color: var(--purple); margin-bottom: 12px;">🔍 Linked Messages</h3>
     <div id="suggested-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
+  </div>
+
+  <!-- DEBUG BOX (Will be removed later) -->
+  <div id="debug-box" class="debug-box" style="display: none;">
+    <strong>Debug Info:</strong><br>
+    <div id="debug-text"></div>
   </div>
 
   <a href="write.html" class="menu-item">
     <div class="menu-icon">✍️</div>
-    <div class="menu-text">
-      <h3>Write a Message</h3>
-      <p>Share what's on your mind anonymously.</p>
-    </div>
+    <div class="menu-text"><h3>Write a Message</h3><p>Share what's on your mind anonymously.</p></div>
   </a>
-
   <a href="my-messages.html" class="menu-item">
     <div class="menu-icon">📝</div>
-    <div class="menu-text">
-      <h3>My Messages</h3>
-      <p>Manage your public posts and see replies.</p>
-    </div>
+    <div class="menu-text"><h3>My Messages</h3><p>Manage your public posts and see replies.</p></div>
   </a>
-
   <a href="inbox.html" class="menu-item">
     <div class="menu-icon">💬</div>
-    <div class="menu-text">
-      <h3>Inbox</h3>
-      <p>Check your private conversations.</p>
-    </div>
+    <div class="menu-text"><h3>Inbox</h3><p>Check your private conversations.</p></div>
   </a>
-
   <a href="profile.html" class="menu-item">
     <div class="menu-icon">👤</div>
-    <div class="menu-text">
-      <h3>My Profile</h3>
-      <p>Update your User ID, location, and education.</p>
-    </div>
+    <div class="menu-text"><h3>My Profile</h3><p>Update your User ID, location, and education.</p></div>
   </a>
-
   <a href="safety.html" class="menu-item" style="border-color: #FFE5C2; background: #FFF9F0;">
     <div class="menu-icon" style="background: #FFE5C2; color: #E67E22;">🕊️</div>
-    <div class="menu-text">
-      <h3 style="color: #8B4513;">Crisis & Support</h3>
-      <p style="color: #A06A3F;">Find someone to talk to if you need help.</p>
-    </div>
+    <div class="menu-text"><h3 style="color: #8B4513;">Crisis & Support</h3><p style="color: #A06A3F;">Find someone to talk to if you need help.</p></div>
   </a>
 
   <button onclick="signOut()" class="btn-signout">Sign Out</button>
@@ -141,63 +110,73 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- Make sure your key is here
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE KEY IS HERE
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-      // Helper function to extract meaningful words from text
+  async function signOut() {
+    await supabaseClient.auth.signOut();
+    window.location.href = 'index.html';
+  }
+
   function getKeywords(text) {
     if (!text) return [];
-    // Convert to lowercase, replace punctuation with spaces
     const cleanText = text.toLowerCase().replace(/[^\w\s]/g, '');
     const words = cleanText.split(/\s+/);
-    // Ignore short words, common words, and nulls
     const stopWords = ['the', 'and', 'of', 'to', 'in', 'at', 'for', 'with', 'on', 'a', 'an', 'my', 'is', 'was', 'i', 'null', 'undefined'];
     return words.filter(w => w.length > 2 && !stopWords.includes(w));
   }
 
   async function loadSuggestedMessages() {
     const list = document.getElementById('suggested-list');
-    if (!list) return;
+    const section = document.getElementById('suggested-section');
+    const debugBox = document.getElementById('debug-box');
+    const debugText = document.getElementById('debug-text');
 
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) return;
 
-    // Use maybeSingle() so it doesn't crash if the profile is completely missing
-    const { data: myProfile } = await supabaseClient.from('profiles').select('education, current_location, bio').eq('id', user.id).maybeSingle();
+    // 1. Fetch my profile
+    const { data: myProfile, error: profileErr } = await supabaseClient.from('profiles').select('education, current_location, bio').eq('id', user.id).maybeSingle();
     
-    if (!myProfile) {
-      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">Please set up your profile to see linked messages.</p>';
-      return;
+    if (profileErr) {
+       debugBox.style.display = 'block';
+       debugText.innerHTML = `Error fetching your profile: ${profileErr.message}`;
+       return;
     }
 
-    // Combine all of the current user's info safely
+    if (!myProfile) {
+       section.style.display = 'block';
+       list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">Please create a profile to see matches.</p>';
+       return;
+    }
+
     const myText = `${myProfile.education || ''} ${myProfile.current_location || ''} ${myProfile.bio || ''}`;
     const myKeywords = getKeywords(myText);
 
-    console.log("My Keywords:", myKeywords); // Debugging
+    // 2. Fetch all other posts
+    const { data: posts, error: postErr } = await supabaseClient.from('posts').select('*').neq('status', 'hidden').neq('user_id', user.id); 
 
-    if (myKeywords.length === 0) {
-      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">Add details to your profile to see matches.</p>';
-      return;
+    if (postErr) {
+       debugBox.style.display = 'block';
+       debugText.innerHTML = `Error fetching posts: ${postErr.message}`;
+       return;
     }
-
-    // Fetch all public posts (excluding the user's own posts)
-    const { data: posts } = await supabaseClient
-      .from('posts')
-      .select('*')
-      .neq('status', 'hidden')
-      .neq('user_id', user.id); 
 
     if (!posts || posts.length === 0) {
-      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">No other messages found on the wall yet.</p>';
+      section.style.display = 'block';
+      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">No other messages on the wall yet.</p>';
       return;
     }
 
-    // Get profiles of everyone who posted
+    // 3. Fetch profiles of posters
     const userIds = [...new Set(posts.map(p => p.user_id))];
-    const { data: profiles } = await supabaseClient.from('profiles').select('id, education, current_location, bio, username').in('id', userIds);
+    const { data: profiles, error: profilesErr } = await supabaseClient.from('profiles').select('id, education, current_location, bio').in('id', userIds);
 
-    if (!profiles) return;
+    if (profilesErr) {
+       debugBox.style.display = 'block';
+       debugText.innerHTML = `Error fetching other profiles: ${profilesErr.message}`;
+       return;
+    }
 
     const matches = [];
     
@@ -205,11 +184,8 @@
       const posterProfile = profiles.find(p => p.id === post.user_id);
       if (!posterProfile) return;
 
-      // Combine poster's info safely
       const posterText = `${posterProfile.education || ''} ${posterProfile.current_location || ''} ${posterProfile.bio || ''}`;
       const posterKeywords = getKeywords(posterText);
-
-      // Check for ANY shared word
       const sharedWord = myKeywords.find(word => posterKeywords.includes(word));
 
       if (sharedWord) {
@@ -217,8 +193,16 @@
       }
     });
 
-    console.log("Found Matches:", matches); // Debugging
+    // Show Debug Info
+    debugBox.style.display = 'block';
+    debugText.innerHTML = `
+      <strong>My Keywords:</strong> ${myKeywords.join(', ') || 'None found'}<br>
+      <strong>Other Posters Found:</strong> ${profiles.length}<br>
+      <strong>Matches Found:</strong> ${matches.length}
+    `;
 
+    // Render Matches
+    section.style.display = 'block';
     if (matches.length > 0) {
       list.innerHTML = matches.slice(0, 3).map(match => `
         <a href="chat.html?post_id=${match.post.id}" class="menu-item" style="border-color: var(--mint); background: #FAFFF9;">
@@ -230,16 +214,11 @@
         </a>
       `).join('');
     } else {
-      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">No linked messages found yet.</p>';
+      list.innerHTML = '<p style="font-size: 13px; color: var(--muted);">No matches found.</p>';
     }
   }
-  // Call this when the page loads
-  loadSuggestedMessages();
 
-  async function signOut() {
-    await supabaseClient.auth.signOut();
-    window.location.href = 'index.html';
-  }
+  loadSuggestedMessages();
 </script>
 
 </body>
