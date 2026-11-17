@@ -182,12 +182,42 @@
     .msg-footer{ flex-direction:column; align-items:flex-start; gap:16px; }
     .banner-section{ padding:0 24px; }
   }
-  /* Category Filter Styles */
+    /* Category Filter & Arrows */
+  .filter-container {
+    position: relative; max-width: 760px; margin: 0 auto; display: flex; align-items: center;
+  }
   .category-filters {
-    display: flex; gap: 10px; overflow-x: auto; padding: 0 24px 24px; 
-    scrollbar-width: none; max-width: 760px; margin: 0 auto;
+    display: flex; gap: 10px; overflow-x: auto; padding: 0 10px 24px; 
+    scrollbar-width: none; scroll-behavior: smooth; flex: 1;
   }
   .category-filters::-webkit-scrollbar { display: none; }
+  
+  .scroll-arrow {
+    position: absolute; z-index: 10; top: 50%; transform: translateY(-50%);
+    width: 36px; height: 36px; background: white; border: 1px solid var(--line);
+    border-radius: 50%; font-size: 20px; color: var(--purple); cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .scroll-arrow:hover { background: var(--light-purple); border-color: var(--purple); }
+  .scroll-arrow.left { left: -15px; }
+  .scroll-arrow.right { right: -15px; }
+  
+  .filter-chip {
+    background: white; border: 1px solid var(--line); color: var(--muted);
+    padding: 8px 16px; border-radius: 999px; font-size: 14px; font-family: 'Inter', sans-serif;
+    cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  }
+  .filter-chip:hover { border-color: var(--purple); color: var(--purple); }
+  .filter-chip.active {
+    background: var(--light-purple); border-color: var(--purple); 
+    color: var(--purple); font-weight: 600;
+  }
+  
+  /* Hide arrows on mobile screens since users can swipe */
+  @media(max-width: 768px) {
+    .scroll-arrow { display: none; }
+  }
   
   .filter-chip {
     background: white; border: 1px solid var(--line); color: var(--muted);
@@ -251,19 +281,25 @@
     <p>Words left unsaid, waiting to be found.</p>
   </div>
 
-  <!-- Category Filter Chips -->
-  <div class="category-filters">
-    <button class="filter-chip active" onclick="filterMessages('All', this)">All</button>
-    <button class="filter-chip" onclick="filterMessages('❤️ I\'m sorry', this)">❤️ I'm sorry</button>
-    <button class="filter-chip" onclick="filterMessages('⚖️ That wasn\'t fair', this)">⚖️ That wasn't fair</button>
-    <button class="filter-chip" onclick="filterMessages('🙏 I forgive you', this)">🙏 I forgive you</button>
-    <button class="filter-chip" onclick="filterMessages('❤️‍🩹 Thank you', this)">❤️‍🩹 Thank you</button>
-    <button class="filter-chip" onclick="filterMessages('💬 Let me explain', this)">💬 Let me explain</button>
-    <button class="filter-chip" onclick="filterMessages('🔗 I want to reconnect', this)">🔗 Reconnect</button>
-    <button class="filter-chip" onclick="filterMessages('🕊️ Goodbye', this)">🕊️ Goodbye</button>
-    <button class="filter-chip" onclick="filterMessages('😔 I regret it', this)">😔 I regret it</button>
-    <button class="filter-chip" onclick="filterMessages('🌊 This is what it did to me', this)">🌊 This is what it did</button>
-    <button class="filter-chip" onclick="filterMessages('✉️ Something else', this)">✉️ Something else</button>
+  <!-- Category Filter with Scroll Arrows -->
+  <div class="filter-container">
+    <button class="scroll-arrow left" onclick="scrollFilters(-1)">‹</button>
+    
+    <div class="category-filters" id="category-scroll">
+      <button class="filter-chip active" onclick="filterMessages('All', this)">All</button>
+      <button class="filter-chip" onclick="filterMessages('❤️ I\'m sorry', this)">❤️ I'm sorry</button>
+      <button class="filter-chip" onclick="filterMessages('⚖️ That wasn\'t fair', this)">⚖️ That wasn't fair</button>
+      <button class="filter-chip" onclick="filterMessages('🙏 I forgive you', this)">🙏 I forgive you</button>
+      <button class="filter-chip" onclick="filterMessages('❤️‍🩹 Thank you', this)">❤️‍🩹 Thank you</button>
+      <button class="filter-chip" onclick="filterMessages('💬 Let me explain', this)">💬 Let me explain</button>
+      <button class="filter-chip" onclick="filterMessages('🔗 I want to reconnect', this)">🔗 Reconnect</button>
+      <button class="filter-chip" onclick="filterMessages('🕊️ Goodbye', this)">🕊️ Goodbye</button>
+      <button class="filter-chip" onclick="filterMessages('😔 I regret it', this)">😔 I regret it</button>
+      <button class="filter-chip" onclick="filterMessages('🌊 This is what it did to me', this)">🌊 This is what it did</button>
+      <button class="filter-chip" onclick="filterMessages('✉️ Something else', this)">✉️ Something else</button>
+    </div>
+
+    <button class="scroll-arrow right" onclick="scrollFilters(1)">›</button>
   </div>
   
   <!-- Messages load here -->
@@ -314,22 +350,20 @@
   let allPosts = []; 
   let currentFilter = 'All';
 
-  async function loadMessages() {
+  // 1. SIMPLIFIED FETCH: Removed the profiles join to ensure the wall loads
+   async function loadMessages() {
     const feedContainer = document.getElementById('message-feed');
     
-    // Note: I added a fallback here just in case the profile relationship isn't set up in Supabase yet
     const { data: posts, error } = await supabaseClient
       .from('posts')
-      .select(`
-        *,
-        profiles ( username, bio, education, current_location )
-      `)
+      .select('*')
       .neq('status', 'hidden')
       .order('created_at', { ascending: false });
 
     if (error) {
       console.error(error);
-      feedContainer.innerHTML = '<p style="text-align:center; color:#666;">Error loading messages. Check console.</p>';
+      // THIS WILL PRINT THE REAL ERROR ON YOUR SCREEN
+      feedContainer.innerHTML = `<p style="text-align:center; color:red; font-weight:bold; padding: 20px;">Database Error: ${error.message}</p>`;
       return;
     }
 
@@ -350,17 +384,8 @@
       return;
     }
 
-    // Limit to 20 for performance
     feedContainer.innerHTML = filteredPosts.slice(0, 20).map(post => `
       <div class="feed-card">
-        
-        <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">
-          Posted by: <strong>@${post.profiles?.username || 'Anonymous'}</strong>
-          ${post.profiles?.education ? `<span style="margin-left: 8px;">🎓 ${post.profiles.education}</span>` : ''}
-          ${post.profiles?.current_location ? `<span style="margin-left: 8px;">📍 ${post.profiles.current_location}</span>` : ''}
-          ${post.profiles?.bio ? `<div style="font-style: italic; margin-top: 4px; font-size: 11px; color: #888;">"${post.profiles.bio}"</div>` : ''}
-        </div>
-
         <span class="msg-category">${post.category}</span>
         <p class="msg-text">${post.content}</p>
         <div class="msg-footer">
@@ -378,6 +403,45 @@
     renderPosts();
   }
 
+  // Function to scroll categories left or right
+  function scrollFilters(direction) {
+    const container = document.getElementById('category-scroll');
+    const scrollAmount = 250; // how many pixels to scroll
+    container.scrollLeft += direction * scrollAmount;
+  }
+  async function checkLoggedInUser() {
+    // Get the current session
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    
+    if (session) {
+      // 1. Update the top right navigation
+      const navLogin = document.getElementById('nav-login');
+      const navSignup = document.getElementById('nav-signup');
+      const navActions = document.getElementById('nav-actions');
+      
+      if (navLogin && navSignup && navActions) {
+        navLogin.style.display = 'none';
+        navSignup.style.display = 'none';
+        
+        // Create a new Dashboard button and add it to the nav
+        const dashBtn = document.createElement('a');
+        dashBtn.href = 'dashboard.html';
+        dashBtn.className = 'btn-solid'; // Use the same purple button styling
+        dashBtn.innerText = 'My Dashboard';
+        navActions.appendChild(dashBtn);
+      }
+
+      // 2. Update the Hero "Get Started" button
+      const heroBtn = document.getElementById('hero-btn');
+      if (heroBtn) {
+        heroBtn.href = 'dashboard.html';
+        heroBtn.innerHTML = `Go to Dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+      }
+    }
+  }
+
+  // Call the function when the page loads
+  checkLoggedInUser();
   loadMessages();
 </script>
 
