@@ -13,18 +13,21 @@
     --mint:#7FFFD4; --dark-gold:#B8860B; --ink:#1A1A1A; --muted:#666666; --line:#EAEAEA;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
+  
+  /* WARM BACKGROUND */
   body{
-    background: radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%),
-                radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%), #FAF7F2;
+    background: 
+      radial-gradient(circle at 10% 20%, #FFF3E0 0%, transparent 50%), /* Warm Amber */
+      radial-gradient(circle at 90% 80%, #FFE0B2 0%, transparent 50%), /* Soft Peach */
+      radial-gradient(circle at 50% 50%, #FFF9F0 0%, transparent 60%), /* Cream */
+      #FDF6EE; /* Warm Base */
     color:var(--ink); font-family:'Inter', sans-serif; line-height:1.6;
     min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px;
   }
   
-  /* WIDER CONTAINER */
   .dashboard-container {
     width: 100%; max-width: 1000px; background: white; border-radius: 24px;
-    padding: 48px; box-shadow: 0 20px 60px rgba(91,50,165,0.06);
+    padding: 48px; box-shadow: 0 20px 60px rgba(139, 69, 19, 0.08); /* Warm shadow */
     border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: hidden;
   }
   .dashboard-container::before {
@@ -84,6 +87,27 @@
   .match-content p { font-size: 13px; font-style: italic; color: var(--muted); margin-bottom: 8px; }
   .match-time { font-size: 11px; color: #999; display: block; }
 
+  /* SUBTLE CRISIS FOOTER */
+  .crisis-footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+  .crisis-footer a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .crisis-footer a:hover {
+    color: #E67E22; /* Warm Orange on hover */
+  }
+
   /* Responsive Stacking for Mobile */
   @media(max-width: 768px) {
     .dashboard-container { padding: 32px 24px; }
@@ -130,10 +154,7 @@
         <div class="menu-icon">👤</div>
         <div class="menu-text"><h3>My Profile</h3><p>Update your User ID, location, and education.</p></div>
       </a>
-      <a href="safety.html" class="menu-item" style="border-color: #FFE5C2; background: #FFF9F0;">
-        <div class="menu-icon" style="background: #FFE5C2; color: #E67E22;">🕊️</div>
-        <div class="menu-text"><h3 style="color: #8B4513;">Crisis & Support</h3><p style="color: #A06A3F;">Find someone to talk to if you need help.</p></div>
-      </a>
+      
       <button onclick="signOut()" class="btn-signout">Sign Out</button>
     </div>
 
@@ -146,6 +167,14 @@
     </div>
 
   </div>
+
+  <!-- NEW POSITION: Subtle Crisis Footer -->
+  <div class="crisis-footer">
+    <a href="safety.html">
+      🕊️ Need someone to talk to? Find Crisis & Support here.
+    </a>
+  </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -159,7 +188,6 @@
     window.location.href = 'index.html';
   }
 
-  // Reusable Time Ago function
   function timeAgo(dateString) {
     const date = new Date(dateString);
     const now = new Date();
