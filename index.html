@@ -28,7 +28,6 @@
     -webkit-font-smoothing:antialiased; background-attachment: fixed;
   }
   
-  /* HERO SECTION */
   .hero-section{
     position:relative;
     background:url('https://images.unsplash.com/photo-1472120435266-53107fd0c44a?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
@@ -41,37 +40,44 @@
     z-index:1;
   }
   
-  /* NAV */
   .nav{
     position:relative; z-index:10; display:flex; align-items:center; justify-content:space-between;
     padding:24px 48px; max-width:1280px; margin:0 auto; width:100%;
   }
   .logo{ font-family:'Outfit',sans-serif; font-size:28px; font-weight:700; color:var(--dark-gold); cursor:pointer; padding-bottom: 1px; border-bottom: 4px solid var(--mint); }
+  
   .nav-links{ display:flex; align-items:center; gap:32px; }
   .nav-links a{ text-decoration:none; color:var(--ink); font-size:15px; font-weight:500; }
   .nav-links a:hover{ color:var(--purple); }
+  
   .nav-actions{ display:flex; align-items:center; gap:12px; }
-  .btn-outline{ padding:10px 24px; border:none; border-radius:999px; color:var(--purple); font-weight:600; text-decoration:none; background:var(--light-purple); transition:all .2s; }
+  .btn-outline{
+    padding:10px 24px; border:none; border-radius:999px; color:var(--purple); 
+    font-weight:600; text-decoration:none; background:var(--light-purple); transition:all .2s;
+  }
   .btn-outline:hover{ background:#E5D9F5; }
-  .btn-solid{ padding:10px 24px; border:none; border-radius:999px; background:var(--purple); color:white; font-weight:600; text-decoration:none; transition:background .2s; }
+  .btn-solid{
+    padding:10px 24px; border:none; border-radius:999px; background:var(--purple); 
+    color:white; font-weight:600; text-decoration:none; transition:background .2s;
+  }
   .btn-solid:hover{ background:var(--purple-hover); }
 
-  /* HERO CONTENT */
   .hero-content{
     position:relative; z-index:10; max-width:1280px; margin:0 auto; width:100%;
     padding:20px 48px 60px; flex:1; display:flex; flex-direction:column; justify-content:center; max-width: 700px;
   }
   .hero-content h1{ font-family:'Outfit',sans-serif; font-size:48px; line-height:1.1; font-weight:700; color:var(--purple); margin-bottom:16px; letter-spacing:-0.02em; }
   .hero-content p{ font-size:18px; color:var(--ink); font-weight:500; margin-bottom:24px; max-width:480px; }
+  
   .btn-hero{
-    display:inline-flex; align-items:center; gap:12px; background:var(--purple); color:white; 
-    text-decoration:none; padding:14px 28px; border-radius:999px; font-size:16px; font-weight:600; 
-    width:fit-content; transition:background .2s; white-space: nowrap;
+  display:inline-flex; align-items:center; gap:12px; background:var(--purple); color:white; 
+  text-decoration:none; padding:14px 28px; border-radius:999px; font-size:16px; font-weight:600; 
+  width:fit-content; transition:background .2s;
+  white-space: nowrap; /* <--- THIS FIXES IT */
+}
   }
   .btn-hero:hover{ background:var(--purple-hover); }
-  .btn-hero svg{ width:18px; height:18px; }
 
-  /* HOW IT WORKS */
   .how-it-works{
     max-width:1280px; margin: -50px auto 0; padding:0 48px 60px; position: relative; z-index: 20; 
     display:grid; grid-template-columns:repeat(4,1fr); gap:24px;
@@ -84,36 +90,11 @@
   .step-card h3{ font-family:'Outfit',sans-serif; font-size:17px; color:var(--ink); margin-bottom:10px; font-weight:600; }
   .step-card p{ font-size:13px; color:var(--muted); line-height:1.5; }
 
-  /* FEED SECTION */
   .feed-section{ max-width:760px; margin:0 auto; padding:20px 24px 80px; position:relative; }
   .feed-header{ text-align:center; margin-bottom:40px; }
   .feed-header h2{ font-family:'Outfit',sans-serif; font-size:36px; color:var(--purple); font-weight:700; margin-bottom:8px; }
   .feed-header p{ font-size:16px; color:var(--muted); }
   
-  /* CATEGORY FILTERS */
-  .filter-container { position: relative; max-width: 760px; margin: 0 auto; display: flex; align-items: center; }
-  .category-filters { display: flex; gap: 10px; overflow-x: auto; padding: 0 10px 24px; scrollbar-width: none; scroll-behavior: smooth; flex: 1; }
-  .category-filters::-webkit-scrollbar { display: none; }
-  
-  .scroll-arrow {
-    position: absolute; z-index: 10; top: 50%; transform: translateY(-50%);
-    width: 36px; height: 36px; background: white; border: 1px solid var(--line);
-    border-radius: 50%; font-size: 20px; color: var(--purple); cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-  }
-  .scroll-arrow:hover { background: var(--light-purple); border-color: var(--purple); }
-  .scroll-arrow.left { left: -15px; }
-  .scroll-arrow.right { right: -15px; }
-  
-  .filter-chip {
-    background: white; border: 1px solid var(--line); color: var(--muted);
-    padding: 8px 16px; border-radius: 999px; font-size: 14px; font-family: 'Inter', sans-serif;
-    cursor: pointer; white-space: nowrap; transition: all 0.2s;
-  }
-  .filter-chip:hover { border-color: var(--purple); color: var(--purple); }
-  .filter-chip.active { background: var(--light-purple); border-color: var(--purple); color: var(--purple); font-weight: 600; }
-
-  /* MESSAGES */
   .feed-list{ display:flex; flex-direction:column; gap:24px; }
   .feed-card{
     background:white; border:1px solid var(--line); border-radius:20px; padding:32px; 
@@ -123,10 +104,10 @@
   .msg-category{ display:inline-block; font-size:12px; font-weight:600; color:var(--purple); background:var(--light-purple); padding:6px 14px; border-radius:999px; margin-bottom:20px; letter-spacing:0.02em; }
   .msg-text{ font-family:'Inter', sans-serif; font-size:18px; line-height:1.7; color:var(--ink); margin-bottom:28px; }
   .msg-footer{ display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line); padding-top:20px; }
+  .msg-time{ font-size:13px; color:var(--muted); }
   .btn-reply{ background:transparent; border:1.5px solid var(--purple); color:var(--purple); padding:10px 20px; border-radius:999px; font-size:14px; font-weight:600; cursor:pointer; transition:all .2s; text-decoration: none;}
   .btn-reply:hover{ background:var(--purple); color:white; }
 
-  /* BOTTOM BANNER */
   .banner-section{ max-width:1280px; margin:0 auto 60px; padding:0 48px; }
   .banner-inner{ background:var(--light-purple); border-radius:24px; display:flex; align-items:center; overflow:hidden; box-shadow:0 10px 40px rgba(91,50,165,0.08); }
   .banner-images{ position:relative; width:300px; height:220px; flex-shrink:0; }
@@ -139,7 +120,48 @@
   .banner-text p{ font-size:16px; color:var(--ink); max-width:400px; }
   .banner-script{ padding:40px; width:280px; flex-shrink:0; border-left:1px solid rgba(91,50,165,0.1); text-align:center; }
   .banner-script span{ font-family:'Caveat', cursive; font-size:32px; color:var(--purple); line-height:1.1; display:inline-block; transform:rotate(-3deg); }
-
+  /* --- SCROLL DOWN INDICATOR --- */
+  .scroll-indicator {
+    position: absolute;
+    right: -10px;
+    bottom: 80px; 
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    padding: 10px 18px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--purple);
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(91,50,165,0.1);
+    transition: all 0.3s ease;
+    animation: float 2s infinite ease-in-out;
+  }
+  .scroll-indicator:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(91,50,165,0.15);
+  }
+  .scroll-indicator svg {
+    width: 18px;
+    height: 18px;
+    animation: bounce 1.5s infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+  @media(max-width: 768px){
+    .scroll-indicator { right: 20px; bottom: 80px; padding: 8px 14px; font-size: 12px; }
+  }
   @media(max-width:1024px){
     .how-it-works{ grid-template-columns:repeat(2,1fr); margin-top: -30px; }
     .hero-content h1{ font-size:40px; }
@@ -149,23 +171,68 @@
     .banner-script{ border-left:none; border-top:1px solid rgba(91,50,165,0.1); width:100%; }
   }
   @media(max-width:768px){
-    .nav-links { display:none; }
-    .nav { padding: 16px 16px; }
-    .nav-actions { gap: 8px; }
-    .btn-outline, .btn-solid { padding: 8px 14px; font-size: 13px; }
+    .nav-links { display:none; } /* Only hide the text links (How It Works, etc) */
+    .nav { padding: 16px 16px; } /* Reduce padding slightly */
+    .nav-actions { gap: 8px; } /* Bring buttons closer together */
+    .btn-outline, .btn-solid { padding: 8px 14px; font-size: 13px; } /* Make buttons smaller */
     .hero-content{ padding:20px 24px 60px; }
     .hero-content h1{ font-size:32px; }
     .how-it-works{ padding:0 24px 40px; grid-template-columns:1fr; margin-top: -20px; }
     .feed-card{ padding:24px; }
     .msg-footer{ flex-direction:column; align-items:flex-start; gap:16px; }
     .banner-section{ padding:0 24px; }
+  }
+    /* Category Filter & Arrows */
+  .filter-container {
+    position: relative; max-width: 760px; margin: 0 auto; display: flex; align-items: center;
+  }
+  .category-filters {
+    display: flex; gap: 10px; overflow-x: auto; padding: 0 10px 24px; 
+    scrollbar-width: none; scroll-behavior: smooth; flex: 1;
+  }
+  .category-filters::-webkit-scrollbar { display: none; }
+  
+  .scroll-arrow {
+    position: absolute; z-index: 10; top: 50%; transform: translateY(-50%);
+    width: 36px; height: 36px; background: white; border: 1px solid var(--line);
+    border-radius: 50%; font-size: 20px; color: var(--purple); cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .scroll-arrow:hover { background: var(--light-purple); border-color: var(--purple); }
+  .scroll-arrow.left { left: -15px; }
+  .scroll-arrow.right { right: -15px; }
+  
+  .filter-chip {
+    background: white; border: 1px solid var(--line); color: var(--muted);
+    padding: 8px 16px; border-radius: 999px; font-size: 14px; font-family: 'Inter', sans-serif;
+    cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  }
+  .filter-chip:hover { border-color: var(--purple); color: var(--purple); }
+  .filter-chip.active {
+    background: var(--light-purple); border-color: var(--purple); 
+    color: var(--purple); font-weight: 600;
+  }
+  
+  /* Hide arrows on mobile screens since users can swipe */
+  @media(max-width: 768px) {
     .scroll-arrow { display: none; }
+  }
+  
+  .filter-chip {
+    background: white; border: 1px solid var(--line); color: var(--muted);
+    padding: 8px 16px; border-radius: 999px; font-size: 14px; font-family: 'Inter', sans-serif;
+    cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  }
+  .filter-chip:hover { border-color: var(--purple); color: var(--purple); }
+  .filter-chip.active {
+    background: var(--light-purple); border-color: var(--purple); 
+    color: var(--purple); font-weight: 600;
   }
 </style>
 </head>
 <body>
 
-<!-- HERO SECTION -->
 <div class="hero-section">
   <nav class="nav">
     <div class="logo">8mellow</div>
@@ -175,9 +242,9 @@
       <a href="faq.html">FAQs</a>
     </div>
     <div class="nav-actions" id="nav-actions">
-      <a href="auth.html?mode=login" class="btn-outline" id="nav-login">Log In</a>
-      <a href="auth.html?mode=signup" class="btn-solid" id="nav-signup">Sign Up</a>
-    </div>
+  <a href="auth.html?mode=login" class="btn-outline" id="nav-login">Log In</a>
+  <a href="auth.html?mode=signup" class="btn-solid" id="nav-signup">Sign Up</a>
+</div>
   </nav>
 
   <div class="hero-content">
@@ -187,13 +254,20 @@
       <strong style="color: var(--dark-gold);">8mellow</strong> is a safe, anonymous space to say the things you never got to say—or were hesitant to say. Whether it's an apology, a forgiveness, a goodbye, a thank you, or something else entirely—write it here. Someone might read it and reply privately. Or you might just find peace in letting it out.
     </p>
     <a href="auth.html?mode=signup" class="btn-hero" id="hero-btn">
-      Get Started
+  Get Started
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
     </a>
+  <!-- SCROLL DOWN INDICATOR -->
+  <a href="#messages" class="scroll-indicator">
+    <span>See messages</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <polyline points="19 12 12 19 5 12"></polyline>
+    </svg>
+  </a>
   </div>
 </div>
 
-<!-- HOW IT WORKS -->
 <div class="how-it-works">
   <div class="step-card"><div class="step-icon">📝</div><h3>1. Post a Message</h3><p>Share what's on your mind for someone from your past.</p></div>
   <div class="step-card"><div class="step-icon">🔍</div><h3>2. Find the Right Person</h3><p>Let others discover your message with helpful clues.</p></div>
@@ -201,7 +275,6 @@
   <div class="step-card"><div class="step-icon">🔒</div><h3>4. Chat Privately</h3><p>Your conversation stays between you.</p></div>
 </div>
 
-<!-- FEED SECTION -->
 <div class="feed-section" id="messages">
   <div class="feed-header">
     <h2>Recent Messages</h2>
@@ -235,7 +308,6 @@
   </div>
 </div>
 
-<!-- BOTTOM BANNER -->
 <div class="banner-section">
   <div class="banner-inner">
     <div class="banner-images">
@@ -252,21 +324,17 @@
   </div>
 </div>
 
-<!-- JAVASCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE KEY IS HERE
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  let allPosts = []; 
-  let currentFilter = 'All';
-  let currentUser = null;
-
   function timeAgo(dateString) {
     const date = new Date(dateString);
     const now = new Date();
     const diffMs = now - date;
+    
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
@@ -275,22 +343,21 @@
     if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
     if (diffHours < 24) return `${diffHours} hr${diffHours > 1 ? 's' : ''} ago`;
     if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+
     return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   }
 
-  // 1. Fetch Posts and Reactions
+  let allPosts = []; 
+  let currentFilter = 'All';
+
+  // 1. SIMPLIFIED FETCH: Removed the profiles join to ensure the wall loads
   async function loadMessages() {
     const feedContainer = document.getElementById('message-feed');
     
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session) currentUser = session.user;
-
+    // 1. Fetch the posts (without the join to avoid crashes)
     const { data: posts, error } = await supabaseClient
       .from('posts')
-      .select(`
-        *,
-        reactions ( user_id )
-      `)
+      .select('*')
       .neq('status', 'hidden')
       .order('created_at', { ascending: false });
 
@@ -299,12 +366,36 @@
       return;
     }
 
+    if (posts.length === 0) {
+      feedContainer.innerHTML = '<p style="text-align:center; color:#666;">No messages yet.</p>';
+      return;
+    }
+
+    // 2. Get all unique user_ids from the posts
+    const userIds = [...new Set(posts.map(p => p.user_id))];
+
+    // 3. Fetch the profiles for those specific users
+    const { data: profiles } = await supabaseClient
+      .from('profiles')
+      .select('id, username, education, current_location, bio')
+      .in('id', userIds);
+
+    // 4. Create a map (dictionary) to easily look up profiles by ID
+    const profileMap = {};
+    if (profiles) {
+      profiles.forEach(p => { profileMap[p.id] = p; });
+    }
+
+    // 5. Attach the profile data to each post
+    posts.forEach(post => {
+      post.profile = profileMap[post.user_id] || null;
+    });
+
     allPosts = posts; 
     renderPosts();    
   }
 
-  // 2. Render Posts with Me Too Button
-  function renderPosts() {
+   function renderPosts() {
     const feedContainer = document.getElementById('message-feed');
     
     let filteredPosts = allPosts;
@@ -318,57 +409,31 @@
     }
 
     feedContainer.innerHTML = filteredPosts.slice(0, 20).map(post => {
-      const reactionCount = post.reactions ? post.reactions.length : 0;
-      const hasReacted = post.reactions?.some(r => r.user_id === currentUser?.id);
-      const buttonStyle = hasReacted 
-        ? "color: var(--purple); font-weight: 600; background: var(--light-purple); border: 1px solid var(--purple);" 
-        : "color: var(--muted); background: transparent; border: 1px solid var(--line);";
+      // Extract profile info safely
+      const username = post.profile?.username || 'Anonymous';
+      const edu = post.profile?.education ? `<span style="margin-left: 8px;">🎓 ${post.profile.education}</span>` : '';
+      const loc = post.profile?.current_location ? `<span style="margin-left: 8px;">📍 ${post.profile.current_location}</span>` : '';
+      const bio = post.profile?.bio ? `<div style="font-style: italic; margin-top: 4px; font-size: 11px; color: #888;">"${post.profile.bio}"</div>` : '';
 
       return `
       <div class="feed-card">
+        
+        <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">
+          Posted by: <strong>@${username}</strong>
+          ${edu} ${loc}
+          ${bio}
+        </div>
+
         <span class="msg-category">${post.category}</span>
         <p class="msg-text">${post.content}</p>
-        <div class="msg-footer" style="display: flex; justify-content: space-between; align-items: center;">
-          <div style="display: flex; gap: 12px; align-items: center;">
-            <span class="msg-time" style="font-size: 12px; color: #999;">${timeAgo(post.created_at)}</span>
-            <button onclick="toggleMeToo('${post.id}')" style="padding: 6px 12px; border-radius: 999px; font-size: 12px; cursor: pointer; transition: all 0.2s; ${buttonStyle}">
-              ♥ ${reactionCount} Me too
-            </button>
-          </div>
-          <a href="auth.html?mode=login&reply_to=${post.id}" class="btn-reply" style="padding: 8px 16px; font-size: 13px;">Reply privately</a>
+        <div class="msg-footer">
+          <span class="msg-time">${timeAgo(post.created_at)}</span>
+          <a href="auth.html?mode=login&reply_to=${post.id}" class="btn-reply">Reply privately</a>
         </div>
       </div>
     `}).join('');
   }
 
-  // 3. Toggle Me Too
-  async function toggleMeToo(postId) {
-    if (!currentUser) {
-      alert("Please log in to show your support.");
-      window.location.href = 'auth.html?mode=login';
-      return;
-    }
-
-    const post = allPosts.find(p => p.id == postId);
-    const hasReacted = post.reactions?.some(r => r.user_id === currentUser.id);
-
-    if (hasReacted) {
-      const { error } = await supabaseClient.from('reactions').delete().eq('post_id', postId).eq('user_id', currentUser.id);
-      if (!error) {
-        post.reactions = post.reactions.filter(r => r.user_id !== currentUser.id);
-        renderPosts(); 
-      }
-    } else {
-      const { data, error } = await supabaseClient.from('reactions').insert([{ post_id: postId, user_id: currentUser.id }]).select();
-      if (!error) {
-        if (!post.reactions) post.reactions = [];
-        post.reactions.push({ user_id: currentUser.id });
-        renderPosts(); 
-      }
-    }
-  }
-
-  // 4. Filtering & Navigation
   function filterMessages(category, btnElement) {
     currentFilter = category;
     document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
@@ -376,31 +441,44 @@
     renderPosts();
   }
 
+  // Function to scroll categories left or right
   function scrollFilters(direction) {
     const container = document.getElementById('category-scroll');
-    container.scrollLeft += (direction * 250);
+    const scrollAmount = 250; // how many pixels to scroll
+    container.scrollLeft += direction * scrollAmount;
   }
-
   async function checkLoggedInUser() {
+    // Get the current session
     const { data: { session } } = await supabaseClient.auth.getSession();
+    
     if (session) {
-      document.getElementById('nav-login').style.display = 'none';
-      document.getElementById('nav-signup').style.display = 'none';
-      
+      // 1. Update the top right navigation
+      const navLogin = document.getElementById('nav-login');
+      const navSignup = document.getElementById('nav-signup');
       const navActions = document.getElementById('nav-actions');
-      const dashBtn = document.createElement('a');
-      dashBtn.href = 'dashboard.html';
-      dashBtn.className = 'btn-solid';
-      dashBtn.innerText = 'My Dashboard';
-      navActions.appendChild(dashBtn);
+      
+      if (navLogin && navSignup && navActions) {
+        navLogin.style.display = 'none';
+        navSignup.style.display = 'none';
+        
+        // Create a new Dashboard button and add it to the nav
+        const dashBtn = document.createElement('a');
+        dashBtn.href = 'dashboard.html';
+        dashBtn.className = 'btn-solid'; // Use the same purple button styling
+        dashBtn.innerText = 'My Dashboard';
+        navActions.appendChild(dashBtn);
+      }
 
+      // 2. Update the Hero "Get Started" button
       const heroBtn = document.getElementById('hero-btn');
-      heroBtn.href = 'dashboard.html';
-      heroBtn.innerHTML = `Go to Dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+      if (heroBtn) {
+        heroBtn.href = 'dashboard.html';
+        heroBtn.innerHTML = `Go to Dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+      }
     }
   }
 
-  // Run on load
+  // Call the function when the page loads
   checkLoggedInUser();
   loadMessages();
 </script>
