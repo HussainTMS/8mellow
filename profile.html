@@ -70,6 +70,16 @@
     <button type="submit" class="btn">Save Profile</button>
     <p class="status-msg" id="status-msg">Profile saved successfully!</p>
   </form>
+  <!-- DANGER ZONE -->
+  <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid #FFE5E5;">
+    <h3 style="color: #C97064; font-family: 'Outfit', sans-serif; font-size: 18px; margin-bottom: 8px;">Danger Zone</h3>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">
+      Once you delete your account, there is no going back. All your posts and private chats will be permanently deleted.
+    </p>
+    <button onclick="deleteAccount()" style="background: #C97064; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+      Delete My Account
+    </button>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -135,6 +145,28 @@
   });
 
   loadProfile();
+  async function deleteAccount() {
+    const confirm1 = confirm("Are you absolutely sure you want to delete your account? This will delete all your posts and messages forever.");
+    if (!confirm1) return;
+
+    const confirm2 = prompt("Type the word DELETE to confirm:");
+    if (confirm2 !== "DELETE") {
+      alert("Account deletion cancelled.");
+      return;
+    }
+
+    // Call the Supabase RPC function we just created
+    const { error } = await supabaseClient.rpc('delete_my_account');
+
+    if (error) {
+      alert('Error deleting account: ' + error.message);
+    } else {
+      // Sign them out locally and send them back to the homepage
+      await supabaseClient.auth.signOut();
+      alert("Your account has been permanently deleted.");
+      window.location.href = 'index.html';
+    }
+  }
 </script>
 
 </body>
