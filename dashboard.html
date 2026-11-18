@@ -37,7 +37,6 @@
     background: linear-gradient(90deg, var(--purple), var(--mint));
   }
 
-  /* TOP HEADER */
   .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
   .logo { font-family:'Outfit',sans-serif; font-size:32px; font-weight:700; color:var(--dark-gold); padding-bottom: 2px; border-bottom: 4px solid var(--mint); display: inline-block; }
   .header-actions { display: flex; gap: 12px; align-items: center; }
@@ -50,7 +49,6 @@
   h1 { font-family: 'Outfit', sans-serif; font-size: 32px; color: var(--purple); margin-bottom: 8px; }
   .subtitle { color: var(--muted); font-size: 16px; }
 
-  /* 2-COLUMN GRID LAYOUT */
   .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
   .menu-column { display: flex; flex-direction: column; }
 
@@ -65,42 +63,36 @@
   .menu-text h3 { font-size: 16px; margin-bottom: 2px; }
   .menu-text p { font-size: 13px; color: var(--muted); }
 
-  /* SCROLLABLE LINKED MESSAGES COLUMN */
+  /* LINKED MESSAGES COLUMN */
   .linked-column {
     background: #FFFFFF; border: 1px solid var(--mint); border-radius: 20px; padding: 24px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     max-height: 520px; 
     overflow-y: auto;  
+    position: relative;
   }
   
   .linked-column::-webkit-scrollbar { width: 6px; }
   .linked-column::-webkit-scrollbar-track { background: transparent; }
   .linked-column::-webkit-scrollbar-thumb { background: #E0D0C0; border-radius: 10px; }
   .linked-column::-webkit-scrollbar-thumb:hover { background: #C0B0A0; }
-  /* Fade effect at the bottom of the scrollable box */
-  .linked-column { position: relative; }
+
+  /* Fade effect at the bottom */
   .linked-column::after {
     content: ''; position: sticky; bottom: 0; left: 0; right: 0; height: 40px;
     background: linear-gradient(to top, white, transparent); pointer-events: none; display: block;
   }
-  .load-more-btn {
-    width: 100%; padding: 12px; margin-top: 12px; background: var(--light-purple);
-    color: var(--purple); border: none; border-radius: 12px; font-weight: 600;
-    cursor: pointer; transition: background 0.2s; position: relative; z-index: 2;
-  }
-  .load-more-btn:hover { background: #E5D9F5; }
 
-  /* Adjusted font-size for the longer title */
   .linked-column h3 { 
     font-family: 'Outfit', sans-serif; font-size: 18px; color: var(--purple); 
-    margin-bottom: 16px; position: sticky; top: 0; background: white; padding-bottom: 8px;
+    margin-bottom: 16px; position: sticky; top: 0; background: white; padding-bottom: 8px; z-index: 2;
   }
   .linked-column p.empty-msg { font-size: 14px; color: var(--muted); font-style: italic; }
   
   .match-card {
     display: flex; gap: 16px; padding: 16px; background: #FAFFF9; border: 1px solid var(--line);
     border-radius: 12px; margin-bottom: 12px; text-decoration: none; color: var(--ink);
-    transition: all 0.2s;
+    transition: all 0.2s; position: relative; z-index: 1;
   }
   .match-card:hover { border-color: var(--purple); box-shadow: 0 4px 12px rgba(91,50,165,0.06); }
   .match-icon { font-size: 24px; }
@@ -108,12 +100,17 @@
   .match-content p { font-size: 13px; font-style: italic; color: var(--muted); margin-bottom: 8px; }
   .match-time { font-size: 11px; color: #999; display: block; }
 
-  /* SUBTLE CRISIS FOOTER */
+  .load-more-btn {
+    width: 100%; padding: 12px; margin-top: 12px; background: var(--light-purple);
+    color: var(--purple); border: none; border-radius: 12px; font-weight: 600;
+    cursor: pointer; transition: background 0.2s; position: relative; z-index: 2;
+  }
+  .load-more-btn:hover { background: #E5D9F5; }
+
   .crisis-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); text-align: center; }
   .crisis-footer a { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
   .crisis-footer a:hover { color: #E67E22; }
 
-  /* Responsive Stacking for Mobile */
   @media(max-width: 768px) {
     .dashboard-container { padding: 32px 24px; }
     .dashboard-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -150,7 +147,7 @@
 
   <div class="dashboard-grid">
     
-    <!-- LEFT COLUMN: CORE ACTIONS -->
+    <!-- LEFT COLUMN -->
     <div class="menu-column">
       <a href="write.html" class="menu-item">
         <div class="menu-icon">✍️</div>
@@ -166,7 +163,7 @@
       </a>
     </div>
 
-    <!-- RIGHT COLUMN: MESSAGES THAT MIGHT LINK TO YOU -->
+    <!-- RIGHT COLUMN -->
     <div class="linked-column">
       <h3>🔍 Messages that might link to you</h3>
       <div id="suggested-list">
@@ -190,13 +187,13 @@
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE KEY IS HERE
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+  let allMatches = [];
+  let displayedMatches = 10;
+
   async function signOut() {
     await supabaseClient.auth.signOut();
     window.location.href = 'index.html';
   }
-
-   let allMatches = [];
-  let displayedMatches = 10;
 
   function timeAgo(dateString) {
     const date = new Date(dateString);
@@ -226,6 +223,7 @@
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) return;
 
+    // 1. Fetch my profile
     const { data: myProfile } = await supabaseClient.from('profiles').select('education, current_location, bio').eq('id', user.id).maybeSingle();
     if (!myProfile) {
       list.innerHTML = '<p class="empty-msg">Create a profile to see messages that might link to you.</p>';
@@ -239,6 +237,15 @@
       return;
     }
 
+    // 2. NEW: Find all threads I have already replied to
+    const { data: myReplies } = await supabaseClient
+      .from('threads')
+      .select('post_id')
+      .eq('replier_id', user.id);
+      
+    const repliedPostIds = myReplies ? myReplies.map(r => r.post_id) : [];
+
+    // 3. Fetch all public posts (excluding my own posts)
     const { data: posts } = await supabaseClient.from('posts').select('*').neq('status', 'hidden').neq('user_id', user.id); 
     if (!posts || posts.length === 0) {
       list.innerHTML = '<p class="empty-msg">No other messages on the wall yet.</p>';
@@ -249,8 +256,11 @@
     const { data: profiles } = await supabaseClient.from('profiles').select('id, education, current_location, bio').in('id', userIds);
     if (!profiles) return;
 
-    const matches = [];
+    allMatches = [];
     posts.forEach(post => {
+      // NEW: If I already replied to this post, skip it!
+      if (repliedPostIds.includes(post.id)) return;
+
       const posterProfile = profiles.find(p => p.id === post.user_id);
       if (!posterProfile) return;
 
@@ -259,12 +269,10 @@
       const sharedWord = myKeywords.find(word => posterKeywords.includes(word));
 
       if (sharedWord) {
-        matches.push({ post, posterProfile, sharedWord });
+        allMatches.push({ post, posterProfile, sharedWord });
       }
     });
 
-    if (matches.length > 0) {
-       allMatches = matches; // Save matches globally
     renderMatches();
   }
 
@@ -276,7 +284,6 @@
       return;
     }
 
-    // Slice the array to only show up to the displayedMatches limit
     let html = allMatches.slice(0, displayedMatches).map(match => `
       <a href="chat.html?post_id=${match.post.id}" class="match-card">
         <div class="match-icon">✨</div>
@@ -288,7 +295,6 @@
       </a>
     `).join('');
 
-    // Add the "Load More" button if there are more matches
     if (allMatches.length > displayedMatches) {
       html += `<button onclick="loadMoreMatches()" class="load-more-btn">Load More Messages</button>`;
     }
@@ -297,9 +303,8 @@
   }
 
   function loadMoreMatches() {
-    displayedMatches += 10; // Increase the limit
-    renderMatches();        // Re-draw the list
-  }
+    displayedMatches += 10; 
+    renderMatches();        
   }
 
   loadSuggestedMessages();
