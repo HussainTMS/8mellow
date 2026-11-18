@@ -84,6 +84,9 @@
         <input type="password" id="login-password" placeholder="Your password" required>
       </div>
       <button type="submit" class="btn">Log In</button>
+      <p style="text-align: center; font-size: 13px; margin-top: 16px;">
+      <a href="#" onclick="handleForgotPassword()" style="color: var(--muted); text-decoration: underline;">Forgot your password?</a>
+    </p>
     </form>
     <p class="toggle-text">Don't have an account? <a onclick="toggleForms()">Sign up</a></p>
   </div>
@@ -139,7 +142,21 @@
       window.location.href = '2fa-setup.html';
     }
   }
+  async function handleForgotPassword() {
+    const email = prompt("Please enter your email address to reset your password:");
+    if (!email) return;
 
+    // This tells Supabase to send the reset email and redirect to your new page
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://hussaintms.github.io/8mellow/reset-password.html',
+    });
+
+    if (error) {
+      alert("Error sending reset email: " + error.message);
+    } else {
+      alert("Check your inbox! We sent a link to reset your password.");
+    }
+  }
   async function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('login-email').value;
