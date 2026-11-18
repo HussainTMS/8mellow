@@ -77,6 +77,18 @@
   .linked-column::-webkit-scrollbar-track { background: transparent; }
   .linked-column::-webkit-scrollbar-thumb { background: #E0D0C0; border-radius: 10px; }
   .linked-column::-webkit-scrollbar-thumb:hover { background: #C0B0A0; }
+  /* Fade effect at the bottom of the scrollable box */
+  .linked-column { position: relative; }
+  .linked-column::after {
+    content: ''; position: sticky; bottom: 0; left: 0; right: 0; height: 40px;
+    background: linear-gradient(to top, white, transparent); pointer-events: none; display: block;
+  }
+  .load-more-btn {
+    width: 100%; padding: 12px; margin-top: 12px; background: var(--light-purple);
+    color: var(--purple); border: none; border-radius: 12px; font-weight: 600;
+    cursor: pointer; transition: background 0.2s; position: relative; z-index: 2;
+  }
+  .load-more-btn:hover { background: #E5D9F5; }
 
   /* Adjusted font-size for the longer title */
   .linked-column h3 { 
@@ -183,6 +195,9 @@
     window.location.href = 'index.html';
   }
 
+   let allMatches = [];
+  let displayedMatches = 10;
+
   function timeAgo(dateString) {
     const date = new Date(dateString);
     const now = new Date();
@@ -249,19 +264,42 @@
     });
 
     if (matches.length > 0) {
-      list.innerHTML = matches.slice(0, 10).map(match => `
-        <a href="chat.html?post_id=${match.post.id}" class="match-card">
-          <div class="match-icon">✨</div>
-          <div class="match-content">
-            <h4>Linked by: "${match.sharedWord}"</h4>
-            <p>"${match.post.content.substring(0, 60)}..."</p>
-            <span class="match-time">${timeAgo(match.post.created_at)}</span>
-          </div>
-        </a>
-      `).join('');
-    } else {
+       allMatches = matches; // Save matches globally
+    renderMatches();
+  }
+
+  function renderMatches() {
+    const list = document.getElementById('suggested-list');
+    
+    if (allMatches.length === 0) {
       list.innerHTML = '<p class="empty-msg">No linked messages found yet.</p>';
+      return;
     }
+
+    // Slice the array to only show up to the displayedMatches limit
+    let html = allMatches.slice(0, displayedMatches).map(match => `
+      <a href="chat.html?post_id=${match.post.id}" class="match-card">
+        <div class="match-icon">✨</div>
+        <div class="match-content">
+          <h4>Linked by: "${match.sharedWord}"</h4>
+          <p>"${match.post.content.substring(0, 60)}..."</p>
+          <span class="match-time">${timeAgo(match.post.created_at)}</span>
+        </div>
+      </a>
+    `).join('');
+
+    // Add the "Load More" button if there are more matches
+    if (allMatches.length > displayedMatches) {
+      html += `<button onclick="loadMoreMatches()" class="load-more-btn">Load More Messages</button>`;
+    }
+
+    list.innerHTML = html;
+  }
+
+  function loadMoreMatches() {
+    displayedMatches += 10; // Increase the limit
+    renderMatches();        // Re-draw the list
+  }
   }
 
   loadSuggestedMessages();
