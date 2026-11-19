@@ -80,7 +80,7 @@
     transition: all 0.2s; background: #F0FFF4; box-shadow: 0 2px 8px rgba(127, 255, 212, 0.1);
   }
   .explore-btn:hover { border-color: var(--purple); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(91,50,165,0.06); }
-  .explore-btn .menu-icon { background: var(--mint); color: var(--purple); }
+  .explore-btn .menu-icon { background: #B3E8DE; }
 
   /* LINKED MESSAGES COLUMN */
   .linked-column {
@@ -165,7 +165,13 @@
       <p class="subtitle">What would you like to do today?</p>
     </div>
     <a href="index.html" class="explore-btn">
-      <div class="menu-icon">🏠</div>
+      <div class="menu-icon">
+        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+          <path d="M5 4h14a2 2 0 0 1 2 2v3.2H3V6a2 2 0 0 1 2-2z" fill="#4A8C7E"/>
+          <path d="M3 10.6h8.2V20H5a2 2 0 0 1-2-2z" fill="#4A8C7E"/>
+          <path d="M12.8 10.6H21V18a2 2 0 0 1-2 2h-6.2z" fill="#4A8C7E"/>
+        </svg>
+      </div>
       <div class="menu-text"><h3>Explore the Wall</h3><p>Read messages and show support.</p></div>
     </a>
   </div>
