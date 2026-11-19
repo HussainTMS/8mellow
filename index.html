@@ -95,7 +95,16 @@
   .feed-header h2{ font-family:'Outfit',sans-serif; font-size:36px; color:var(--purple); font-weight:700; margin-bottom:8px; }
   .feed-header p{ font-size:16px; color:var(--muted); }
   
-  .feed-list{ display:flex; flex-direction:column; gap:24px; }
+    /* Loading skeletons */
+  .skel{ background:linear-gradient(90deg,#EFEAF5 25%,#F9F6FD 50%,#EFEAF5 75%); background-size:200% 100%; animation:shimmer 1.4s linear infinite; border-radius:8px; }
+  @keyframes shimmer{ 0%{ background-position:200% 0; } 100%{ background-position:-200% 0; } }
+  @media (prefers-reduced-motion: reduce){ .skel{ animation:none; } }
+  .skel-card{ pointer-events:none; }
+  .skel-card:hover{ transform:none; box-shadow:0 8px 30px rgba(0,0,0,0.03); }
+  .skel-pill{ width:110px; height:28px; border-radius:999px; margin-bottom:20px; }
+  .skel-line{ height:16px; margin-bottom:12px; }
+  .skel-foot{ display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line); padding-top:20px; margin-top:28px; }
+.feed-list{ display:flex; flex-direction:column; gap:24px; }
   .feed-card{
     background:white; border:1px solid var(--line); border-radius:20px; padding:32px; 
     box-shadow:0 8px 30px rgba(0,0,0,0.03); transition:transform .2s, box-shadow .2s;
@@ -309,7 +318,37 @@
   
   <!-- Messages load here -->
   <div class="feed-list" id="message-feed">
-    <p style="text-align:center; color:#666;">Loading messages...</p>
+    <div class="feed-card skel-card" aria-hidden="true">
+      <div class="skel skel-pill"></div>
+      <div class="skel skel-line" style="width:92%"></div>
+      <div class="skel skel-line" style="width:100%"></div>
+      <div class="skel skel-line" style="width:64%"></div>
+      <div class="skel-foot">
+        <div class="skel" style="width:150px;height:28px;border-radius:999px"></div>
+        <div class="skel" style="width:130px;height:40px;border-radius:999px"></div>
+      </div>
+    </div>
+    <div class="feed-card skel-card" aria-hidden="true">
+      <div class="skel skel-pill"></div>
+      <div class="skel skel-line" style="width:92%"></div>
+      <div class="skel skel-line" style="width:100%"></div>
+      <div class="skel skel-line" style="width:64%"></div>
+      <div class="skel-foot">
+        <div class="skel" style="width:150px;height:28px;border-radius:999px"></div>
+        <div class="skel" style="width:130px;height:40px;border-radius:999px"></div>
+      </div>
+    </div>
+    <div class="feed-card skel-card" aria-hidden="true">
+      <div class="skel skel-pill"></div>
+      <div class="skel skel-line" style="width:92%"></div>
+      <div class="skel skel-line" style="width:100%"></div>
+      <div class="skel skel-line" style="width:64%"></div>
+      <div class="skel-foot">
+        <div class="skel" style="width:150px;height:28px;border-radius:999px"></div>
+        <div class="skel" style="width:130px;height:40px;border-radius:999px"></div>
+      </div>
+    </div>
+    <span class="sr-only" role="status" style="position:absolute;left:-9999px">Loading messages...</span>
   </div>
 </div>
 
@@ -502,7 +541,7 @@
     if (error) {
       setLikeState(post, wasLiked); // put it back if saving failed
       console.error(error);
-      alert('Could not save that. Please try again.');
+      alert('Could not save that: ' + error.message);
     }
     likeBusy.delete(postId);
   }

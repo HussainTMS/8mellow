@@ -39,6 +39,13 @@
 }
   .chat-date { color: var(--dark-gold); font-weight: 500; }
   
+  /* Loading skeletons */
+  .skel{ background:linear-gradient(90deg,#EFEAF5 25%,#F9F6FD 50%,#EFEAF5 75%); background-size:200% 100%; animation:shimmer 1.4s linear infinite; border-radius:8px; }
+  @keyframes shimmer{ 0%{ background-position:200% 0; } 100%{ background-position:-200% 0; } }
+  @media (prefers-reduced-motion: reduce){ .skel{ animation:none; } }
+  .skel-row{ display:flex; align-items:center; gap:16px; padding:20px; border:1px solid var(--line); border-radius:16px; background:#FAFAFA; margin-bottom:12px; }
+  .skel-circle{ width:48px; height:48px; border-radius:50%; flex-shrink:0; }
+  .skel-body{ flex:1; }
   .empty-text { font-size: 14px; color: var(--muted); font-style: italic; padding: 10px 0; }
 
   .unread-dot {
@@ -63,12 +70,42 @@
 
   <div class="section-label">Chats from my messages</div>
   <div id="author-chats">
-    <p class="empty-text">Loading...</p>
+    <div class="skel-row" aria-hidden="true">
+      <div class="skel skel-circle"></div>
+      <div class="skel-body">
+        <div class="skel" style="height:15px;width:75%;margin-bottom:10px"></div>
+        <div class="skel" style="height:12px;width:35%"></div>
+      </div>
+      <div class="skel" style="height:12px;width:60px"></div>
+    </div>
+    <div class="skel-row" aria-hidden="true">
+      <div class="skel skel-circle"></div>
+      <div class="skel-body">
+        <div class="skel" style="height:15px;width:75%;margin-bottom:10px"></div>
+        <div class="skel" style="height:12px;width:35%"></div>
+      </div>
+      <div class="skel" style="height:12px;width:60px"></div>
+    </div>
   </div>
 
   <div class="section-label">Chats I started</div>
   <div id="replier-chats">
-    <p class="empty-text">Loading...</p>
+    <div class="skel-row" aria-hidden="true">
+      <div class="skel skel-circle"></div>
+      <div class="skel-body">
+        <div class="skel" style="height:15px;width:75%;margin-bottom:10px"></div>
+        <div class="skel" style="height:12px;width:35%"></div>
+      </div>
+      <div class="skel" style="height:12px;width:60px"></div>
+    </div>
+    <div class="skel-row" aria-hidden="true">
+      <div class="skel skel-circle"></div>
+      <div class="skel-body">
+        <div class="skel" style="height:15px;width:75%;margin-bottom:10px"></div>
+        <div class="skel" style="height:12px;width:35%"></div>
+      </div>
+      <div class="skel" style="height:12px;width:60px"></div>
+    </div>
   </div>
 </div>
 
