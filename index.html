@@ -428,10 +428,23 @@
         <p class="msg-text">${post.content}</p>
         <div class="msg-footer">
           <span class="msg-time">${timeAgo(post.created_at)}</span>
-          <a href="auth.html?mode=login&reply_to=${post.id}" class="btn-reply">Reply privately</a>
+          <a href="auth.html?mode=login&reply_to=${post.id}" class="btn-reply" onclick="replyPrivately(event, '${post.id}')">Reply privately</a>
         </div>
       </div>
     `}).join('');
+  }
+
+  // If logged in, open the chat straight away; otherwise go to login first
+  async function replyPrivately(event, postId) {
+    event.preventDefault();
+
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (session) {
+      window.location.href = `chat.html?post_id=${postId}`;
+    } else {
+      window.location.href = `auth.html?mode=login&reply_to=${postId}`;
+    }
   }
 
   function filterMessages(category, btnElement) {
