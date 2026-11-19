@@ -163,6 +163,17 @@
       return;
     }
 
+    // Count the "Me too" presses for each of my posts
+    const { data: likes } = await supabaseClient
+      .from('post_likes')
+      .select('post_id')
+      .in('post_id', posts.map(p => p.id));
+
+    const likeCounts = {};
+    (likes || []).forEach(l => {
+      likeCounts[l.post_id] = (likeCounts[l.post_id] || 0) + 1;
+    });
+
     // Render the messages
     container.innerHTML = posts.map(post => `
       <div class="message-card" id="post-${post.id}">
@@ -178,7 +189,7 @@
 
         <div class="card-footer">
                  <div class="card-stats">
-         <div>♥ 0 me too</div>
+         <div>♥ ${likeCounts[post.id] || 0} me too</div>
          <div>💬 ${post.threads ? post.threads.length : 0} ${post.threads && post.threads.length === 1 ? 'reply' : 'replies'}</div>
        </div>
           <div class="card-actions">
