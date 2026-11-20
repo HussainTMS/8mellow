@@ -200,9 +200,9 @@
         <a href="chat.html?thread_id=${thread.id}" class="chat-row">
           <div class="chat-icon">💬</div>
           <div class="chat-details">
-            <div class="chat-title">Re: "${thread.posts.content.substring(0, 45)}..."</div>
+            <div class="chat-title">${thread.posts ? 'Re: "' + thread.posts.content.substring(0, 45) + '..."' : 'Original message was deleted'}</div>
             <div class="chat-preview">
-              <span>${thread.posts.category}</span>
+              <span>${thread.posts ? thread.posts.category : 'Private conversation'}</span>
             </div>
           </div>
           ${isUnread ? '<div class="unread-dot"></div>' : ''}

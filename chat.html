@@ -258,8 +258,16 @@
        }
 
        // 2. Load the context badge
-       const { data: post } = await supabaseClient.from('posts').select('*').eq('id', thread.post_id).single();
-       if (post) { postContext.innerHTML = `Replying to: <strong>${post.category}</strong> · "${post.content.substring(0, 40)}..."`; }
+       let post = null;
+       if (thread.post_id) {
+         const res = await supabaseClient.from('posts').select('*').eq('id', thread.post_id).maybeSingle();
+         post = res.data;
+       }
+       if (post) {
+         postContext.innerHTML = `Replying to: <strong>${post.category}</strong> · "${post.content.substring(0, 40)}..."`;
+       } else {
+         postContext.textContent = 'The original message was deleted';
+       }
     }
   }
 

@@ -230,7 +230,7 @@
 
   // Function to Delete a post
   async function deleteMessage(postId) {
-    if (!confirm('Are you sure you want to delete this message? This cannot be undone.')) return;
+    if (!confirm('Delete this message?\n\nIt will be removed from the wall for good. Any private chats started from it will stay in your inbox until you delete them.')) return;
 
     const { error } = await supabaseClient
       .from('posts')
