@@ -104,7 +104,7 @@
   .search-gate{ display:none; background:var(--light-purple); color:var(--purple); border-radius:14px; padding:14px 18px; margin:-6px 4px 16px; font-size:14px; line-height:1.5; }
   .search-gate a{ color:var(--purple); font-weight:600; }
   mark{ background:#FFF0B3; color:inherit; border-radius:3px; padding:0 2px; }
-  .tag-link{ background:none; border:none; padding:0; margin-left:8px; font:inherit; color:inherit; cursor:pointer; }
+  .tag-link{ background:none; border:none; padding:0; margin:0; font:inherit; color:inherit; cursor:pointer; }
   .tag-link:hover{ color:var(--purple); text-decoration:underline; }
   .show-more{ display:block; margin:8px auto 0; padding:13px 28px; border:1.5px solid var(--purple); border-radius:999px; background:transparent; color:var(--purple); font-family:'Outfit',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:all .2s; }
   .show-more:hover{ background:var(--purple); color:white; }
@@ -482,6 +482,17 @@
     if (!hlRegex) return esc(text);
     return text.split(hlRegex).map((part, i) => i % 2 ? '<mark>' + esc(part) + '</mark>' : esc(part)).join('');
   }
+  // A profile detail on a post: each comma-separated item is clickable (search) when logged in
+  function chips(icon, text) {
+    if (!text) return '';
+    const parts = String(text).split(',').map(x => x.trim()).filter(Boolean);
+    if (!parts.length) return '';
+    const inner = parts.map(part => loggedIn
+      ? `<button type="button" class="tag-link" data-q="${esc(part)}" title="Search for this">${hl(part)}</button>`
+      : esc(part)
+    ).join(', ');
+    return `<span style="margin-left: 8px;">${icon} ${inner}</span>`;
+  }
   function postMatches(post) {
     if (!searchTerms.length) return true;
     if (!post._hay) {
@@ -633,8 +644,8 @@
       // Extract profile info safely (everything is escaped, matches are highlighted)
       const p = post.profile || {};
       const username = p.username || 'Anonymous';
-      const edu = p.education ? (loggedIn ? `<button type="button" class="tag-link" data-q="${esc(p.education)}" title="Search for this">🎓 ${hl(p.education)}</button>` : `<span style="margin-left: 8px;">🎓 ${esc(p.education)}</span>`) : '';
-      const loc = p.current_location ? (loggedIn ? `<button type="button" class="tag-link" data-q="${esc(p.current_location)}" title="Search for this">📍 ${hl(p.current_location)}</button>` : `<span style="margin-left: 8px;">📍 ${esc(p.current_location)}</span>`) : '';
+      const edu = chips('🎓', p.education);
+      const loc = chips('📍', p.current_location);
       const bio = p.bio ? `<div style="font-style: italic; margin-top: 4px; font-size: 11px; color: #888;">"${hl(p.bio)}"</div>` : '';
 
       return `
