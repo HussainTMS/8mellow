@@ -57,6 +57,8 @@
   .empty-btn:hover{ background:#482680; transform:translateY(-1px); }
   @keyframes floaty{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
   @media (prefers-reduced-motion: reduce){ .empty-card svg{ animation:none; } }
+  .chat-delete { background:none; border:none; cursor:pointer; font-size:16px; padding:8px; border-radius:8px; opacity:.45; flex-shrink:0; transition:all .2s; }
+  .chat-delete:hover { opacity:1; background:#FFF5F5; }
   .empty-text { font-size: 14px; color: var(--muted); font-style: italic; padding: 10px 0; }
 
   .unread-dot {
@@ -151,6 +153,8 @@
         created_at,
         unread_author,
         unread_replier,
+        deleted_by_author,
+        deleted_by_replier,
         posts ( category, content )
       `)
       .or(`author_id.eq.${user.id},replier_id.eq.${user.id}`)
@@ -168,8 +172,8 @@
       return !blockedUserIds.includes(otherUserId);
     });
 
-    const chatsFromMyMessages = safeThreads.filter(t => t.author_id === user.id);
-    const chatsIStarted = safeThreads.filter(t => t.replier_id === user.id);
+    const chatsFromMyMessages = safeThreads.filter(t => t.author_id === user.id && !t.deleted_by_author);
+    const chatsIStarted = safeThreads.filter(t => t.replier_id === user.id && !t.deleted_by_replier);
 
     // Nothing at all: show one friendly empty state instead of two small ones
     if (chatsFromMyMessages.length === 0 && chatsIStarted.length === 0) {
@@ -203,6 +207,7 @@
           </div>
           ${isUnread ? '<div class="unread-dot"></div>' : ''}
           <div class="chat-date-side">${formattedDate}</div>
+          <button type="button" class="chat-delete" title="Delete conversation" aria-label="Delete conversation" onclick="deleteChat(event, '${thread.id}', ${isAuthorView})">🗑️</button>
         </a>
       `}).join('');
     }
@@ -211,6 +216,27 @@
     renderChatList(authorContainer, chatsFromMyMessages, true);
     renderChatList(replierContainer, chatsIStarted, false);
   }
+  // "Delete for me": hides the chat from MY inbox only. The other person keeps their copy.
+  async function deleteChat(event, threadId, isAuthorView) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!confirm('Delete this conversation?\n\nIt will be removed from your inbox. The other person keeps their copy.')) return;
+
+    const column = isAuthorView ? 'deleted_by_author' : 'deleted_by_replier';
+    const { data, error } = await supabaseClient
+      .from('threads')
+      .update({ [column]: true })
+      .eq('id', threadId)
+      .select('id');
+
+    if (error || !data || data.length === 0) {
+      alert('Could not delete this conversation' + (error ? ': ' + error.message : '.'));
+      return;
+    }
+    loadInbox();
+  }
+
   function timeAgo(dateString) {
     const date = new Date(dateString);
     const now = new Date();

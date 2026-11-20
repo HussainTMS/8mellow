@@ -69,6 +69,7 @@
   </button>
 
   <div class="dropdown-menu" id="dropdown-menu">
+    <button onclick="deleteChat()">🗑️ Delete conversation</button>
     <button onclick="reportChat()">🚩 Report this chat</button>
     <button onclick="blockChat()">🚫 Block this user</button>
   </div>
@@ -118,6 +119,28 @@
         dropdown.classList.remove('show');
       }
     }
+  }
+
+  // "Delete for me": removes this chat from MY inbox only. The other person keeps their copy.
+  async function deleteChat() {
+    document.getElementById('dropdown-menu').classList.remove('show');
+    if (!confirm('Delete this conversation?\n\nIt will be removed from your inbox. The other person keeps their copy.')) return;
+
+    const { data: thread } = await supabaseClient.from('threads').select('author_id').eq('id', currentThreadId).single();
+    if (!thread) { alert('Could not find this conversation.'); return; }
+
+    const column = thread.author_id === currentUser.id ? 'deleted_by_author' : 'deleted_by_replier';
+    const { data, error } = await supabaseClient
+      .from('threads')
+      .update({ [column]: true })
+      .eq('id', currentThreadId)
+      .select('id');
+
+    if (error || !data || data.length === 0) {
+      alert('Could not delete this conversation' + (error ? ': ' + error.message : '.'));
+      return;
+    }
+    window.location.href = 'inbox.html';
   }
 
   async function reportChat() {
