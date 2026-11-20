@@ -93,6 +93,21 @@
   .step-card h3{ font-family:'Outfit',sans-serif; font-size:17px; color:var(--ink); margin-bottom:10px; font-weight:600; }
   .step-card p{ font-size:13px; color:var(--muted); line-height:1.5; }
 
+    /* Search bar */
+  .search-wrap{ position:relative; margin:0 0 18px; }
+  .search-wrap .search-icon{ position:absolute; left:18px; top:50%; transform:translateY(-50%); width:18px; height:18px; color:var(--muted); pointer-events:none; }
+  .search-input{ width:100%; padding:15px 48px 15px 48px; border:1px solid var(--line); border-radius:999px; background:white; font-family:'Inter',sans-serif; font-size:15px; color:var(--ink); box-shadow:0 4px 16px rgba(91,50,165,0.04); transition:all .2s; }
+  .search-input:focus{ outline:none; border-color:var(--purple); box-shadow:0 0 0 3px var(--light-purple); }
+  .search-clear{ display:none; position:absolute; right:12px; top:50%; transform:translateY(-50%); width:30px; height:30px; border:none; border-radius:50%; background:var(--light-purple); color:var(--purple); font-size:18px; line-height:1; cursor:pointer; }
+  .search-clear:hover{ background:#E5D9F5; }
+  .search-info{ display:none; font-size:14px; color:var(--muted); margin:0 4px 14px; }
+  .search-gate{ display:none; background:var(--light-purple); color:var(--purple); border-radius:14px; padding:14px 18px; margin:-6px 4px 16px; font-size:14px; line-height:1.5; }
+  .search-gate a{ color:var(--purple); font-weight:600; }
+  mark{ background:#FFF0B3; color:inherit; border-radius:3px; padding:0 2px; }
+  .tag-link{ background:none; border:none; padding:0; margin-left:8px; font:inherit; color:inherit; cursor:pointer; }
+  .tag-link:hover{ color:var(--purple); text-decoration:underline; }
+  .show-more{ display:block; margin:8px auto 0; padding:13px 28px; border:1.5px solid var(--purple); border-radius:999px; background:transparent; color:var(--purple); font-family:'Outfit',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:all .2s; }
+  .show-more:hover{ background:var(--purple); color:white; }
   .feed-section{ max-width:760px; margin:0 auto; padding:20px 24px 80px; position:relative; }
   .feed-header{ text-align:center; margin-bottom:40px; }
   .feed-header h2{ font-family:'Outfit',sans-serif; font-size:36px; color:var(--purple); font-weight:700; margin-bottom:8px; }
@@ -309,6 +324,15 @@
     <p>Words left unsaid, waiting to be found.</p>
   </div>
 
+  <!-- Search -->
+  <div class="search-wrap">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <input type="search" id="search-input" class="search-input" placeholder="Search by place, school, interest or word (e.g. Oxford, hiking)" autocomplete="off" aria-label="Search messages" oninput="onSearchInput()" onfocus="searchAllowed()">
+    <button type="button" class="search-clear" id="search-clear" onclick="clearSearch()" aria-label="Clear search">×</button>
+  </div>
+  <div class="search-gate" id="search-gate" role="status">🔒 Please <a href="auth.html?mode=login">log in</a> or <a href="auth.html?mode=signup">sign up</a> to search the wall.</div>
+  <div class="search-info" id="search-info" aria-live="polite"></div>
+
   <!-- Category Filter with Scroll Arrows -->
   <div class="filter-container">
     <button class="scroll-arrow left" onclick="scrollFilters(-1)">‹</button>
@@ -427,6 +451,85 @@
   }
 
   let currentFilter = 'All';
+  let searchTerms = [];      // lowercase, accent-free words used for matching
+  let hlRegex = null;        // used to highlight matches
+  let searchQuery = '';
+  let visibleCount = 20;
+  let searchTimer = null;
+  let loggedIn = false;      // search is for logged-in users only
+
+  // Returns true if the visitor may search; otherwise shows the "log in" note
+  function searchAllowed() {
+    const gate = document.getElementById('search-gate');
+    if (loggedIn) { gate.style.display = 'none'; return true; }
+    const input = document.getElementById('search-input');
+    input.value = '';
+    input.blur();
+    gate.style.display = 'block';
+    return false;
+  }
+
+  // ----- helpers -----
+  function esc(s) {
+    return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function normText(s) {
+    return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+  // Escape the text, wrapping any search matches in <mark>
+  function hl(raw) {
+    const text = String(raw ?? '');
+    if (!hlRegex) return esc(text);
+    return text.split(hlRegex).map((part, i) => i % 2 ? '<mark>' + esc(part) + '</mark>' : esc(part)).join('');
+  }
+  function postMatches(post) {
+    if (!searchTerms.length) return true;
+    if (!post._hay) {
+      const p = post.profile || {};
+      post._hay = normText([post.content, post.category, p.username, p.education, p.current_location, p.bio].join(' '));
+    }
+    return searchTerms.every(term => post._hay.includes(term));
+  }
+
+  // ----- search controls -----
+  function onSearchInput() {
+    if (!searchAllowed()) return;
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(applySearch, 120);
+  }
+  function applySearch() {
+    searchQuery = document.getElementById('search-input').value.trim();
+    const words = searchQuery.split(/\s+/).filter(Boolean);
+    searchTerms = words.map(normText);
+    hlRegex = words.length
+      ? new RegExp('(' + words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'gi')
+      : null;
+    visibleCount = 20;
+    document.getElementById('search-clear').style.display = words.length ? 'block' : 'none';
+    renderPosts();
+  }
+  function clearSearch() {
+    document.getElementById('search-input').value = '';
+    applySearch();
+  }
+  function setSearch(q) {
+    if (!searchAllowed()) return;
+    document.getElementById('search-input').value = q;
+    applySearch();
+    document.getElementById('search-input').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  function showMore() {
+    visibleCount += 20;
+    renderPosts();
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.activeElement === document.getElementById('search-input')) clearSearch();
+  });
+  // Clicking a school or place on a post searches for it
+  document.addEventListener('click', (e) => {
+    const tag = e.target.closest('.tag-link');
+    if (tag) setSearch(tag.dataset.q);
+  });
 
   // 1. SIMPLIFIED FETCH: Removed the profiles join to ensure the wall loads
   async function loadMessages() {
@@ -440,7 +543,7 @@
       .order('created_at', { ascending: false });
 
     if (error) {
-      feedContainer.innerHTML = `<p style="text-align:center; color:red;">Error: ${error.message}</p>`;
+      feedContainer.innerHTML = `<p style="text-align:center; color:red;">Error: ${esc(error.message)}</p>`;
       return;
     }
 
@@ -472,6 +575,8 @@
     // 6. Load "Me too" counts and which ones the current user has pressed
     const { data: { session } } = await supabaseClient.auth.getSession();
     const myId = session ? session.user.id : null;
+    loggedIn = !!session;
+    if (!loggedIn) document.getElementById('search-input').placeholder = 'Log in to search by place, school, interest or word';
 
     const { data: likes } = await supabaseClient
       .from('post_likes')
@@ -495,35 +600,54 @@
 
    function renderPosts() {
     const feedContainer = document.getElementById('message-feed');
-    
-    let filteredPosts = allPosts;
+    const info = document.getElementById('search-info');
+
+    let list = allPosts;
     if (currentFilter !== 'All') {
-      filteredPosts = allPosts.filter(post => post.category === currentFilter);
+      list = list.filter(post => post.category === currentFilter);
+    }
+    if (searchTerms.length) {
+      list = list.filter(postMatches);
     }
 
-    if (filteredPosts.length === 0) {
-      feedContainer.innerHTML = `<div class="empty-card small">${ART_PINBOARD}<h3>Nothing here yet</h3><p>No messages in this category yet.</p><button class="empty-btn" onclick="showAllMessages()">Show all messages</button></div>`;
+    // "12 messages match ..." line
+    if (searchTerms.length) {
+      info.textContent = list.length + (list.length === 1 ? ' message matches “' : ' messages match “') + searchQuery + '”' + (currentFilter !== 'All' ? ' in this category' : '');
+      info.style.display = 'block';
+    } else {
+      info.style.display = 'none';
+    }
+
+    if (list.length === 0) {
+      if (searchTerms.length) {
+        feedContainer.innerHTML = `<div class="empty-card small">${ART_PINBOARD}<h3>No matches</h3><p>Nothing matches “${esc(searchQuery)}”. Try a different word, a place or a school.</p><button class="empty-btn" onclick="clearSearch()">Clear search</button></div>`;
+      } else {
+        feedContainer.innerHTML = `<div class="empty-card small">${ART_PINBOARD}<h3>Nothing here yet</h3><p>No messages in this category yet.</p><button class="empty-btn" onclick="showAllMessages()">Show all messages</button></div>`;
+      }
       return;
     }
 
-    feedContainer.innerHTML = filteredPosts.slice(0, 20).map(post => {
-      // Extract profile info safely
-      const username = post.profile?.username || 'Anonymous';
-      const edu = post.profile?.education ? `<span style="margin-left: 8px;">🎓 ${post.profile.education}</span>` : '';
-      const loc = post.profile?.current_location ? `<span style="margin-left: 8px;">📍 ${post.profile.current_location}</span>` : '';
-      const bio = post.profile?.bio ? `<div style="font-style: italic; margin-top: 4px; font-size: 11px; color: #888;">"${post.profile.bio}"</div>` : '';
+    const shown = list.slice(0, visibleCount);
+
+    feedContainer.innerHTML = shown.map(post => {
+      // Extract profile info safely (everything is escaped, matches are highlighted)
+      const p = post.profile || {};
+      const username = p.username || 'Anonymous';
+      const edu = p.education ? (loggedIn ? `<button type="button" class="tag-link" data-q="${esc(p.education)}" title="Search for this">🎓 ${hl(p.education)}</button>` : `<span style="margin-left: 8px;">🎓 ${esc(p.education)}</span>`) : '';
+      const loc = p.current_location ? (loggedIn ? `<button type="button" class="tag-link" data-q="${esc(p.current_location)}" title="Search for this">📍 ${hl(p.current_location)}</button>` : `<span style="margin-left: 8px;">📍 ${esc(p.current_location)}</span>`) : '';
+      const bio = p.bio ? `<div style="font-style: italic; margin-top: 4px; font-size: 11px; color: #888;">"${hl(p.bio)}"</div>` : '';
 
       return `
       <div class="feed-card">
         
         <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">
-          Posted by: <strong>@${username}</strong>
+          Posted by: <strong>@${hl(username)}</strong>
           ${edu} ${loc}
           ${bio}
         </div>
 
-        <span class="msg-category">${post.category}</span>
-        <p class="msg-text">${post.content}</p>
+        <span class="msg-category">${hl(post.category)}</span>
+        <p class="msg-text">${hl(post.content)}</p>
         <div class="msg-footer">
           <div class="msg-meta">
             <span class="msg-time">${timeAgo(post.created_at)}</span>
@@ -534,7 +658,7 @@
           <a href="auth.html?mode=login&reply_to=${post.id}" class="btn-reply" onclick="replyPrivately(event, '${post.id}')">Reply privately</a>
         </div>
       </div>
-    `}).join('');
+    `}).join('') + (list.length > visibleCount ? `<button type="button" class="show-more" onclick="showMore()">Show more messages</button>` : '');
   }
 
   // "Me too" button: click to add, click again to remove. Login required.
@@ -607,6 +731,7 @@
     currentFilter = category;
     document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
     btnElement.classList.add('active');
+    visibleCount = 20;
     renderPosts();
   }
 
@@ -621,6 +746,7 @@
     const { data: { session } } = await supabaseClient.auth.getSession();
     
     if (session) {
+      loggedIn = true;
       // 1. Update the top right navigation
       const navLogin = document.getElementById('nav-login');
       const navSignup = document.getElementById('nav-signup');
