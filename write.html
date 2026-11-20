@@ -179,6 +179,10 @@
     color: #A0A0A0;
   }
 
+  /* Post error */
+  .post-error { display:none; background:#FFF5F5; border:1px solid #FFD6CC; color:#8B3A3A; border-radius:12px; padding:14px 16px; margin-top:12px; font-size:14px; line-height:1.5; }
+  .post-error a { color:#8B3A3A; font-weight:600; }
+
   /* Character Count */
   .char-count {
     text-align: right;
@@ -302,6 +306,7 @@
     <textarea placeholder="What do you wish you could say to them now?"></textarea>
     
     <div class="char-count">0 / 2000</div>
+    <div class="post-error" id="post-error" role="alert"></div>
 
     <!-- Safety Warning -->
     <div class="warning">
@@ -339,6 +344,7 @@
   
   textarea.setAttribute('maxlength', '2000');
   textarea.addEventListener('input', () => {
+    document.getElementById('post-error').style.display = 'none';
     charCount.textContent = `${textarea.value.length} / 2000`;
   });
 
@@ -366,20 +372,42 @@
     }
 
     // Send to Supabase with the REAL user ID
+    const errorBox = document.getElementById('post-error');
+    errorBox.style.display = 'none';
+
     const { data, error } = await supabaseClient
       .from('posts')
       .insert([{ 
         content: content, 
         category: category,
         user_id: user.id 
-      }]);
+      }])
+      .select('id, flagged');
 
     if (error) {
-      alert('Database Error: ' + error.message);
+      // The database filter rejected the message (or something else went wrong)
+      let msg;
+      if (error.message.includes('contact_details')) {
+        msg = 'Please remove any email addresses, phone numbers, links or @handles so your message stays anonymous, then try again.';
+      } else if (error.message.includes('blocked_term')) {
+        msg = 'Your message includes language we do not allow on 8mellow. Please reword it and try again. You can read more in our <a href="guidelines.html" onclick="window.open(this.href, \'_blank\'); return false;">Community Guidelines</a>.';
+      } else {
+        msg = 'Sorry, we could not post your message: ' + error.message;
+      }
+      errorBox.innerHTML = msg;
+      errorBox.style.display = 'block';
+      errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const wasFlagged = data && data[0] && data[0].flagged;
+    if (wasFlagged) {
+      // Posted, but it may be a heavy message: offer support gently
+      const wantsSupport = confirm('Your message was posted.\n\nIt sounds like you might be carrying something heavy. You are not alone. Would you like to see support options now?');
+      window.location.href = wantsSupport ? 'safety.html' : 'dashboard.html';
     } else {
       alert('Success! Your message was saved.');
-      // CHANGED: Go to dashboard instead of the public wall
-      window.location.href = 'dashboard.html'; 
+      window.location.href = 'dashboard.html';
     }
   });
 
