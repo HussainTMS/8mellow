@@ -229,12 +229,17 @@
 </div>
 
 <script>
-  // Back button: go back if there is a page to go back to; otherwise close this tab or go to the wall
+  // Back button: close this tab if it was opened from another page,
+  // otherwise go back, otherwise go to the wall
   function goBack(e) {
     e.preventDefault();
-    if (window.history.length > 1 && document.referrer) { window.history.back(); return false; }
-    window.close();
-    setTimeout(function () { window.location.href = 'index.html'; }, 150);
+    if (window.opener && !window.opener.closed) {
+      window.close();
+      setTimeout(function () { window.location.href = 'index.html'; }, 200);
+      return false;
+    }
+    if (document.referrer && window.history.length > 1) { window.history.back(); return false; }
+    window.location.href = 'index.html';
     return false;
   }
 </script>
