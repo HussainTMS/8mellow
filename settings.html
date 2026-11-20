@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — Account Settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --purple:#5B32A5; --purple-hover:#482680; --light-purple:#F3ECFC; --mint:#7FFFD4; --dark-gold:#B8860B; --ink:#1A1A1A; --muted:#666666; --line:#EAEAEA; --danger:#C97064; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background: radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%), radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%), radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%), #FAF7F2; background-attachment: fixed; color:var(--ink); font-family:'Inter', sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased; min-height:100vh; padding:40px 20px; }
+  .container{ width:100%; max-width:640px; margin:0 auto; background:white; border-radius:24px; padding:48px; box-shadow:0 20px 60px rgba(91,50,165,0.06); position:relative; overflow:hidden; }
+  .container::before{ content:''; position:absolute; top:0; left:0; right:0; height:6px; background:linear-gradient(90deg, var(--purple), var(--mint)); }
+  .header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; }
+  .logo{ font-family:'Outfit',sans-serif; font-size:24px; font-weight:700; color:var(--dark-gold); letter-spacing:-0.03em; padding-bottom:2px; border-bottom:4px solid var(--mint); display:inline-block; text-decoration:none; }
+  .back-btn{ color:var(--muted); text-decoration:none; font-size:15px; font-weight:500; }
+  .back-btn:hover{ color:var(--ink); }
+  h1{ font-family:'Outfit',sans-serif; font-size:30px; color:var(--purple); margin-bottom:8px; }
+  .subtitle{ color:var(--muted); font-size:15px; margin-bottom:32px; }
+
+  .card{ border:1px solid var(--line); border-radius:18px; padding:24px; background:#FAFAFA; margin-bottom:20px; }
+  .card h2{ font-family:'Outfit',sans-serif; font-size:18px; color:var(--purple); margin-bottom:4px; }
+  .card .desc{ font-size:13px; color:var(--muted); margin-bottom:16px; }
+  label{ display:block; font-size:14px; font-weight:600; margin-bottom:8px; }
+  input[type="text"], input[type="email"]{ width:100%; padding:14px 16px; border:1px solid var(--line); border-radius:12px; font-family:'Inter',sans-serif; font-size:15px; background:white; }
+  input:focus{ outline:none; border-color:var(--purple); box-shadow:0 0 0 3px var(--light-purple); }
+  .current{ font-size:14px; color:var(--muted); margin-bottom:16px; word-break:break-all; }
+  .current strong{ color:var(--ink); }
+  .field{ margin-bottom:14px; }
+  .btn{ padding:13px 22px; border:none; border-radius:12px; background:var(--purple); color:white; font-family:'Outfit',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn:hover{ background:var(--purple-hover); transform:translateY(-1px); }
+  .btn:disabled{ background:#D1C4E9; cursor:not-allowed; transform:none; }
+  .status{ font-size:14px; font-weight:600; margin-top:12px; display:none; line-height:1.5; }
+  .status.ok{ color:#2E7D32; display:block; }
+  .status.err{ color:#B3402F; display:block; }
+  .pending{ display:none; background:var(--light-purple); color:var(--purple); border-radius:12px; padding:12px 16px; font-size:14px; margin-bottom:16px; }
+
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .toggle-text{ font-size:14px; font-weight:600; }
+  .toggle-text small{ display:block; font-weight:400; color:var(--muted); font-size:13px; margin-top:2px; }
+  .switch{ position:relative; width:52px; height:30px; flex-shrink:0; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{ position:absolute; inset:0; background:#D8D2E0; border-radius:999px; cursor:pointer; transition:background .2s; }
+  .slider::before{ content:''; position:absolute; height:24px; width:24px; left:3px; top:3px; background:white; border-radius:50%; transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+  .switch input:checked + .slider{ background:var(--purple); }
+  .switch input:checked + .slider::before{ transform:translateX(22px); }
+  .switch input:focus-visible + .slider{ box-shadow:0 0 0 3px var(--light-purple); }
+
+  .more{ margin-top:28px; font-size:13px; color:var(--muted); text-align:center; }
+  .more a{ color:var(--purple); font-weight:600; text-decoration:none; }
+  .more a:hover{ text-decoration:underline; }
+  @media(max-width:600px){ .container{ padding:32px 22px; } h1{ font-size:26px; } .card{ padding:20px; } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <a href="dashboard.html" class="logo">8mellow</a>
+    <a href="dashboard.html" class="back-btn">← Dashboard</a>
+  </div>
+
+  <h1>Account Settings</h1>
+  <p class="subtitle">Manage your name, your email and how we contact you.</p>
+
+  <!-- DISPLAY NAME -->
+  <form class="card" id="name-form">
+    <h2>Display name</h2>
+    <p class="desc">Used inside your account. It is not shown on your public messages, which always stay anonymous.</p>
+    <div class="field">
+      <label for="display-name">Display name <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+      <input type="text" id="display-name" maxlength="40" placeholder="e.g. MellowSoul" autocomplete="nickname">
+    </div>
+    <button type="submit" class="btn" id="name-btn">Save name</button>
+    <p class="status" id="name-status" role="status"></p>
+  </form>
+
+  <!-- EMAIL -->
+  <form class="card" id="email-form">
+    <h2>Email address</h2>
+    <p class="desc">You use this email to log in and to receive your sign-in links.</p>
+    <p class="current">Current email: <strong id="current-email">…</strong></p>
+    <div class="pending" id="pending-note"></div>
+    <div class="field">
+      <label for="new-email">New email address</label>
+      <input type="email" id="new-email" placeholder="you@example.com" autocomplete="email" required>
+    </div>
+    <button type="submit" class="btn" id="email-btn">Update email</button>
+    <p class="status" id="email-status" role="status"></p>
+  </form>
+
+  <!-- NOTIFICATIONS -->
+  <div class="card" id="notify-card">
+    <h2>Email notifications</h2>
+    <p class="desc">Choose whether 8mellow can email you about activity on your account.</p>
+    <div class="toggle-row">
+      <div class="toggle-text">
+        New private messages
+        <small>Email me when someone sends me a private message.</small>
+      </div>
+      <label class="switch" aria-label="Email me about new private messages">
+        <input type="checkbox" id="notify-toggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <p class="status" id="notify-status" role="status"></p>
+  </div>
+
+  <p class="more">
+    To change your User ID, bio or to delete your account, go to <a href="profile.html">My Profile</a>.
+  </p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4';
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+  // Set to false to hide the notifications card (for example until email sending is set up)
+  const SHOW_NOTIFICATIONS = true;
+
+  let currentUser = null;
+
+  function showStatus(id, message, ok) {
+    const el = document.getElementById(id);
+    el.textContent = message;               // textContent: never inserts HTML
+    el.className = 'status ' + (ok ? 'ok' : 'err');
+  }
+  function clearStatus(id) {
+    const el = document.getElementById(id);
+    el.textContent = '';
+    el.className = 'status';
+  }
+
+  function renderUser(user) {
+    currentUser = user;
+    const meta = user.user_metadata || {};
+    document.getElementById('display-name').value = meta.display_name || '';
+    document.getElementById('current-email').textContent = user.email;
+    document.getElementById('notify-toggle').checked = meta.email_notifications !== false; // default: on
+
+    const pending = document.getElementById('pending-note');
+    if (user.new_email) {
+      pending.textContent = 'A change to ' + user.new_email + ' is waiting for confirmation. Check your inbox and click the link to finish.';
+      pending.style.display = 'block';
+    } else {
+      pending.style.display = 'none';
+    }
+  }
+
+  async function loadSettings() {
+    if (!SHOW_NOTIFICATIONS) document.getElementById('notify-card').style.display = 'none';
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) { window.location.href = 'auth.html?mode=login'; return; }
+    renderUser(user);
+  }
+
+  // ---- Display name ----
+  document.getElementById('name-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('name-btn');
+    const name = document.getElementById('display-name').value.trim();
+    clearStatus('name-status');
+    btn.disabled = true;
+
+    const { data, error } = await supabaseClient.auth.updateUser({ data: { display_name: name } });
+    btn.disabled = false;
+
+    if (error) {
+      showStatus('name-status', 'Could not save your name: ' + error.message, false);
+    } else {
+      renderUser(data.user);
+      showStatus('name-status', name ? 'Name saved.' : 'Name removed.', true);
+    }
+  });
+
+  // ---- Email ----
+  document.getElementById('email-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('email-btn');
+    const newEmail = document.getElementById('new-email').value.trim().toLowerCase();
+    clearStatus('email-status');
+
+    if (newEmail === (currentUser.email || '').toLowerCase()) {
+      showStatus('email-status', 'That is already your email address.', false);
+      return;
+    }
+
+    btn.disabled = true;
+    const { data, error } = await supabaseClient.auth.updateUser(
+      { email: newEmail },
+      { emailRedirectTo: 'https://hussaintms.github.io/8mellow/settings.html' }
+    );
+    btn.disabled = false;
+
+    if (error) {
+      showStatus('email-status', 'Could not update your email: ' + error.message, false);
+    } else {
+      renderUser(data.user);
+      document.getElementById('new-email').value = '';
+      showStatus('email-status', 'Almost done. We sent a confirmation link to your new address. You may also be asked to confirm from your current email. Your email changes once you click the link(s).', true);
+    }
+  });
+
+  // ---- Notifications (saves as soon as you flip it) ----
+  document.getElementById('notify-toggle').addEventListener('change', async (e) => {
+    const toggle = e.target;
+    const wanted = toggle.checked;
+    clearStatus('notify-status');
+    toggle.disabled = true;
+
+    const { data, error } = await supabaseClient.auth.updateUser({ data: { email_notifications: wanted } });
+    toggle.disabled = false;
+
+    if (error) {
+      toggle.checked = !wanted;              // put it back if saving failed
+      showStatus('notify-status', 'Could not save that: ' + error.message, false);
+    } else {
+      renderUser(data.user);
+      showStatus('notify-status', wanted ? 'Email notifications are on.' : 'Email notifications are off.', true);
+    }
+  });
+
+  loadSettings();
+</script>
+<script src="idle-timeout.js"></script>
+</body>
+</html>
