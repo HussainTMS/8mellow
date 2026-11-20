@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — Community Guidelines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#5B32A5;
+    --purple-hover:#482680;
+    --light-purple:#F3ECFC;
+    --mint:#7FFFD4; 
+    --dark-gold:#B8860B; 
+    --ink:#1A1A1A;
+    --muted:#666666;
+    --line:#EAEAEA;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  
+  body{
+    background: 
+      radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%),
+      #FAF7F2;
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    padding: 48px;
+    box-shadow: 0 20px 60px rgba(91,50,165,0.06);
+    border: 1px solid rgba(255,255,255,0.8);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--purple), var(--mint));
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+  .logo {
+    font-family:'Outfit',sans-serif; 
+    font-size: 24px; 
+    font-weight:700; 
+    color:var(--dark-gold); 
+    letter-spacing: -0.03em;
+    padding-bottom: 2px; 
+    border-bottom: 4px solid var(--mint); 
+    display: inline-block;
+  }
+  .back-btn {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .back-btn:hover { color: var(--ink); }
+
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 32px;
+    color: var(--purple);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    margin-bottom: 40px;
+  }
+
+  /* Policy Content Styling */
+  .policy-content h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    color: var(--purple);
+    margin-top: 32px;
+    margin-bottom: 12px;
+  }
+  .policy-content p {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .policy-content ul {
+    margin-left: 20px;
+    margin-bottom: 16px;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .policy-content li {
+    margin-bottom: 8px;
+  }
+  .policy-content strong {
+    color: var(--ink);
+  }
+
+  @media(max-width: 600px) {
+    .container { padding: 32px 24px; }
+    h1 { font-size: 28px; }
+  }
+
+  .callout { background: var(--light-purple); border-radius: 16px; padding: 20px 24px; margin: 24px 0; }
+  .callout p { color: var(--purple); margin: 0; font-size: 15px; }
+  .rule-grid { display: grid; gap: 12px; margin: 16px 0 24px; }
+  .rule { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: #FAFAFA; }
+  .rule h3 { font-family: 'Outfit', sans-serif; font-size: 16px; color: var(--ink); margin-bottom: 4px; }
+  .rule p { margin: 0; font-size: 14px; }
+  .related { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+  .related a { color: var(--purple); font-weight: 600; text-decoration: none; margin-right: 16px; white-space: nowrap; }
+  .related a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="logo">8mellow</div>
+    <a href="javascript:history.back()" class="back-btn" style="font-weight: 600; color: var(--purple);">← Go Back</a>
+  </div>
+
+  <h1>Community Guidelines</h1>
+  <p class="subtitle">Last updated: November 2026</p>
+
+  <div class="policy-content">
+    <div class="callout">
+      <p><strong>8mellow is a place to say what you never got to say, gently.</strong> These guidelines keep it safe for everyone who writes here and everyone who reads.</p>
+    </div>
+
+    <h2>The short version</h2>
+    <div class="rule-grid">
+      <div class="rule"><h3>💜 Be kind</h3><p>Speak about your own feelings. Do not use this space to hurt, shame or attack anyone.</p></div>
+      <div class="rule"><h3>🔒 Protect identities</h3><p>No real names, contact details or anything that could identify you or another person.</p></div>
+      <div class="rule"><h3>🚫 No harassment</h3><p>No bullying, threats, intimidation or repeated unwanted contact.</p></div>
+      <div class="rule"><h3>🙅 Respect "no"</h3><p>If someone does not want to talk, stop. If they block you, do not try to reach them another way.</p></div>
+      <div class="rule"><h3>🔞 Adults only</h3><p>You must be 18 or older. No sexual content, and nothing involving minors.</p></div>
+    </div>
+
+    <h2>1. Be kind</h2>
+    <p>Many messages here are apologies, thank-yous, goodbyes and hard truths. Write from your own experience and your own feelings. You can say how something affected you without insulting, mocking or blaming a person in a way meant to hurt them. When you read or reply, assume the other person is carrying something heavy.</p>
+
+    <h2>2. Do not identify people (no doxxing)</h2>
+    <p>Public messages are anonymous, and that protection only works if everyone keeps it that way. Do not share:</p>
+    <ul>
+      <li>Real names, nicknames or usernames from other platforms, of yourself or anyone else.</li>
+      <li>Phone numbers, email addresses, home or work addresses, or social media handles.</li>
+      <li>Details specific enough to point to one person, such as a full workplace, class or street.</li>
+      <li>Photos, screenshots or documents showing another person.</li>
+    </ul>
+    <p>Do not try to work out who wrote a message, and do not share guesses about who it might be. Keep it about the feelings, not the identity.</p>
+
+    <h2>3. No harassment, threats or hate</h2>
+    <ul>
+      <li>No threats of violence or harm, including "jokes" about hurting someone.</li>
+      <li>No bullying, name-calling, humiliation or pressure on someone to respond.</li>
+      <li>No hateful content targeting people for their race, ethnicity, religion, gender, sexual orientation, disability, age or any similar characteristic.</li>
+      <li>No encouraging anyone to harm themselves.</li>
+    </ul>
+
+    <h2>4. Private chats</h2>
+    <p>A private conversation begins only when someone chooses to reply. Replying is an invitation, not a promise of a relationship.</p>
+    <ul>
+      <li>It is always okay not to reply, to end a conversation, or to delete it from your inbox.</li>
+      <li>Do not pressure, guilt or repeatedly message someone who has gone quiet.</li>
+      <li>Do not ask for personal details, money, photos or to move the conversation to another app.</li>
+      <li>Do not use a private chat to threaten, blackmail or expose someone.</li>
+      <li>If you are blocked, that is final. Do not make a new account to contact the same person.</li>
+    </ul>
+
+    <h2>5. Adults only, and no sexual content</h2>
+    <p>8mellow is for people 18 and over. Sexual or explicit content is not allowed anywhere on the site. Anything that sexualizes or endangers a minor is removed immediately and may be reported to the authorities.</p>
+
+    <h2>6. No spam, scams or impersonation</h2>
+    <ul>
+      <li>No advertising, promotion, links to sell things, or requests for money.</li>
+      <li>No pretending to be another person, an 8mellow team member, or someone you are not.</li>
+      <li>No fake accounts, and no using more than one account to get around a block or a removal.</li>
+    </ul>
+
+    <h2>7. If you or someone else is in danger</h2>
+    <p>8mellow is not a crisis service. If you are thinking about harming yourself, or you are worried about someone's safety, please contact your local emergency number or a crisis line. You can find options on our <a href="safety.html" style="color: var(--purple); font-weight: 600;">Safety &amp; Support</a> page.</p>
+
+    <h2>8. Reporting and blocking</h2>
+    <p>If something breaks these guidelines, use <strong>Report this chat</strong> or <strong>Block this user</strong> in the Safety menu of any private conversation. Reports are reviewed by our safety team. You do not have to explain a block, and the other person is not told when you block them.</p>
+
+    <h2>9. What happens when the rules are broken</h2>
+    <p>Depending on how serious the problem is and whether it has happened before, we may:</p>
+    <ul>
+      <li>Hide or remove a message or conversation.</li>
+      <li>Send a warning.</li>
+      <li>Temporarily limit an account.</li>
+      <li>Permanently close an account.</li>
+      <li>Report serious threats, or anything involving minors, to the appropriate authorities.</li>
+    </ul>
+    <p>We may act without warning for serious violations. If you believe we made a mistake, email us at [support@8mellow.com] and we will take a second look.</p>
+
+    <h2>10. Updates</h2>
+    <p>As the community grows, these guidelines may change. We will update the date at the top of this page when they do.</p>
+
+    <div class="related">Also see: <a href="terms.html">Terms of Service</a><a href="privacy.html">Privacy Policy</a><a href="safety.html">Safety &amp; Support</a></div>
+  </div>
+
+</div>
+
+</body>
+</html>
