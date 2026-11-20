@@ -104,6 +104,17 @@
   .skel-pill{ width:110px; height:28px; border-radius:999px; margin-bottom:20px; }
   .skel-line{ height:16px; margin-bottom:12px; }
   .skel-foot{ display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line); padding-top:20px; margin-top:28px; }
+/* Empty states */
+  .empty-card{ text-align:center; padding:48px 20px; }
+  .empty-card svg{ width:170px; height:auto; margin-bottom:20px; animation:floaty 5s ease-in-out infinite; }
+  .empty-card.small{ padding:32px 20px; }
+  .empty-card.small svg{ width:120px; }
+  .empty-card h3{ font-family:'Outfit',sans-serif; font-size:22px; color:var(--purple); margin-bottom:8px; }
+  .empty-card p{ color:var(--muted); font-size:15px; max-width:340px; margin:0 auto 24px; }
+  .empty-btn{ display:inline-block; background:var(--purple); color:white; border:none; padding:14px 28px; border-radius:999px; font-family:'Outfit',sans-serif; font-size:15px; font-weight:600; text-decoration:none; cursor:pointer; transition:all .2s; }
+  .empty-btn:hover{ background:#482680; transform:translateY(-1px); }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+  @media (prefers-reduced-motion: reduce){ .empty-card svg{ animation:none; } }
 .feed-list{ display:flex; flex-direction:column; gap:24px; }
   .feed-card{
     background:white; border:1px solid var(--line); border-radius:20px; padding:32px; 
@@ -392,6 +403,19 @@
   }
 
   let allPosts = []; 
+  // Empty-state illustration
+  const ART_PINBOARD = `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><ellipse cx="100" cy="148" rx="52" ry="5" fill="#5B32A5" opacity=".08"/><rect x="30" y="24" width="140" height="108" rx="14" fill="#F3ECFC" stroke="#5B32A5" stroke-width="3"/><rect x="50" y="52" width="54" height="46" rx="6" fill="white" stroke="#5B32A5" stroke-width="2" stroke-dasharray="5 5" opacity=".7"/><rect x="116" y="68" width="36" height="30" rx="6" fill="white" stroke="#5B32A5" stroke-width="2" stroke-dasharray="5 5" opacity=".4"/><path d="M62 72h30M62 84h20" stroke="#5B32A5" stroke-width="3" stroke-linecap="round" opacity=".2"/><circle cx="77" cy="52" r="6.5" fill="#B8860B"/><circle cx="75" cy="50" r="2" fill="white" opacity=".6"/><circle cx="178" cy="30" r="5" fill="#7FFFD4"/><circle cx="22" cy="116" r="4" fill="#7FFFD4"/><path d="M184 112v10M179 117h10" stroke="#B8860B" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+
+  // Take the visitor to write a message (or sign up first)
+  async function goWrite() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    window.location.href = session ? 'write.html' : 'auth.html';
+  }
+
+  function showAllMessages() {
+    filterMessages('All', document.querySelector('#category-scroll .filter-chip'));
+  }
+
   let currentFilter = 'All';
 
   // 1. SIMPLIFIED FETCH: Removed the profiles join to ensure the wall loads
@@ -411,7 +435,7 @@
     }
 
     if (posts.length === 0) {
-      feedContainer.innerHTML = '<p style="text-align:center; color:#666;">No messages yet.</p>';
+      feedContainer.innerHTML = `<div class="empty-card">${ART_PINBOARD}<h3>The wall is quiet</h3><p>Be the first to say something you never got to say.</p><button class="empty-btn" onclick="goWrite()">Write a message</button></div>`;
       return;
     }
 
@@ -468,7 +492,7 @@
     }
 
     if (filteredPosts.length === 0) {
-      feedContainer.innerHTML = '<p style="text-align:center; color:#666; padding: 40px;">No messages in this category yet.</p>';
+      feedContainer.innerHTML = `<div class="empty-card small">${ART_PINBOARD}<h3>Nothing here yet</h3><p>No messages in this category yet.</p><button class="empty-btn" onclick="showAllMessages()">Show all messages</button></div>`;
       return;
     }
 

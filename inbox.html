@@ -46,6 +46,17 @@
   .skel-row{ display:flex; align-items:center; gap:16px; padding:20px; border:1px solid var(--line); border-radius:16px; background:#FAFAFA; margin-bottom:12px; }
   .skel-circle{ width:48px; height:48px; border-radius:50%; flex-shrink:0; }
   .skel-body{ flex:1; }
+  /* Empty states */
+  .empty-card{ text-align:center; padding:48px 20px; }
+  .empty-card svg{ width:170px; height:auto; margin-bottom:20px; animation:floaty 5s ease-in-out infinite; }
+  .empty-card.small{ padding:32px 20px; }
+  .empty-card.small svg{ width:120px; }
+  .empty-card h3{ font-family:'Outfit',sans-serif; font-size:22px; color:var(--purple); margin-bottom:8px; }
+  .empty-card p{ color:var(--muted); font-size:15px; max-width:340px; margin:0 auto 24px; }
+  .empty-btn{ display:inline-block; background:var(--purple); color:white; border:none; padding:14px 28px; border-radius:999px; font-family:'Outfit',sans-serif; font-size:15px; font-weight:600; text-decoration:none; cursor:pointer; transition:all .2s; }
+  .empty-btn:hover{ background:#482680; transform:translateY(-1px); }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+  @media (prefers-reduced-motion: reduce){ .empty-card svg{ animation:none; } }
   .empty-text { font-size: 14px; color: var(--muted); font-style: italic; padding: 10px 0; }
 
   .unread-dot {
@@ -159,6 +170,15 @@
 
     const chatsFromMyMessages = safeThreads.filter(t => t.author_id === user.id);
     const chatsIStarted = safeThreads.filter(t => t.replier_id === user.id);
+
+    // Nothing at all: show one friendly empty state instead of two small ones
+    if (chatsFromMyMessages.length === 0 && chatsIStarted.length === 0) {
+      const ART_ENVELOPE = `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><ellipse cx="100" cy="148" rx="56" ry="5" fill="#5B32A5" opacity=".08"/><rect x="56" y="34" width="88" height="66" rx="6" fill="white" stroke="#5B32A5" stroke-width="2.5"/><path d="M70 54h60M70 66h40" stroke="#5B32A5" stroke-width="3" stroke-linecap="round" opacity=".25"/><path d="M38 74L100 114L162 74V126a10 10 0 0 1-10 10H48a10 10 0 0 1-10-10Z" fill="#F3ECFC" stroke="#5B32A5" stroke-width="3" stroke-linejoin="round"/><path d="M38 74L100 114L162 74" stroke="#5B32A5" stroke-width="3" stroke-linejoin="round"/><circle cx="172" cy="40" r="5" fill="#7FFFD4"/><circle cx="26" cy="110" r="4" fill="#7FFFD4"/><path d="M28 40v10M23 45h10" stroke="#B8860B" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+      document.querySelectorAll('.section-label').forEach(el => el.style.display = 'none');
+      replierContainer.innerHTML = '';
+      authorContainer.innerHTML = `<div class="empty-card">${ART_ENVELOPE}<h3>No conversations yet</h3><p>When someone replies to a message, it will appear here.</p><a class="empty-btn" href="index.html">Explore the Wall</a></div>`;
+      return;
+    }
 
     function renderChatList(container, chatArray, isAuthorView) {
       if (chatArray.length === 0) {
