@@ -53,6 +53,41 @@
   .week-empty { font-size: 14px; color: var(--muted); font-style: italic; }
   .count-badge { display: inline-block; min-width: 20px; padding: 0 7px; margin-left: 6px; border-radius: 999px; background: var(--purple); color: white; font-size: 12px; font-weight: 600; line-height: 20px; text-align: center; vertical-align: middle; }
 
+  /* Feelings check-in */
+  .checkin-card { border: 1px solid var(--line); border-radius: 20px; padding: 22px 24px; background: #FFFFFF; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin-bottom: 32px; }
+  .checkin-note { font-size: 13px; color: var(--muted); margin: -4px 0 14px; }
+  .faces { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .face-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 6px; border: 1px solid var(--line); border-radius: 16px; background: #FAFAFA; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: var(--ink); cursor: pointer; transition: all 0.2s; }
+  .face-btn .emoji { font-size: 28px; line-height: 1.1; }
+  .face-btn:hover { border-color: var(--purple); background: white; transform: translateY(-2px); }
+  .face-btn[aria-pressed="true"] { border-color: var(--purple); background: var(--light-purple); color: var(--purple); }
+  .checkin-response { display: none; margin-top: 16px; padding: 16px 18px; border-radius: 14px; background: var(--light-purple); }
+  .checkin-response p { font-size: 15px; color: var(--ink); line-height: 1.55; margin-bottom: 14px; }
+  .checkin-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .checkin-actions a { padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1.5px solid var(--purple); color: var(--purple); background: white; transition: all 0.2s; }
+  .checkin-actions a:hover { background: var(--purple); color: white; }
+  .checkin-actions a.primary { background: var(--purple); color: white; }
+  .checkin-actions a.primary:hover { background: var(--purple-hover); }
+
+  /* From the wall today */
+  .wall-strip { display: none; margin-top: 40px; }
+  .wall-strip-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .wall-strip-head h3 { font-family: 'Outfit', sans-serif; font-size: 20px; color: var(--purple); }
+  .wall-strip-head a { font-size: 14px; font-weight: 600; color: var(--purple); text-decoration: none; }
+  .wall-strip-head a:hover { text-decoration: underline; }
+  .strip-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .strip-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 18px; padding: 18px; background: #FFFFFF; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+  .strip-cat { align-self: flex-start; background: var(--light-purple); color: var(--purple); padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+  .strip-text { font-size: 15px; line-height: 1.55; color: var(--ink); flex: 1; margin-bottom: 14px; }
+  .strip-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .strip-time { font-size: 12px; color: #999; }
+  .strip-actions { display: flex; align-items: center; gap: 8px; }
+  .strip-like { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border: 1.5px solid var(--line); border-radius: 999px; background: transparent; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+  .strip-like:hover { border-color: var(--purple); color: var(--purple); }
+  .strip-like.liked { background: var(--light-purple); border-color: var(--purple); color: var(--purple); }
+  .strip-reply { padding: 6px 12px; border: 1.5px solid var(--purple); border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--purple); text-decoration: none; }
+  .strip-reply:hover { background: var(--purple); color: white; }
+
   .dashboard-container {
     width: 100%; max-width: 1000px; 
     background: #FFFDF9; 
@@ -174,6 +209,10 @@
     .dashboard-container { padding: 32px 24px; }
     .dashboard-grid { grid-template-columns: 1fr; gap: 32px; }
     .today-row { grid-template-columns: 1fr; }
+    .strip-grid { grid-template-columns: 1fr; }
+    .face-btn { padding: 10px 2px; font-size: 11px; }
+    .face-btn .emoji { font-size: 24px; }
+    .faces { gap: 6px; }
     .draft-banner { flex-direction: column; align-items: flex-start; }
     .linked-column { max-height: 400px; }
     .top-header { flex-direction: column; align-items: flex-start; gap: 16px; }
@@ -254,6 +293,17 @@
     </div>
   </div>
 
+  <!-- HOW ARE YOU TODAY -->
+  <div class="checkin-card">
+    <div class="today-label">💭 How are you today?</div>
+    <p class="checkin-note">Just for you. Nothing you choose here is saved.</p>
+    <div class="faces" id="faces" role="group" aria-label="How are you feeling today?"></div>
+    <div class="checkin-response" id="checkin-response" role="status" aria-live="polite">
+      <p id="checkin-message"></p>
+      <div class="checkin-actions" id="checkin-actions"></div>
+    </div>
+  </div>
+
   <div class="dashboard-grid">
     
     <!-- LEFT COLUMN: CORE ACTIONS -->
@@ -285,6 +335,15 @@
 
     </div>
 
+  </div>
+
+  <!-- FROM THE WALL TODAY -->
+  <div class="wall-strip" id="wall-strip">
+    <div class="wall-strip-head">
+      <h3>🏠 From the wall today</h3>
+      <a href="index.html">See all →</a>
+    </div>
+    <div class="strip-grid" id="strip-grid"></div>
   </div>
 
   <div class="crisis-footer">
@@ -415,13 +474,163 @@
     }
   }
 
+  // ---------- How are you today? (nothing is saved) ----------
+  const FEELINGS = [
+    { emoji: '😊', label: 'Good', msg: 'That is lovely to hear. Good days are worth sharing. Is there someone you would like to thank?',
+      actions: [{ t: 'Write a thank you', href: 'write.html?category=thanks', primary: true }, { t: 'Read the wall', href: 'index.html' }] },
+    { emoji: '😌', label: 'Okay', msg: 'A steady day is a good day. If you feel like it, see what others are sharing.',
+      actions: [{ t: 'Explore the Wall', href: 'index.html', primary: true }, { t: 'Write something', href: 'write.html' }] },
+    { emoji: '😔', label: 'A bit low', msg: 'Thank you for being honest. Low days happen. Sometimes writing it down, even if you never post it, helps a little.',
+      actions: [{ t: 'Write it down', href: 'write.html?category=other', primary: true }, { t: 'Read the wall', href: 'index.html' }] },
+    { emoji: '😟', label: 'Heavy', msg: 'That sounds like a lot to carry. You do not have to carry it alone, and there are people ready to listen.',
+      actions: [{ t: 'See support options', href: 'safety.html', primary: true }, { t: 'Write it down', href: 'write.html?category=other' }] },
+    { emoji: '😢', label: 'Really hard', msg: 'That sounds really hard. You matter, and you do not have to go through it alone. Free, confidential support is available any time, day or night.',
+      actions: [{ t: 'Get support now', href: 'safety.html', primary: true }] }
+  ];
+
+  function buildCheckin() {
+    const faces = document.getElementById('faces');
+    FEELINGS.forEach((f, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'face-btn';
+      btn.setAttribute('aria-pressed', 'false');
+      const emoji = document.createElement('span');
+      emoji.className = 'emoji';
+      emoji.textContent = f.emoji;
+      btn.append(emoji, document.createTextNode(f.label));
+      btn.onclick = () => chooseFeeling(i);
+      faces.append(btn);
+    });
+  }
+
+  function chooseFeeling(index) {
+    const f = FEELINGS[index];
+    document.querySelectorAll('.face-btn').forEach((b, i) => b.setAttribute('aria-pressed', i === index ? 'true' : 'false'));
+    document.getElementById('checkin-message').textContent = f.msg;
+    const actions = document.getElementById('checkin-actions');
+    actions.textContent = '';
+    f.actions.forEach(a => {
+      const link = document.createElement('a');
+      link.href = a.href;
+      link.textContent = a.t;
+      if (a.primary) link.className = 'primary';
+      actions.append(link);
+    });
+    document.getElementById('checkin-response').style.display = 'block';
+  }
+
+  // ---------- From the wall today ----------
+  let stripUserId = null;
+  const stripBusy = new Set();
+
+  function paintStripLike(btn, post) {
+    btn.classList.toggle('liked', post.liked);
+    btn.querySelector('.h').textContent = post.liked ? '♥' : '♡';
+    btn.querySelector('.n').textContent = post.count;
+  }
+
+  async function toggleStripLike(btn, post) {
+    if (stripBusy.has(post.id)) return;
+    stripBusy.add(post.id);
+    const was = post.liked;
+    post.liked = !was;
+    post.count = Math.max(0, post.count + (was ? -1 : 1));
+    paintStripLike(btn, post);
+
+    const { error } = was
+      ? await supabaseClient.from('post_likes').delete().eq('post_id', post.id).eq('user_id', stripUserId)
+      : await supabaseClient.from('post_likes').insert([{ post_id: post.id, user_id: stripUserId }]);
+
+    if (error) {
+      post.liked = was;
+      post.count = Math.max(0, post.count + (was ? 1 : -1));
+      paintStripLike(btn, post);
+      alert('Could not save that: ' + error.message);
+    }
+    stripBusy.delete(post.id);
+  }
+
+  function makeStripCard(post) {
+    const card = document.createElement('div');
+    card.className = 'strip-card';
+
+    const cat = document.createElement('span');
+    cat.className = 'strip-cat';
+    cat.textContent = post.category;
+
+    const text = document.createElement('p');
+    text.className = 'strip-text';
+    text.textContent = post.content.length > 170 ? post.content.slice(0, 170).trimEnd() + '…' : post.content;
+
+    const foot = document.createElement('div');
+    foot.className = 'strip-foot';
+    const time = document.createElement('span');
+    time.className = 'strip-time';
+    time.textContent = timeAgo(post.created_at);
+
+    const actions = document.createElement('div');
+    actions.className = 'strip-actions';
+
+    const like = document.createElement('button');
+    like.type = 'button';
+    like.className = 'strip-like';
+    like.innerHTML = '<span class="h"></span> <span class="n"></span> Me too';
+    paintStripLike(like, post);
+    like.onclick = () => toggleStripLike(like, post);
+
+    const reply = document.createElement('a');
+    reply.className = 'strip-reply';
+    reply.href = 'chat.html?post_id=' + encodeURIComponent(post.id);
+    reply.textContent = 'Reply privately';
+
+    actions.append(like, reply);
+    foot.append(time, actions);
+    card.append(cat, text, foot);
+    return card;
+  }
+
+  async function loadWallStrip(user) {
+    try {
+      stripUserId = user.id;
+      const base = () => supabaseClient.from('posts')
+        .select('id, user_id, category, content, created_at')
+        .neq('status', 'hidden').neq('user_id', user.id)
+        .order('created_at', { ascending: false }).limit(30);
+
+      // Leave out posts the filter flagged as possibly heavy
+      let { data: posts, error } = await base().eq('flagged', false);
+      if (error) ({ data: posts } = await base());       // older database without that column
+      if (!posts) return;
+
+      const { data: blocks } = await supabaseClient.from('blocks').select('blocked_id').eq('blocker_id', user.id);
+      const blocked = (blocks || []).map(b => b.blocked_id);
+      const picked = posts.filter(p => !blocked.includes(p.user_id)).slice(0, 3);
+      if (!picked.length) return;
+
+      const { data: likes } = await supabaseClient.from('post_likes').select('post_id, user_id').in('post_id', picked.map(p => p.id));
+      picked.forEach(p => {
+        const mine = (likes || []).filter(l => l.post_id === p.id);
+        p.count = mine.length;
+        p.liked = mine.some(l => l.user_id === user.id);
+      });
+
+      const grid = document.getElementById('strip-grid');
+      grid.textContent = '';
+      picked.forEach(p => grid.append(makeStripCard(p)));
+      document.getElementById('wall-strip').style.display = 'block';
+    } catch (e) { /* the strip is optional: stay hidden if anything goes wrong */ }
+  }
+
   async function initDashboard() {
     showThought();
+    buildCheckin();
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) return;
     showGreeting(user);
     showDraft(user);
     loadWeek(user);
+    loadWallStrip(user);
   }
 
   function toggleAccountMenu(event) {
