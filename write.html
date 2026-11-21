@@ -400,6 +400,7 @@
       return;
     }
 
+    clearDraft();
     const wasFlagged = data && data[0] && data[0].flagged;
     if (wasFlagged) {
       // Posted, but it may be a heavy message: offer support gently
@@ -419,6 +420,58 @@
     introBox.innerHTML = `<strong>${title}</strong> — ${desc}`;
     introBox.style.display = 'block';
   }
+
+  // 5. Drafts (saved in this browser only) and category chosen from the dashboard
+  const DRAFT_KEY = '8mellow_draft';
+  const CATEGORY_KEYS = { sorry: 'sorry', unfair: 'fair', forgive: 'forgive', thanks: 'thank you', explain: 'explain', reconnect: 'reconnect', goodbye: 'goodbye', regret: 'regret', impact: 'what it did', other: 'something else' };
+  let draftUid = null;
+  let draftTimer = null;
+
+  function allChips() { return Array.from(document.querySelectorAll('.category-chip')); }
+  function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch (e) {} }
+
+  function saveDraftNow(removeIfEmpty) {
+    if (!draftUid) return;
+    try {
+      const content = textarea.value;
+      if (!content.trim()) { if (removeIfEmpty) localStorage.removeItem(DRAFT_KEY); return; }
+      const active = document.querySelector('.category-chip.active');
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({
+        uid: draftUid, content: content, category: active ? active.innerText : '', savedAt: Date.now()
+      }));
+    } catch (e) {}
+  }
+  function scheduleDraftSave(removeIfEmpty) {
+    clearTimeout(draftTimer);
+    draftTimer = setTimeout(() => saveDraftNow(removeIfEmpty), 500);
+  }
+  textarea.addEventListener('input', () => scheduleDraftSave(true));
+  allChips().forEach(c => c.addEventListener('click', () => scheduleDraftSave(false)));
+
+  (async function initDraft() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return;
+    draftUid = user.id;
+
+    // Came from "Today's thought": just pick the category
+    const wanted = new URLSearchParams(window.location.search).get('category');
+    if (wanted && CATEGORY_KEYS[wanted]) {
+      const chip = allChips().find(c => c.innerText.toLowerCase().includes(CATEGORY_KEYS[wanted]));
+      if (chip) chip.click();
+      return;
+    }
+
+    // Otherwise bring back an unfinished message (this account only, up to 7 days old)
+    try {
+      const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+      if (d && d.uid === user.id && d.content && Date.now() - d.savedAt < 7 * 24 * 3600 * 1000 && !textarea.value) {
+        textarea.value = d.content;
+        charCount.textContent = `${textarea.value.length} / 2000`;
+        const chip = allChips().find(c => c.innerText === d.category);
+        if (chip) chip.click();
+      }
+    } catch (e) {}
+  })();
 </script>
 
 <script src="idle-timeout.js"></script>

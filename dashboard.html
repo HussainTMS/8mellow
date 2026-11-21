@@ -24,6 +24,35 @@
     min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px;
   }
   
+  /* Time-of-day tint (afternoon uses the default colours) */
+  body[data-time="morning"] { background: radial-gradient(circle at 10% 20%, #FFF4D6 0%, transparent 50%), radial-gradient(circle at 90% 80%, #FFE3C2 0%, transparent 50%), radial-gradient(circle at 50% 50%, #FFFBF0 0%, transparent 60%), #FFFAF0; }
+  body[data-time="evening"] { background: radial-gradient(circle at 10% 20%, #FFE3EC 0%, transparent 50%), radial-gradient(circle at 90% 80%, #E9DDF8 0%, transparent 50%), radial-gradient(circle at 50% 50%, #FDF3F8 0%, transparent 60%), #FBF3F7; }
+  body[data-time="night"] { background: radial-gradient(circle at 10% 20%, #E3DBF5 0%, transparent 50%), radial-gradient(circle at 90% 80%, #D5E3F6 0%, transparent 50%), radial-gradient(circle at 50% 50%, #F1EEFA 0%, transparent 60%), #F2F0FA; }
+
+  /* Unfinished message */
+  .draft-banner { display: none; align-items: center; justify-content: space-between; gap: 16px; background: #FFF9E8; border: 1px solid #F3E2A9; border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; }
+  .draft-text { display: flex; flex-direction: column; font-size: 13px; color: var(--muted); }
+  .draft-text strong { font-size: 15px; color: var(--ink); }
+  .draft-actions { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+  .draft-continue { background: var(--purple); color: white; padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 600; text-decoration: none; }
+  .draft-continue:hover { background: var(--purple-hover); }
+  .draft-discard { background: none; border: none; color: var(--muted); font-size: 13px; text-decoration: underline; cursor: pointer; }
+
+  /* Today's thought + Your week */
+  .today-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+  .today-card { border: 1px solid var(--line); border-radius: 20px; padding: 22px 24px; background: #FFFFFF; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+  .prompt-card { background: linear-gradient(135deg, #F7F1FE 0%, #EFFCF8 100%); border-color: #E5DAF5; }
+  .today-label { font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .prompt-text { font-family: 'Outfit', sans-serif; font-size: 20px; line-height: 1.35; color: var(--purple); margin-bottom: 16px; }
+  .prompt-btn { display: inline-block; background: var(--purple); color: white; padding: 11px 20px; border-radius: 999px; font-size: 14px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+  .prompt-btn:hover { background: var(--purple-hover); transform: translateY(-1px); }
+  .week-row { display: flex; align-items: center; gap: 10px; font-size: 15px; padding: 8px 0; color: var(--ink); text-decoration: none; }
+  .week-row + .week-row { border-top: 1px solid var(--line); }
+  .week-row strong { color: var(--purple); font-size: 18px; }
+  a.week-row:hover { color: var(--purple); }
+  .week-empty { font-size: 14px; color: var(--muted); font-style: italic; }
+  .count-badge { display: inline-block; min-width: 20px; padding: 0 7px; margin-left: 6px; border-radius: 999px; background: var(--purple); color: white; font-size: 12px; font-weight: 600; line-height: 20px; text-align: center; vertical-align: middle; }
+
   .dashboard-container {
     width: 100%; max-width: 1000px; 
     background: #FFFDF9; 
@@ -144,6 +173,8 @@
   @media(max-width: 768px) {
     .dashboard-container { padding: 32px 24px; }
     .dashboard-grid { grid-template-columns: 1fr; gap: 32px; }
+    .today-row { grid-template-columns: 1fr; }
+    .draft-banner { flex-direction: column; align-items: flex-start; }
     .linked-column { max-height: 400px; }
     .top-header { flex-direction: column; align-items: flex-start; gap: 16px; }
     .header-area { flex-direction: column; align-items: stretch; }
@@ -156,6 +187,10 @@
 <body>
 
 <script>
+  (function () {
+    const h = new Date().getHours();
+    document.body.dataset.time = h >= 5 && h < 12 ? 'morning' : h < 17 ? 'afternoon' : h < 21 ? 'evening' : 'night';
+  })();
   const replyToPost = localStorage.getItem('reply_to_post');
   if (replyToPost) {
     localStorage.removeItem('reply_to_post');
@@ -182,7 +217,7 @@
 
   <div class="header-area">
     <div>
-      <h1>Welcome back</h1>
+      <h1 id="greeting">Welcome back</h1>
       <p class="subtitle">What would you like to do today?</p>
     </div>
     <a href="index.html" class="explore-btn">
@@ -195,6 +230,28 @@
       </div>
       <div class="menu-text"><h3>Explore the Wall</h3><p>Read messages and show support.</p></div>
     </a>
+  </div>
+
+  <!-- UNFINISHED MESSAGE -->
+  <div class="draft-banner" id="draft-banner">
+    <div class="draft-text"><strong>📝 You have an unfinished message</strong><span id="draft-meta"></span></div>
+    <div class="draft-actions">
+      <a href="write.html" class="draft-continue">Continue writing</a>
+      <button type="button" class="draft-discard" onclick="discardDraft()">Discard</button>
+    </div>
+  </div>
+
+  <!-- TODAY'S THOUGHT + YOUR WEEK -->
+  <div class="today-row">
+    <div class="today-card prompt-card">
+      <div class="today-label">✨ Today’s thought</div>
+      <p class="prompt-text" id="prompt-text"></p>
+      <a href="write.html" class="prompt-btn" id="prompt-btn">Write about this</a>
+    </div>
+    <div class="today-card">
+      <div class="today-label">📅 Your week</div>
+      <div id="week-body"><p class="week-empty">Checking…</p></div>
+    </div>
   </div>
 
   <div class="dashboard-grid">
@@ -211,7 +268,7 @@
       </a>
       <a href="inbox.html" class="menu-item">
         <div class="menu-icon">💬</div>
-        <div class="menu-text"><h3>Inbox</h3><p>Check your private conversations.</p></div>
+        <div class="menu-text"><h3>Inbox<span class="count-badge" id="inbox-badge" style="display:none"></span></h3><p>Check your private conversations.</p></div>
       </a>
     </div>
 
@@ -250,6 +307,123 @@
   let allMatches = [];
   let displayedMatches = 10;
 
+  // ---------- Greeting, thought of the day, your week, unfinished message ----------
+  const DRAFT_KEY = '8mellow_draft';
+
+  const PROMPTS = [
+    { text: 'Is there someone you never properly thanked?', cat: 'thanks' },
+    { text: 'Is there an apology that has been waiting for you?', cat: 'sorry' },
+    { text: 'Who showed you kindness when you needed it most?', cat: 'thanks' },
+    { text: 'Is there a goodbye you never got to say?', cat: 'goodbye' },
+    { text: 'Is there something you are ready to let go of?', cat: 'forgive' },
+    { text: 'Is there something you wish someone understood about you?', cat: 'explain' },
+    { text: 'Who do you wonder about from time to time?', cat: 'reconnect' },
+    { text: 'What did someone teach you that you still carry?', cat: 'thanks' },
+    { text: 'Is there something you would do differently, if you could?', cat: 'regret' },
+    { text: 'What is one thing you wish you had said out loud?', cat: 'other' },
+    { text: 'Who would you message if you knew they would answer kindly?', cat: 'reconnect' },
+    { text: 'Is there a small moment from long ago that you are still grateful for?', cat: 'thanks' },
+    { text: 'Is there a mistake you have been carrying for too long?', cat: 'sorry' },
+    { text: 'Is there something that changed you that you have never told anyone?', cat: 'impact' }
+  ];
+
+  function showThought() {
+    const now = new Date();
+    const dayNumber = Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
+    const p = PROMPTS[dayNumber % PROMPTS.length];       // same thought all day, new one tomorrow
+    document.getElementById('prompt-text').textContent = p.text;
+    document.getElementById('prompt-btn').href = 'write.html?category=' + p.cat;
+  }
+
+  function showGreeting(user) {
+    const h = new Date().getHours();
+    const part = h >= 5 && h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : h < 21 ? 'Good evening' : 'Hello';
+    const name = ((user.user_metadata || {}).display_name || '').trim();
+    document.getElementById('greeting').textContent = name ? `${part}, ${name}` : part;
+  }
+
+  function showDraft(user) {
+    try {
+      const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+      if (!d || d.uid !== user.id || !d.content || !d.content.trim()) return;
+      if (Date.now() - d.savedAt > 7 * 24 * 3600 * 1000) { localStorage.removeItem(DRAFT_KEY); return; }
+      document.getElementById('draft-meta').textContent = 'Saved ' + timeAgo(new Date(d.savedAt).toISOString()) + '. Pick up where you left off.';
+      document.getElementById('draft-banner').style.display = 'flex';
+    } catch (e) {}
+  }
+  function discardDraft() {
+    if (!confirm('Discard your unfinished message?')) return;
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    document.getElementById('draft-banner').style.display = 'none';
+  }
+
+  function weekRow(strongText, label, href) {
+    const row = document.createElement(href ? 'a' : 'div');
+    row.className = 'week-row';
+    if (href) row.href = href;
+    const strong = document.createElement('strong');
+    strong.textContent = strongText;
+    row.append(strong, document.createTextNode(label));
+    return row;
+  }
+
+  async function loadWeek(user) {
+    const body = document.getElementById('week-body');
+    try {
+      // "Me too" on my posts in the last 7 days (not counting my own)
+      const { data: myPosts } = await supabaseClient.from('posts').select('id').eq('user_id', user.id);
+      const ids = (myPosts || []).map(p => p.id);
+      let likeCount = 0;
+      if (ids.length) {
+        const since = new Date(Date.now() - 7 * 86400000).toISOString();
+        const { count } = await supabaseClient.from('post_likes')
+          .select('post_id', { count: 'exact', head: true })
+          .in('post_id', ids).gte('created_at', since).neq('user_id', user.id);
+        likeCount = count || 0;
+      }
+
+      // Unread private conversations (same rules as the Inbox page)
+      const { data: blocks } = await supabaseClient.from('blocks').select('blocked_id').eq('blocker_id', user.id);
+      const blocked = (blocks || []).map(b => b.blocked_id);
+      const { data: threads } = await supabaseClient.from('threads')
+        .select('author_id, replier_id, unread_author, unread_replier, deleted_by_author, deleted_by_replier')
+        .or(`author_id.eq.${user.id},replier_id.eq.${user.id}`);
+      const unread = (threads || []).filter(t => {
+        const mineAsAuthor = t.author_id === user.id;
+        const other = mineAsAuthor ? t.replier_id : t.author_id;
+        if (blocked.includes(other)) return false;
+        return mineAsAuthor ? (t.unread_author && !t.deleted_by_author) : (t.unread_replier && !t.deleted_by_replier);
+      }).length;
+
+      // Badge on the Inbox card
+      const badge = document.getElementById('inbox-badge');
+      if (unread > 0) { badge.textContent = unread; badge.style.display = 'inline-block'; }
+
+      body.textContent = '';
+      if (likeCount > 0) body.append(weekRow('💜 ' + likeCount, ' “Me too” on your messages this week'));
+      if (unread > 0) body.append(weekRow('💬 ' + unread, unread === 1 ? ' unread conversation' : ' unread conversations', 'inbox.html'));
+      if (!body.children.length) {
+        const p = document.createElement('p');
+        p.className = 'week-empty';
+        p.textContent = ids.length
+          ? 'Nothing new this week, and that is okay. Your words are still out there.'
+          : 'Share your first message and your week will start to fill with warmth.';
+        body.append(p);
+      }
+    } catch (e) {
+      body.textContent = 'Could not load your week right now.';
+    }
+  }
+
+  async function initDashboard() {
+    showThought();
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return;
+    showGreeting(user);
+    showDraft(user);
+    loadWeek(user);
+  }
+
   function toggleAccountMenu(event) {
     event.stopPropagation();
     const open = document.getElementById('account-dropdown').classList.toggle('show');
@@ -265,6 +439,7 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAccountMenu(); });
 
   async function signOut() {
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
     await supabaseClient.auth.signOut();
     window.location.href = 'index.html';
   }
@@ -374,6 +549,7 @@
   }
 
   loadSuggestedMessages();
+  initDashboard();
 </script>
 
 <script src="idle-timeout.js"></script>

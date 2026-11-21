@@ -36,7 +36,7 @@
     if (signingOut) return;
     signingOut = true;
     try { await supabaseClient.auth.signOut(); } catch (e) {}
-    try { localStorage.removeItem(KEY); } catch (e) {}
+    try { localStorage.removeItem(KEY); localStorage.removeItem('8mellow_draft'); } catch (e) {}
     window.location.replace(LOGIN_URL);
   }
 
