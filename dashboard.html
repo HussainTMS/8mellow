@@ -47,6 +47,16 @@
   .signout-btn { padding: 10px 16px; border-radius: 999px; background: transparent; color: #A84136; border: 1px solid #A84136; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; }
   .signout-btn:hover { background: #A84136; color: white; }
 
+  .account-menu { position: relative; }
+  .account-btn { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; border: none; background: var(--light-purple); color: var(--purple); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; transition: background 0.2s; }
+  .account-btn:hover { background: #E5D9F5; }
+  .account-dropdown { display: none; position: absolute; right: 0; top: calc(100% + 8px); min-width: 210px; background: white; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 32px rgba(91,50,165,0.12); padding: 6px; z-index: 20; }
+  .account-dropdown.show { display: block; }
+  .account-dropdown a, .account-dropdown button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 14px; border: none; background: none; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; color: var(--ink); text-decoration: none; text-align: left; cursor: pointer; }
+  .account-dropdown a:hover, .account-dropdown button:hover { background: var(--light-purple); }
+  .account-dropdown hr { border: none; border-top: 1px solid var(--line); margin: 6px 4px; }
+  .account-dropdown .signout-item { color: #A84136; }
+  .account-dropdown .signout-item:hover { background: #FFF5F5; }
   .header-area { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 32px; }
   .header-area .explore-btn { flex-shrink: 0; min-width: 300px; }
   h1 { font-family: 'Outfit', sans-serif; font-size: 32px; color: var(--purple); margin-bottom: 8px; }
@@ -139,6 +149,7 @@
     .header-area { flex-direction: column; align-items: stretch; }
     .header-area .explore-btn { min-width: 0; }
     .header-actions { width: 100%; justify-content: flex-start; }
+    .account-dropdown { left: 0; right: auto; }
   }
 </style>
 </head>
@@ -157,9 +168,15 @@
   <div class="top-header">
     <div class="logo">8mellow</div>
     <div class="header-actions">
-      <a href="profile.html" class="profile-btn">👤 My Profile</a>
-      <a href="settings.html" class="profile-btn">⚙️ Settings</a>
-      <button onclick="signOut()" class="signout-btn">Sign Out</button>
+      <div class="account-menu">
+        <button type="button" class="account-btn" id="account-btn" onclick="toggleAccountMenu(event)" aria-haspopup="true" aria-expanded="false">👤 Account <span aria-hidden="true">▾</span></button>
+        <div class="account-dropdown" id="account-dropdown" role="menu">
+          <a href="profile.html" role="menuitem">👤 My Profile</a>
+          <a href="settings.html" role="menuitem">⚙️ Settings</a>
+          <hr>
+          <button type="button" class="signout-item" onclick="signOut()" role="menuitem">↩ Sign Out</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -232,6 +249,20 @@
 
   let allMatches = [];
   let displayedMatches = 10;
+
+  function toggleAccountMenu(event) {
+    event.stopPropagation();
+    const open = document.getElementById('account-dropdown').classList.toggle('show');
+    document.getElementById('account-btn').setAttribute('aria-expanded', open);
+  }
+  function closeAccountMenu() {
+    document.getElementById('account-dropdown').classList.remove('show');
+    document.getElementById('account-btn').setAttribute('aria-expanded', 'false');
+  }
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.account-menu')) closeAccountMenu();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAccountMenu(); });
 
   async function signOut() {
     await supabaseClient.auth.signOut();
