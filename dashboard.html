@@ -53,18 +53,21 @@
   .week-empty { font-size: 14px; color: var(--muted); font-style: italic; }
   .count-badge { display: inline-block; min-width: 20px; padding: 0 7px; margin-left: 6px; border-radius: 999px; background: var(--purple); color: white; font-size: 12px; font-weight: 600; line-height: 20px; text-align: center; vertical-align: middle; }
 
-  /* Feelings check-in */
-  .checkin-card { border: 1px solid var(--line); border-radius: 20px; padding: 22px 24px; background: #FFFFFF; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin-bottom: 32px; }
-  .checkin-note { font-size: 13px; color: var(--muted); margin: -4px 0 14px; }
-  .faces { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-  .face-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 6px; border: 1px solid var(--line); border-radius: 16px; background: #FAFAFA; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: var(--ink); cursor: pointer; transition: all 0.2s; }
-  .face-btn .emoji { font-size: 28px; line-height: 1.1; }
-  .face-btn:hover { border-color: var(--purple); background: white; transform: translateY(-2px); }
+  /* Feelings check-in (compact) */
+  .checkin-card { border: 1px solid var(--line); border-radius: 18px; padding: 14px 20px; background: #FFFFFF; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin-bottom: 28px; }
+  .checkin-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .checkin-head .today-label { margin-bottom: 2px; }
+  .checkin-note { font-size: 12px; color: var(--muted); margin: 0; }
+  .faces { display: flex; gap: 6px; }
+  .face-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 66px; padding: 8px 8px 6px; border: 1px solid transparent; border-radius: 14px; background: none; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+  .face-btn svg { width: 36px; height: 36px; transition: transform 0.2s; }
+  .face-btn:hover { background: var(--light-purple); color: var(--purple); }
+  .face-btn:hover svg { transform: scale(1.08); }
   .face-btn[aria-pressed="true"] { border-color: var(--purple); background: var(--light-purple); color: var(--purple); }
-  .checkin-response { display: none; margin-top: 16px; padding: 16px 18px; border-radius: 14px; background: var(--light-purple); }
-  .checkin-response p { font-size: 15px; color: var(--ink); line-height: 1.55; margin-bottom: 14px; }
-  .checkin-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-  .checkin-actions a { padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1.5px solid var(--purple); color: var(--purple); background: white; transition: all 0.2s; }
+  .checkin-response { display: none; margin-top: 12px; padding: 12px 16px; border-radius: 12px; background: var(--light-purple); }
+  .checkin-response p { font-size: 14px; color: var(--ink); line-height: 1.5; margin-bottom: 10px; }
+  .checkin-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .checkin-actions a { padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 600; text-decoration: none; border: 1.5px solid var(--purple); color: var(--purple); background: white; transition: all 0.2s; }
   .checkin-actions a:hover { background: var(--purple); color: white; }
   .checkin-actions a.primary { background: var(--purple); color: white; }
   .checkin-actions a.primary:hover { background: var(--purple-hover); }
@@ -210,9 +213,10 @@
     .dashboard-grid { grid-template-columns: 1fr; gap: 32px; }
     .today-row { grid-template-columns: 1fr; }
     .strip-grid { grid-template-columns: 1fr; }
-    .face-btn { padding: 10px 2px; font-size: 11px; }
-    .face-btn .emoji { font-size: 24px; }
-    .faces { gap: 6px; }
+    .checkin-row { flex-direction: column; align-items: stretch; gap: 10px; }
+    .faces { justify-content: space-between; gap: 2px; }
+    .face-btn { min-width: 0; flex: 1; padding: 8px 2px 6px; }
+    .face-btn svg { width: 32px; height: 32px; }
     .draft-banner { flex-direction: column; align-items: flex-start; }
     .linked-column { max-height: 400px; }
     .top-header { flex-direction: column; align-items: flex-start; gap: 16px; }
@@ -295,9 +299,13 @@
 
   <!-- HOW ARE YOU TODAY -->
   <div class="checkin-card">
-    <div class="today-label">💭 How are you today?</div>
-    <p class="checkin-note">Just for you. Nothing you choose here is saved.</p>
-    <div class="faces" id="faces" role="group" aria-label="How are you feeling today?"></div>
+    <div class="checkin-row">
+      <div class="checkin-head">
+        <div class="today-label">How are you today?</div>
+        <p class="checkin-note">Private. Nothing you choose here is saved.</p>
+      </div>
+      <div class="faces" id="faces" role="group" aria-label="How are you feeling today?"></div>
+    </div>
     <div class="checkin-response" id="checkin-response" role="status" aria-live="polite">
       <p id="checkin-message"></p>
       <div class="checkin-actions" id="checkin-actions"></div>
@@ -475,16 +483,25 @@
   }
 
   // ---------- How are you today? (nothing is saved) ----------
+  const FACES = {
+
+    good: '<svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="#FFF1BF" stroke="#5B32A5" stroke-width="2"/><circle cx="12.5" cy="15" r="1.9" fill="#5B32A5"/><circle cx="23.5" cy="15" r="1.9" fill="#5B32A5"/><path d="M11 21.5 Q18 29 25 21.5" stroke="#5B32A5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    okay: '<svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="#DDF6EC" stroke="#5B32A5" stroke-width="2"/><circle cx="12.5" cy="15" r="1.9" fill="#5B32A5"/><circle cx="23.5" cy="15" r="1.9" fill="#5B32A5"/><path d="M12 23.5 H24" stroke="#5B32A5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    low: '<svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="#EBE4F7" stroke="#5B32A5" stroke-width="2"/><circle cx="12.5" cy="15" r="1.9" fill="#5B32A5"/><circle cx="23.5" cy="15" r="1.9" fill="#5B32A5"/><path d="M12 25 Q18 20 24 25" stroke="#5B32A5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    heavy: '<svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="#DCE9F8" stroke="#5B32A5" stroke-width="2"/><circle cx="12.5" cy="16" r="1.9" fill="#5B32A5"/><circle cx="23.5" cy="16" r="1.9" fill="#5B32A5"/><path d="M8.5 13.5 L15 10.5 M27.5 13.5 L21 10.5" stroke="#5B32A5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 25 Q13.5 22.5 16 25 T21 25 T25 25" stroke="#5B32A5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    hard: '<svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="#E4E0F3" stroke="#5B32A5" stroke-width="2"/><path d="M9.5 15.5 Q12.5 12.5 15.5 15.5 M20.5 15.5 Q23.5 12.5 26.5 15.5" stroke="#5B32A5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 19 Q9.8 22.2 12 24 Q14.2 22.2 12 19Z" fill="#7FB8E8" stroke="#5B8FC4" stroke-width="1"/><path d="M12.5 28 Q18 23 23.5 28" stroke="#5B32A5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+
   const FEELINGS = [
-    { emoji: '😊', label: 'Good', msg: 'That is lovely to hear. Good days are worth sharing. Is there someone you would like to thank?',
+    { face: 'good', label: 'Good', msg: 'That is lovely to hear. Good days are worth sharing. Is there someone you would like to thank?',
       actions: [{ t: 'Write a thank you', href: 'write.html?category=thanks', primary: true }, { t: 'Read the wall', href: 'index.html' }] },
-    { emoji: '😌', label: 'Okay', msg: 'A steady day is a good day. If you feel like it, see what others are sharing.',
+    { face: 'okay', label: 'Okay', msg: 'A steady day is a good day. If you feel like it, see what others are sharing.',
       actions: [{ t: 'Explore the Wall', href: 'index.html', primary: true }, { t: 'Write something', href: 'write.html' }] },
-    { emoji: '😔', label: 'A bit low', msg: 'Thank you for being honest. Low days happen. Sometimes writing it down, even if you never post it, helps a little.',
+    { face: 'low', label: 'A bit low', msg: 'Thank you for being honest. Low days happen. Sometimes writing it down, even if you never post it, helps a little.',
       actions: [{ t: 'Write it down', href: 'write.html?category=other', primary: true }, { t: 'Read the wall', href: 'index.html' }] },
-    { emoji: '😟', label: 'Heavy', msg: 'That sounds like a lot to carry. You do not have to carry it alone, and there are people ready to listen.',
+    { face: 'heavy', label: 'Heavy', msg: 'That sounds like a lot to carry. You do not have to carry it alone, and there are people ready to listen.',
       actions: [{ t: 'See support options', href: 'safety.html', primary: true }, { t: 'Write it down', href: 'write.html?category=other' }] },
-    { emoji: '😢', label: 'Really hard', msg: 'That sounds really hard. You matter, and you do not have to go through it alone. Free, confidential support is available any time, day or night.',
+    { face: 'hard', label: 'Really hard', msg: 'That sounds really hard. You matter, and you do not have to go through it alone. Free, confidential support is available any time, day or night.',
       actions: [{ t: 'Get support now', href: 'safety.html', primary: true }] }
   ];
 
@@ -495,10 +512,8 @@
       btn.type = 'button';
       btn.className = 'face-btn';
       btn.setAttribute('aria-pressed', 'false');
-      const emoji = document.createElement('span');
-      emoji.className = 'emoji';
-      emoji.textContent = f.emoji;
-      btn.append(emoji, document.createTextNode(f.label));
+      btn.innerHTML = FACES[f.face];                       // our own drawings, not user text
+      btn.append(document.createTextNode(f.label));
       btn.onclick = () => chooseFeeling(i);
       faces.append(btn);
     });
