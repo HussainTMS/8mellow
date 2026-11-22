@@ -64,6 +64,12 @@
   .face-btn:hover { background: var(--light-purple); color: var(--purple); }
   .face-btn:hover svg { transform: scale(1.08); }
   .face-btn[aria-pressed="true"] { border-color: var(--purple); background: var(--light-purple); color: var(--purple); }
+  /* "dots" style: text labels with a small coloured dot */
+  .faces.dots { flex-wrap: wrap; gap: 8px; }
+  .faces.dots .face-btn { flex-direction: row; min-width: 0; gap: 8px; padding: 8px 14px; border: 1px solid var(--line); background: #FAFAFA; font-size: 13px; color: var(--ink); }
+  .faces.dots .face-btn:hover { background: var(--light-purple); color: var(--purple); }
+  .faces.dots .face-btn[aria-pressed="true"] { border-color: var(--purple); background: var(--light-purple); color: var(--purple); }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   .checkin-response { display: none; margin-top: 12px; padding: 12px 16px; border-radius: 12px; background: var(--light-purple); }
   .checkin-response p { font-size: 14px; color: var(--ink); line-height: 1.5; margin-bottom: 10px; }
   .checkin-actions { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -217,6 +223,8 @@
     .faces { justify-content: space-between; gap: 2px; }
     .face-btn { min-width: 0; flex: 1; padding: 8px 2px 6px; }
     .face-btn svg { width: 32px; height: 32px; }
+    .faces.dots { justify-content: flex-start; }
+    .faces.dots .face-btn { flex: 0 0 auto; padding: 8px 12px; }
     .draft-banner { flex-direction: column; align-items: flex-start; }
     .linked-column { max-height: 400px; }
     .top-header { flex-direction: column; align-items: flex-start; gap: 16px; }
@@ -492,6 +500,10 @@
     hard: '<svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="#E4E0F3" stroke="#5B32A5" stroke-width="2"/><path d="M9.5 15.5 Q12.5 12.5 15.5 15.5 M20.5 15.5 Q23.5 12.5 26.5 15.5" stroke="#5B32A5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 19 Q9.8 22.2 12 24 Q14.2 22.2 12 19Z" fill="#7FB8E8" stroke="#5B8FC4" stroke-width="1"/><path d="M12.5 28 Q18 23 23.5 28" stroke="#5B32A5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
+  // 'dots' = text with a small coloured dot, 'faces' = drawn faces. Change this one word to switch.
+  const CHECKIN_STYLE = 'dots';
+  const DOT_COLOURS = { good: '#F2B93B', okay: '#4CC9A0', low: '#9C8BD0', heavy: '#5B9BDB', hard: '#E27C8D' };
+
   const FEELINGS = [
     { face: 'good', label: 'Good', msg: 'That is lovely to hear. Good days are worth sharing. Is there someone you would like to thank?',
       actions: [{ t: 'Write a thank you', href: 'write.html?category=thanks', primary: true }, { t: 'Read the wall', href: 'index.html' }] },
@@ -507,12 +519,20 @@
 
   function buildCheckin() {
     const faces = document.getElementById('faces');
+    if (CHECKIN_STYLE === 'dots') faces.classList.add('dots');
     FEELINGS.forEach((f, i) => {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'face-btn';
       btn.setAttribute('aria-pressed', 'false');
-      btn.innerHTML = FACES[f.face];                       // our own drawings, not user text
+      if (CHECKIN_STYLE === 'dots') {
+        const dot = document.createElement('span');
+        dot.className = 'dot';
+        dot.style.background = DOT_COLOURS[f.face];
+        btn.append(dot);
+      } else {
+        btn.innerHTML = FACES[f.face];                   // our own drawings, not user text
+      }
       btn.append(document.createTextNode(f.label));
       btn.onclick = () => chooseFeeling(i);
       faces.append(btn);
