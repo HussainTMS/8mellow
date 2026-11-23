@@ -195,6 +195,11 @@
     margin-top: 8px;
   }
 
+  /* Calm minute link */
+  .calm-row { display:flex; align-items:center; gap:8px; margin-top:6px; font-size:14px; color:var(--muted); }
+  .calm-link { background:none; border:none; padding:6px 0; font-family:inherit; font-size:14px; font-weight:600; color:var(--purple); cursor:pointer; text-decoration:underline; }
+  .calm-link:hover { color:var(--purple-hover); }
+
   /* Safety Warning */
   .warning {
     background: #FFF9F0;
@@ -310,6 +315,7 @@
     <textarea placeholder="What do you wish you could say to them now?"></textarea>
     
     <div class="char-count">0 / 2000</div>
+    <div class="calm-row">Finding this hard to write? <button type="button" class="calm-link" onclick="openCalm()">Take a calm minute</button></div>
     <div class="post-error" id="post-error" role="alert"></div>
 
     <!-- Safety Warning -->
@@ -478,6 +484,7 @@
   })();
 </script>
 
+<script src="calm.js"></script>
 <script src="idle-timeout.js"></script>
 </body>
 </html>
