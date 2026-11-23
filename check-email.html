@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — Check Your Email</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#5B32A5;
+    --purple-hover:#482680;
+    --light-purple:#F3ECFC;
+    --mint:#7FFFD4; 
+    --dark-gold:#B8860B; 
+    --ink:#1A1A1A;
+    --muted:#666666;
+    --line:#EAEAEA;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  
+  body{
+    background: 
+      radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #F9F5FF 0%, transparent 60%),
+      #FAF7F2;
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .setup-container {
+    width: 100%;
+    max-width: 480px;
+    background: white;
+    border-radius: 24px;
+    padding: 48px;
+    box-shadow: 0 20px 60px rgba(91,50,165,0.06);
+    border: 1px solid rgba(255,255,255,0.8);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .setup-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--purple), var(--mint));
+  }
+
+  .logo {
+    font-family:'Outfit',sans-serif; 
+    font-size:32px; 
+    font-weight:700; 
+    color:var(--dark-gold); 
+    letter-spacing: -0.03em;
+    padding-bottom: 2px; 
+    border-bottom: 4px solid var(--mint); 
+    display: inline-block;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 28px;
+    color: var(--purple);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 24px;
+  }
+
+  .email-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--light-purple);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    color: var(--purple);
+  }
+  .email-icon svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .instruction-text {
+    font-size: 16px; 
+    color: var(--purple); 
+    font-weight: 600; 
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .info-box {
+    background: #FAFAFA; 
+    border: 1px solid var(--line); 
+    border-radius: 12px; 
+    padding: 16px; 
+    font-size: 14px; 
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  /* Back Button Area */
+  .back-area {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+  }
+  .back-text {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .btn-back {
+    background: transparent;
+    border: none;
+    color: var(--purple);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.2s;
+  }
+  .btn-back:hover {
+    color: var(--purple-hover);
+  }
+
+  @media(max-width: 600px) {
+    .setup-container { padding: 32px 24px; }
+    h1 { font-size: 24px; }
+  }
+
+  .btn-resend { display:block; width:100%; margin-bottom:12px; padding:14px; border:1.5px solid var(--purple); border-radius:12px; background:white; color:var(--purple); font-family:'Outfit',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn-resend:hover:not(:disabled) { background:var(--light-purple); }
+  .btn-resend:disabled { border-color:var(--line); color:#999; cursor:not-allowed; }
+  .resend-status { font-size:14px; font-weight:600; min-height:22px; margin-bottom:16px; }
+  .resend-status.ok { color:#2E7D32; }
+  .resend-status.err { color:#B3402F; }
+  .sent-to { word-break:break-all; color:var(--ink); }
+  a.btn-back { display:inline-block; }
+</style>
+</head>
+<body>
+
+<div class="setup-container">
+  <div class="logo">8mellow</div>
+
+  <div class="email-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+      <polyline points="22,6 12,13 2,6"></polyline>
+    </svg>
+  </div>
+
+  <h1>Check your email</h1>
+  <p class="subtitle">We sent a secure sign-in link to <strong class="sent-to" id="sent-to">your email</strong>.</p>
+
+  <p class="instruction-text">Open the email and tap the link to sign in. You can close this tab afterwards.</p>
+
+  <div class="info-box">
+    The link works once and expires after a short time. If you do not see it, check your spam folder.
+  </div>
+
+  <button type="button" class="btn-resend" id="resend-btn">Send the link again</button>
+  <p class="resend-status" id="resend-status" role="status"></p>
+
+  <div class="back-area">
+    <p class="back-text">Wrong email address?</p>
+    <a href="auth.html" class="btn-back" id="back-link">Go back</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4';
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+  const SITE = 'https://hussaintms.github.io/8mellow/';
+
+  // A new sign-in starts with a fresh inactivity timer
+  try { localStorage.removeItem('8mellow_last_activity'); } catch (e) {}
+
+  let email = null, mode = 'login';
+  try {
+    email = sessionStorage.getItem('pending_email');
+    mode = sessionStorage.getItem('pending_mode') || 'login';
+  } catch (e) {}
+
+  if (!email) {
+    window.location.replace('auth.html?mode=login');
+  } else {
+    document.getElementById('sent-to').textContent = email;      // textContent: never inserts HTML
+    document.getElementById('back-link').href = 'auth.html?mode=' + (mode === 'signup' ? 'signup' : 'login');
+  }
+
+  // If the link is opened in another tab of this browser, this tab follows along
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) window.location.replace('dashboard.html');
+  });
+
+  // "Send again" with a 60 second wait
+  const resendBtn = document.getElementById('resend-btn');
+  const statusEl = document.getElementById('resend-status');
+  let waitTimer = null;
+
+  function startCooldown(seconds) {
+    let left = seconds;
+    resendBtn.disabled = true;
+    resendBtn.textContent = 'Send again in ' + left + 's';
+    clearInterval(waitTimer);
+    waitTimer = setInterval(() => {
+      left--;
+      if (left <= 0) {
+        clearInterval(waitTimer);
+        resendBtn.disabled = false;
+        resendBtn.textContent = 'Send the link again';
+      } else {
+        resendBtn.textContent = 'Send again in ' + left + 's';
+      }
+    }, 1000);
+  }
+
+  resendBtn.addEventListener('click', async () => {
+    if (!email) return;
+    statusEl.className = 'resend-status';
+    statusEl.textContent = '';
+    startCooldown(60);
+
+    let replyTo = null;
+    try { replyTo = localStorage.getItem('reply_to_post'); } catch (e) {}
+    const redirect = SITE + 'dashboard.html' + (replyTo ? '?reply_to=' + encodeURIComponent(replyTo) : '');
+
+    const { error } = await supabaseClient.auth.signInWithOtp({
+      email: email,
+      options: { shouldCreateUser: mode === 'signup', emailRedirectTo: redirect }
+    });
+
+    const unknownAccount = mode !== 'signup' && error && /not allowed|not found|signups/i.test(error.message);
+    if (error && !unknownAccount) {
+      statusEl.className = 'resend-status err';
+      statusEl.textContent = 'Could not send it: ' + error.message;
+    } else {
+      statusEl.className = 'resend-status ok';
+      statusEl.textContent = 'Sent. Please check your inbox.';
+    }
+  });
+
+  startCooldown(30);   // we just sent one, so wait a moment before offering another
+</script>
+
+</body>
+</html>

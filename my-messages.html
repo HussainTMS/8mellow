@@ -137,6 +137,11 @@
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE YOUR KEY IS HERE
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+  // Makes text safe to place inside HTML (stops pasted code from running)
+  function esc(s) {
+    return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
   let currentUser = null;
 
   async function loadMyMessages() {
@@ -187,13 +192,13 @@
       <div class="message-card" id="post-${post.id}">
         <div class="card-top">
           <div class="card-meta">
-            <span class="category-badge">${post.category}</span>
+            <span class="category-badge">${esc(post.category)}</span>
             <span>${timeAgo(post.created_at)}</span>
           </div>
           <span class="status-badge status-${post.status || 'public'}">${post.status || 'public'}</span>
         </div>
         
-        <p class="card-text">${post.content}</p>
+        <p class="card-text">${esc(post.content)}</p>
 
         <div class="card-footer">
                  <div class="card-stats">

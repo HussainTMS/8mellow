@@ -100,6 +100,11 @@
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE KEY IS HERE
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+  // Makes text safe to place inside HTML (stops pasted code from running)
+  function esc(s) {
+    return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
   let currentUser = null;
   let currentThreadId = null;
   let currentPostId = null;
@@ -227,7 +232,7 @@
 
   async function startOrLoadThread() {
     const { data: post } = await supabaseClient.from('posts').select('*').eq('id', currentPostId).single();
-    if (post) { postContext.innerHTML = `Replying to: <strong>${post.category}</strong> · "${post.content.substring(0, 40)}..."`; }
+    if (post) { postContext.innerHTML = `Replying to: <strong>${esc(post.category)}</strong> · "${esc(post.content.substring(0, 40))}..."`; }
 
     const { data: existingThread } = await supabaseClient.from('threads').select('id').eq('post_id', currentPostId).eq('replier_id', currentUser.id).single();
 
@@ -264,7 +269,7 @@
          post = res.data;
        }
        if (post) {
-         postContext.innerHTML = `Replying to: <strong>${post.category}</strong> · "${post.content.substring(0, 40)}..."`;
+         postContext.innerHTML = `Replying to: <strong>${esc(post.category)}</strong> · "${esc(post.content.substring(0, 40))}..."`;
        } else {
          postContext.textContent = 'The original message was deleted';
        }
@@ -287,7 +292,7 @@
     const formattedDate = timeAgo(msg.created_at);
 
     bubble.innerHTML = `
-      ${msg.content}
+      ${esc(msg.content)}
       <span class="bubble-time">${formattedDate}</span>
     `;
     chatArea.appendChild(bubble);

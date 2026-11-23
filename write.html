@@ -392,7 +392,7 @@
       } else if (error.message.includes('blocked_term')) {
         msg = 'Your message includes language we do not allow on 8mellow. Please reword it and try again. You can read more in our <a href="guidelines.html" onclick="window.open(this.href, \'_blank\'); return false;">Community Guidelines</a>.';
       } else {
-        msg = 'Sorry, we could not post your message: ' + error.message;
+        msg = 'Sorry, we could not post your message: ' + String(error.message).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
       }
       errorBox.innerHTML = msg;
       errorBox.style.display = 'block';

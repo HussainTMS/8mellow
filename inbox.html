@@ -128,6 +128,11 @@
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4'; // <-- MAKE SURE KEY IS HERE
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+  // Makes text safe to place inside HTML (stops pasted code from running)
+  function esc(s) {
+    return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
   async function loadInbox() {
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) { window.location.href = 'auth.html?mode=login'; return; }
@@ -200,9 +205,9 @@
         <a href="chat.html?thread_id=${thread.id}" class="chat-row">
           <div class="chat-icon">💬</div>
           <div class="chat-details">
-            <div class="chat-title">${thread.posts ? 'Re: "' + thread.posts.content.substring(0, 45) + '..."' : 'Original message was deleted'}</div>
+            <div class="chat-title">${thread.posts ? 'Re: "' + esc(thread.posts.content.substring(0, 45)) + '..."' : 'Original message was deleted'}</div>
             <div class="chat-preview">
-              <span>${thread.posts ? thread.posts.category : 'Private conversation'}</span>
+              <span>${thread.posts ? esc(thread.posts.category) : 'Private conversation'}</span>
             </div>
           </div>
           ${isUnread ? '<div class="unread-dot"></div>' : ''}
