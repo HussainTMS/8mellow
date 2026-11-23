@@ -4,6 +4,19 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>8mellow — Some things are worth saying</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#5B32A5">
+<meta name="description" content="Share the things you never got to say, anonymously, and connect privately with people who understand.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="8mellow">
+<meta property="og:title" content="8mellow — Some things are worth saying">
+<meta property="og:description" content="Share the things you never got to say, anonymously, and connect privately with people who understand.">
+<meta property="og:url" content="https://hussaintms.github.io/8mellow/">
+<meta property="og:image" content="https://hussaintms.github.io/8mellow/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -645,7 +658,7 @@
       const username = p.username || 'Anonymous';
       const edu = chips('🎓', p.education);
       const loc = chips('📍', p.current_location);
-      const bio = p.bio ? `<div style="font-style: italic; margin-top: 4px; font-size: 11px; color: #888;">"${hl(p.bio)}"</div>` : '';
+      const bio = p.bio ? `<div style="font-style: italic; margin-top: 4px; font-size: 11px; color: #6B6B6B;">"${hl(p.bio)}"</div>` : '';
 
       return `
       <div class="feed-card">

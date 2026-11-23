@@ -4,6 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>8mellow — Check Your Email</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#5B32A5">
+<meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -150,9 +154,9 @@
 
   .btn-resend { display:block; width:100%; margin-bottom:12px; padding:14px; border:1.5px solid var(--purple); border-radius:12px; background:white; color:var(--purple); font-family:'Outfit',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:all .2s; }
   .btn-resend:hover:not(:disabled) { background:var(--light-purple); }
-  .btn-resend:disabled { border-color:var(--line); color:#999; cursor:not-allowed; }
+  .btn-resend:disabled { border-color:var(--line); color:#6B6B6B; cursor:not-allowed; }
   .resend-status { font-size:14px; font-weight:600; min-height:22px; margin-bottom:16px; }
-  .resend-status.ok { color:#2E7D32; }
+  .resend-status.ok { color:#1B5E20; }
   .resend-status.err { color:#B3402F; }
   .sent-to { word-break:break-all; color:var(--ink); }
   a.btn-back { display:inline-block; }
@@ -211,7 +215,6 @@
   if (!email) {
     window.location.replace('auth.html?mode=login');
   } else {
-    if (mode !== 'signup') document.getElementById('no-account-hint').style.display = 'block';
     document.getElementById('sent-to').textContent = email;      // textContent: never inserts HTML
     document.getElementById('back-link').href = 'auth.html?mode=' + (mode === 'signup' ? 'signup' : 'login');
   }
