@@ -4,6 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>8mellow — Private Chat</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#5B32A5">
+<meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{ 
@@ -255,7 +259,7 @@
 
   async function initChat() {
     const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) { window.location.href = 'auth.html?mode=login'; return; }
+    if (!user) { window.location.href = 'auth.html?mode=login&next=' + encodeURIComponent(location.pathname.split('/').pop() + location.search); return; }
     currentUser = user;
 
     const urlParams = new URLSearchParams(window.location.search);

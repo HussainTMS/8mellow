@@ -5,6 +5,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>8mellow — Write a Message</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#5B32A5">
+<meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -367,7 +371,7 @@
 
     if (!user) {
       alert('You must be logged in to post a message.');
-      window.location.href = 'auth.html?mode=login';
+      window.location.href = 'auth.html?mode=login&next=' + encodeURIComponent(location.pathname.split('/').pop() + location.search);
       return;
     }
 
