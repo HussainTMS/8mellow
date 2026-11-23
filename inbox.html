@@ -137,6 +137,23 @@
     return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
+  const BASE_TITLE = document.title.replace(/^\(\d+\)\s*/, '');
+  function setUnreadTitle(n) { document.title = (n > 0 ? '(' + n + ') ' : '') + BASE_TITLE; }
+
+  // Live updates: realtime changes, plus a gentle check every 45 seconds and when the tab is opened again
+  function watchInbox(user, onChange) {
+    let t = null;
+    const fire = () => { clearTimeout(t); t = setTimeout(onChange, 400); };
+    try {
+      supabaseClient.channel('inbox-live-' + user.id)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'threads', filter: 'author_id=eq.' + user.id }, fire)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'threads', filter: 'replier_id=eq.' + user.id }, fire)
+        .subscribe();
+    } catch (e) { /* the timer below still keeps things fresh */ }
+    setInterval(() => { if (!document.hidden) onChange(); }, 45000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) onChange(); });
+  }
+
   async function loadInbox() {
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) { window.location.href = 'auth.html?mode=login&next=' + encodeURIComponent(location.pathname.split('/').pop() + location.search); return; }
@@ -187,6 +204,7 @@
     // Nothing at all: show one friendly empty state instead of two small ones
     if (chatsFromMyMessages.length === 0 && chatsIStarted.length === 0) {
       const ART_ENVELOPE = `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><ellipse cx="100" cy="148" rx="56" ry="5" fill="#5B32A5" opacity=".08"/><rect x="56" y="34" width="88" height="66" rx="6" fill="white" stroke="#5B32A5" stroke-width="2.5"/><path d="M70 54h60M70 66h40" stroke="#5B32A5" stroke-width="3" stroke-linecap="round" opacity=".25"/><path d="M38 74L100 114L162 74V126a10 10 0 0 1-10 10H48a10 10 0 0 1-10-10Z" fill="#F3ECFC" stroke="#5B32A5" stroke-width="3" stroke-linejoin="round"/><path d="M38 74L100 114L162 74" stroke="#5B32A5" stroke-width="3" stroke-linejoin="round"/><circle cx="172" cy="40" r="5" fill="#7FFFD4"/><circle cx="26" cy="110" r="4" fill="#7FFFD4"/><path d="M28 40v10M23 45h10" stroke="#B8860B" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+      setUnreadTitle(0);
       document.querySelectorAll('.section-label').forEach(el => el.style.display = 'none');
       replierContainer.innerHTML = '';
       authorContainer.innerHTML = `<div class="empty-card">${ART_ENVELOPE}<h3>No conversations yet</h3><p>When someone replies to a message, it will appear here.</p><a class="empty-btn" href="index.html">Explore the Wall</a></div>`;
@@ -220,6 +238,11 @@
         </a>
       `}).join('');
     }
+
+    setUnreadTitle(
+      chatsFromMyMessages.filter(t => t.unread_author).length +
+      chatsIStarted.filter(t => t.unread_replier).length
+    );
 
     // Call the function with the correct role
     renderChatList(authorContainer, chatsFromMyMessages, true);
@@ -264,6 +287,7 @@
     return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   }
   loadInbox();
+  supabaseClient.auth.getUser().then(({ data: { user } }) => { if (user) watchInbox(user, loadInbox); });
 </script>
 <script src="idle-timeout.js"></script>
 </body>

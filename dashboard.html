@@ -486,7 +486,7 @@
       if (!body.children.length) {
         const p = document.createElement('p');
         p.className = 'week-empty';
-        p.textContent = ids.length
+        p.textContent = (myPosts || []).length
           ? 'Nothing new this week, and that is okay. Your words are still out there.'
           : 'Share your first message and your week will start to fill with warmth.';
         body.append(p);
@@ -494,6 +494,39 @@
     } catch (e) {
       body.textContent = 'Could not load your week right now.';
     }
+  }
+
+  // ---------- Live unread badge on the Inbox card ----------
+  async function refreshInboxBadge(user) {
+    try {
+      const { data: blocks } = await supabaseClient.from('blocks').select('blocked_id').eq('blocker_id', user.id);
+      const blocked = (blocks || []).map(b => b.blocked_id);
+      const { data: threads } = await supabaseClient.from('threads')
+        .select('author_id, replier_id, unread_author, unread_replier, deleted_by_author, deleted_by_replier')
+        .or(`author_id.eq.${user.id},replier_id.eq.${user.id}`);
+      const unread = (threads || []).filter(t => {
+        const mineAsAuthor = t.author_id === user.id;
+        const other = mineAsAuthor ? t.replier_id : t.author_id;
+        if (blocked.includes(other)) return false;
+        return mineAsAuthor ? (t.unread_author && !t.deleted_by_author) : (t.unread_replier && !t.deleted_by_replier);
+      }).length;
+      const badge = document.getElementById('inbox-badge');
+      if (unread > 0) { badge.textContent = unread; badge.style.display = 'inline-block'; }
+      else { badge.style.display = 'none'; }
+    } catch (e) { /* keep the old badge */ }
+  }
+
+  function watchInboxBadge(user) {
+    let t = null;
+    const fire = () => { clearTimeout(t); t = setTimeout(() => refreshInboxBadge(user), 400); };
+    try {
+      supabaseClient.channel('dash-inbox-' + user.id)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'threads', filter: 'author_id=eq.' + user.id }, fire)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'threads', filter: 'replier_id=eq.' + user.id }, fire)
+        .subscribe();
+    } catch (e) { /* the timer still keeps it fresh */ }
+    setInterval(() => { if (!document.hidden) refreshInboxBadge(user); }, 45000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshInboxBadge(user); });
   }
 
   // ---------- How are you today? (nothing is saved) ----------
@@ -700,6 +733,7 @@
     showGreeting(user);
     showDraft(user);
     loadWeek(user);
+    watchInboxBadge(user);
     loadWallStrip(user);
   }
 
