@@ -484,7 +484,258 @@
   })();
 </script>
 
-<script src="calm.js"></script>
+<script>
+/* Calm minute: breathe, ground yourself, pop bubbles. Nothing is saved. */
+(function () {
+  if (window.openCalm) return;
+
+  var style = document.createElement('style');
+  style.textContent = `
+  .calm-overlay { --purple:#5B32A5; --purple-hover:#482680; --light-purple:#F3ECFC; --ink:#1A1A1A; --muted:#666666; --line:#EAEAEA; }
+  .calm-overlay { position: fixed; inset: 0; z-index: 9998; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(40, 25, 70, 0.38); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .calm-overlay[hidden], .calm-screen[hidden] { display: none !important; }
+  .calm-box { position: relative; width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto; background: linear-gradient(180deg, #FBF8FF 0%, #F2FBF8 100%); border-radius: 24px; padding: 32px 28px 22px; box-shadow: 0 30px 80px rgba(40, 25, 70, 0.3); border-top: 6px solid var(--purple); }
+  .calm-close { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border: none; border-radius: 50%; background: white; color: var(--purple); font-size: 22px; line-height: 1; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .calm-close:hover { background: var(--light-purple); }
+  .calm-box h2 { font-family: 'Outfit', sans-serif; font-size: 26px; color: var(--purple); margin-bottom: 6px; padding-right: 36px; }
+  .calm-sub { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+  .calm-option { display: flex; align-items: center; gap: 16px; width: 100%; padding: 16px 18px; margin-bottom: 10px; border: 1px solid #E5DAF5; border-radius: 16px; background: white; font-family: 'Inter', sans-serif; text-align: left; cursor: pointer; transition: all 0.2s; }
+  .calm-option:hover { border-color: var(--purple); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(91,50,165,0.08); }
+  .calm-option .calm-ico { font-size: 28px; }
+  .calm-option strong { display: block; font-size: 16px; color: var(--ink); }
+  .calm-option small { font-size: 13px; color: var(--muted); }
+  .calm-btns { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; }
+  .calm-primary { padding: 12px 24px; border: none; border-radius: 999px; background: var(--purple); color: white; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .calm-primary:hover { background: var(--purple-hover); }
+  .calm-secondary { padding: 10px 4px; border: none; background: none; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .calm-secondary:hover { color: var(--purple); text-decoration: underline; }
+  .calm-foot { margin-top: 22px; padding-top: 14px; border-top: 1px solid #E8E0F3; font-size: 12px; color: var(--muted); line-height: 1.5; text-align: center; }
+  .calm-foot a { color: var(--purple); font-weight: 600; }
+
+  .breath-wrap { position: relative; display: flex; align-items: center; justify-content: center; height: 230px; }
+  .breath-circle { width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #DDF6EC 0%, #C9B8F0 100%); transform: scale(0.55); box-shadow: 0 0 40px rgba(124, 92, 200, 0.25); }
+  .breath-text { position: absolute; font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 600; color: var(--purple); text-align: center; }
+
+  .ground-card { text-align: center; padding: 22px 18px; border-radius: 18px; background: white; border: 1px solid #E5DAF5; }
+  .ground-num { font-family: 'Outfit', sans-serif; font-size: 64px; font-weight: 700; line-height: 1; color: var(--purple); }
+  .ground-title { font-family: 'Outfit', sans-serif; font-size: 20px; color: var(--ink); margin: 8px 0; }
+  .ground-card p { font-size: 14px; color: var(--muted); margin: 0; }
+  .ground-dots { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+  .ground-dots span { width: 8px; height: 8px; border-radius: 50%; background: #DDD3EE; }
+  .ground-dots span.on { background: var(--purple); }
+
+  .bubble-field { position: relative; height: 280px; overflow: hidden; border-radius: 18px; background: linear-gradient(180deg, #EFE9FB 0%, #E6F8F2 100%); touch-action: manipulation; }
+  .bubble { position: absolute; bottom: -90px; padding: 0; border: 1.5px solid rgba(255,255,255,0.9); border-radius: 50%; background: radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95) 0%, rgba(201, 184, 240, 0.55) 55%, rgba(127, 255, 212, 0.4) 100%); cursor: pointer; animation: bubbleRise linear forwards; transition: transform 0.25s, opacity 0.25s; }
+  .bubble.pop { transform: scale(1.5); opacity: 0; pointer-events: none; }
+  @keyframes bubbleRise { from { transform: translateY(0); } to { transform: translateY(-400px); } }
+  `;
+  document.head.appendChild(style);
+
+  document.body.insertAdjacentHTML('beforeend', `
+<div class="calm-overlay" id="calm-overlay" role="dialog" aria-modal="true" aria-labelledby="calm-title" hidden>
+  <div class="calm-box">
+    <button type="button" class="calm-close" id="calm-close" aria-label="Close">×</button>
+
+    <div class="calm-screen" id="calm-menu">
+      <h2 id="calm-title">Take a calm minute</h2>
+      <p class="calm-sub">Pick whatever feels easiest. Nothing is scored or saved.</p>
+      <button type="button" class="calm-option" data-calm="breathe"><span class="calm-ico">🌬️</span><span><strong>Breathe</strong><small>A slow, guided minute</small></span></button>
+      <button type="button" class="calm-option" data-calm="ground"><span class="calm-ico">🌿</span><span><strong>Ground yourself</strong><small>Five small steps to come back to now</small></span></button>
+      <button type="button" class="calm-option" data-calm="bubbles"><span class="calm-ico">🫧</span><span><strong>Pop some bubbles</strong><small>Something gentle to do with your hands</small></span></button>
+    </div>
+
+    <div class="calm-screen" id="calm-breathe" hidden>
+      <h2>Breathe</h2>
+      <p class="calm-sub" id="breath-sub">Follow the circle. In through your nose, out slowly.</p>
+      <div class="breath-wrap"><div class="breath-circle" id="breath-circle"></div><div class="breath-text" id="breath-text"></div></div>
+      <div class="calm-btns"><button type="button" class="calm-secondary" data-calm="menu">← Choose another</button><button type="button" class="calm-primary" id="breath-again" hidden>Go again</button></div>
+    </div>
+
+    <div class="calm-screen" id="calm-ground" hidden>
+      <h2>Ground yourself</h2>
+      <p class="calm-sub">Take your time. There are no wrong answers.</p>
+      <div class="ground-card"><div class="ground-num" id="ground-num"></div><div class="ground-title" id="ground-title"></div><p id="ground-hint"></p></div>
+      <div class="ground-dots" id="ground-dots"></div>
+      <div class="calm-btns"><button type="button" class="calm-secondary" data-calm="menu">← Choose another</button><button type="button" class="calm-primary" id="ground-next">Next</button></div>
+    </div>
+
+    <div class="calm-screen" id="calm-bubbles" hidden>
+      <h2>Pop some bubbles</h2>
+      <p class="calm-sub">Tap a bubble. That is all.</p>
+      <div class="bubble-field" id="bubble-field"></div>
+      <div class="calm-btns"><button type="button" class="calm-secondary" data-calm="menu">← Choose another</button></div>
+    </div>
+
+    <div class="calm-foot">These may help you feel a little calmer. They are not a replacement for support. <a href="safety.html">Need support? See options</a></div>
+  </div>
+</div>
+  `);
+
+  // ---------- Calm minute: breathe, ground yourself, pop bubbles (nothing is saved) ----------
+  let calmToken = 0;            // changes whenever an activity stops, so old loops quit
+  let calmTimers = [];
+  let calmReturnFocus = null;
+  let bubbleTimer = null;
+  const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const calmWait = (ms) => new Promise(res => calmTimers.push(setTimeout(res, ms)));
+
+  function stopCalmActivity() {
+    calmToken++;
+    calmTimers.forEach(clearTimeout);
+    calmTimers = [];
+    clearInterval(bubbleTimer);
+    bubbleTimer = null;
+    document.getElementById('bubble-field').textContent = '';
+  }
+
+  function showCalmScreen(name) {
+    stopCalmActivity();
+    ['menu', 'breathe', 'ground', 'bubbles'].forEach(n => {
+      document.getElementById('calm-' + n).hidden = (n !== name);
+    });
+    if (name === 'breathe') startBreathe();
+    if (name === 'ground') startGround();
+    if (name === 'bubbles') startBubbles();
+  }
+
+  function openCalm() {
+    calmReturnFocus = document.activeElement;
+    document.getElementById('calm-overlay').hidden = false;
+    document.body.style.overflow = 'hidden';
+    showCalmScreen('menu');
+    document.getElementById('calm-close').focus();
+  }
+  function closeCalm() {
+    stopCalmActivity();
+    document.getElementById('calm-overlay').hidden = true;
+    document.body.style.overflow = '';
+    if (calmReturnFocus && calmReturnFocus.focus) calmReturnFocus.focus();
+  }
+
+  document.getElementById('calm-close').onclick = closeCalm;
+  document.getElementById('calm-overlay').addEventListener('click', (e) => {
+    if (e.target.id === 'calm-overlay') closeCalm();                 // tap the dim background
+    const choice = e.target.closest('[data-calm]');
+    if (choice) showCalmScreen(choice.dataset.calm);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !document.getElementById('calm-overlay').hidden) closeCalm();
+  });
+
+  // --- Breathe: in 4s, hold 2s, out 6s, five times (about a minute) ---
+  async function startBreathe() {
+    const token = calmToken;
+    const circle = document.getElementById('breath-circle');
+    const text = document.getElementById('breath-text');
+    const sub = document.getElementById('breath-sub');
+    const again = document.getElementById('breath-again');
+    const reduced = prefersReducedMotion();
+    const phases = [
+      { label: 'Breathe in', ms: 4000, scale: 1 },
+      { label: 'Hold', ms: 2000, scale: 1 },
+      { label: 'Breathe out', ms: 6000, scale: 0.55 }
+    ];
+
+    again.hidden = true;
+    sub.textContent = 'Follow the circle. In through your nose, out slowly.';
+    circle.style.transition = 'none';
+    circle.style.transform = 'scale(0.55)';
+    void circle.offsetWidth;
+
+    for (let round = 0; round < 5; round++) {
+      for (const p of phases) {
+        if (token !== calmToken) return;
+        circle.style.transition = reduced ? 'none' : `transform ${p.ms}ms ease-in-out`;
+        circle.style.transform = `scale(${p.scale})`;
+        if (reduced) {
+          for (let sec = p.ms / 1000; sec > 0; sec--) {           // numbers instead of motion
+            text.textContent = `${p.label} · ${sec}`;
+            await calmWait(1000);
+            if (token !== calmToken) return;
+          }
+        } else {
+          text.textContent = p.label;
+          await calmWait(p.ms);
+        }
+      }
+    }
+    if (token !== calmToken) return;
+    text.textContent = 'Well done';
+    sub.textContent = 'You took a minute for yourself.';
+    again.hidden = false;
+  }
+  document.getElementById('breath-again').onclick = () => showCalmScreen('breathe');
+
+  // --- Ground yourself: 5-4-3-2-1 ---
+  const GROUND_STEPS = [
+    { n: '5', title: 'things you can see', hint: 'Look around you. Name five things, out loud or in your head.' },
+    { n: '4', title: 'things you can feel', hint: 'Your feet on the floor, your clothes, the chair. Name four.' },
+    { n: '3', title: 'things you can hear', hint: 'Close your eyes if you like. What are three sounds?' },
+    { n: '2', title: 'things you can smell', hint: 'Or two smells that you like.' },
+    { n: '1', title: 'thing you can taste', hint: 'Or one thing you would like to taste.' },
+    { n: '✓', title: 'Well done', hint: 'Take one slow breath in, and out. You can start again any time.' }
+  ];
+  let groundIndex = 0;
+
+  function renderGround() {
+    const step = GROUND_STEPS[groundIndex];
+    document.getElementById('ground-num').textContent = step.n;
+    document.getElementById('ground-title').textContent = step.title;
+    document.getElementById('ground-hint').textContent = step.hint;
+    document.getElementById('ground-next').textContent = groundIndex === GROUND_STEPS.length - 1 ? 'Start again' : 'Next';
+    const dots = document.getElementById('ground-dots');
+    dots.textContent = '';
+    GROUND_STEPS.forEach((_, i) => {
+      const d = document.createElement('span');
+      if (i <= groundIndex) d.className = 'on';
+      dots.append(d);
+    });
+  }
+  function startGround() { groundIndex = 0; renderGround(); }
+  document.getElementById('ground-next').onclick = () => {
+    groundIndex = groundIndex === GROUND_STEPS.length - 1 ? 0 : groundIndex + 1;
+    renderGround();
+  };
+
+  // --- Bubbles: tap to pop, no score ---
+  function popBubble(b) {
+    if (b.classList.contains('pop')) return;
+    b.classList.add('pop');
+    setTimeout(() => b.remove(), 260);
+  }
+  function spawnBubble() {
+    const field = document.getElementById('bubble-field');
+    if (field.children.length >= 10) return;
+    const reduced = prefersReducedMotion();
+    const size = 46 + Math.random() * 40;
+    const rise = 7 + Math.random() * 5;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'bubble';
+    b.setAttribute('aria-label', 'Bubble');
+    b.style.width = b.style.height = size + 'px';
+    b.style.left = Math.max(0, Math.random() * (field.clientWidth - size)) + 'px';
+    if (reduced) {
+      b.style.animation = 'none';                                  // stay still instead of floating
+      b.style.bottom = 'auto';
+      b.style.top = Math.max(0, Math.random() * (field.clientHeight - size)) + 'px';
+    } else {
+      b.style.animationDuration = rise + 's';
+    }
+    b.addEventListener('pointerdown', (e) => { e.preventDefault(); popBubble(b); });
+    b.addEventListener('click', () => popBubble(b));               // keyboard
+    field.append(b);
+    setTimeout(() => b.remove(), reduced ? 7000 : rise * 1000 + 300);
+  }
+  function startBubbles() {
+    for (let i = 0; i < 4; i++) calmTimers.push(setTimeout(spawnBubble, i * 250));
+    bubbleTimer = setInterval(spawnBubble, 900);
+  }
+
+  window.openCalm = openCalm;
+})();
+
+</script>
 <script src="idle-timeout.js"></script>
 </body>
 </html>
