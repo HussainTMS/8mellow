@@ -49,6 +49,21 @@
 
   .bottom-safety-link { text-align: center; margin-top: 8px; }
   .bottom-safety-link button { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; text-decoration: underline; }
+  .rp-back{ position:fixed; inset:0; background:rgba(26,26,26,.5); display:none; align-items:center; justify-content:center; padding:20px; z-index:200; }
+  .rp-back.show{ display:flex; }
+  .rp-box{ background:white; border-radius:18px; padding:24px; max-width:420px; width:100%; max-height:90vh; overflow:auto; }
+  .rp-box h3{ font-family:'Outfit',sans-serif; color:var(--purple); font-size:20px; margin-bottom:4px; }
+  .rp-box p.sub{ font-size:13px; color:var(--muted); margin-bottom:14px; }
+  .rp-opt{ display:flex; gap:10px; align-items:center; padding:10px 12px; border:1.5px solid var(--line); border-radius:12px; margin-bottom:8px; font-size:15px; cursor:pointer; }
+  .rp-opt:has(input:checked){ border-color:var(--purple); background:var(--light-purple); }
+  .rp-box textarea{ width:100%; min-height:70px; padding:10px 12px; border:1.5px solid var(--line); border-radius:12px; font-family:inherit; font-size:14px; margin:6px 0 10px; resize:vertical; }
+  .rp-check{ display:flex; gap:8px; align-items:flex-start; font-size:14px; margin-bottom:14px; }
+  .rp-actions{ display:flex; gap:10px; justify-content:flex-end; }
+  .rp-actions button{ padding:10px 18px; border-radius:10px; font-family:'Outfit',sans-serif; font-size:15px; font-weight:600; cursor:pointer; border:1.5px solid var(--purple); }
+  .rp-cancel{ background:white; color:var(--purple); }
+  .rp-send{ background:var(--purple); color:white; }
+  .rp-send:disabled{ opacity:.5; cursor:not-allowed; }
+  .rp-err{ color:var(--danger); font-size:13px; min-height:18px; margin-bottom:6px; }
 </style>
 </head>
 <body>
@@ -72,6 +87,26 @@
     <button onclick="deleteChat()">🗑️ Delete conversation</button>
     <button onclick="reportChat()">🚩 Report this chat</button>
     <button onclick="blockChat()">🚫 Block this user</button>
+  </div>
+</div>
+
+<div class="rp-back" id="report-modal" role="dialog" aria-modal="true" aria-labelledby="rp-title">
+  <div class="rp-box">
+    <h3 id="rp-title">Report this chat</h3>
+    <p class="sub">Our safety team will review it. The other person is not told who reported.</p>
+    <label class="rp-opt"><input type="radio" name="rp-reason" value="Harassment or bullying"> Harassment or bullying</label>
+    <label class="rp-opt"><input type="radio" name="rp-reason" value="Threats or violence"> Threats or violence</label>
+    <label class="rp-opt"><input type="radio" name="rp-reason" value="Sexual or inappropriate content"> Sexual or inappropriate content</label>
+    <label class="rp-opt"><input type="radio" name="rp-reason" value="Spam or scam"> Spam or scam</label>
+    <label class="rp-opt"><input type="radio" name="rp-reason" value="Self-harm concern"> Someone may be at risk of self-harm</label>
+    <label class="rp-opt"><input type="radio" name="rp-reason" value="Other"> Something else</label>
+    <textarea id="rp-details" maxlength="1000" placeholder="Anything else we should know? (optional)"></textarea>
+    <label class="rp-check"><input type="checkbox" id="rp-block" checked> <span>Also block this person and remove this chat from my inbox</span></label>
+    <div class="rp-err" id="rp-err" role="alert"></div>
+    <div class="rp-actions">
+      <button type="button" class="rp-cancel" onclick="closeReport()">Cancel</button>
+      <button type="button" class="rp-send" id="rp-send" onclick="submitReport()">Send report</button>
+    </div>
   </div>
 </div>
 
@@ -148,29 +183,47 @@
     window.location.href = 'inbox.html';
   }
 
-  async function reportChat() {
-    const confirmReport = confirm("Are you sure you want to report this conversation? Our safety team will review it.");
-    if (!confirmReport) return;
+  function reportChat() {
+    document.getElementById('dropdown-menu').classList.remove('show');
+    document.getElementById('rp-err').textContent = '';
+    document.getElementById('report-modal').classList.add('show');
+  }
+  function closeReport() {
+    document.getElementById('report-modal').classList.remove('show');
+  }
+
+  async function submitReport() {
+    const err = document.getElementById('rp-err');
+    const picked = document.querySelector('input[name="rp-reason"]:checked');
+    if (!picked) { err.textContent = 'Please choose a reason.'; return; }
+    const details = document.getElementById('rp-details').value.trim();
+    const alsoBlock = document.getElementById('rp-block').checked;
+    const btn = document.getElementById('rp-send');
+    btn.disabled = true;
+    err.textContent = '';
 
     const { data: thread } = await supabaseClient.from('threads').select('author_id, replier_id').eq('id', currentThreadId).single();
+    if (!thread) { err.textContent = 'Could not find this conversation.'; btn.disabled = false; return; }
+    const otherUserId = thread.author_id === currentUser.id ? thread.replier_id : thread.author_id;
 
-    if (thread) {
-      const otherUserId = thread.author_id === currentUser.id ? thread.replier_id : thread.author_id;
+    const { error } = await supabaseClient.from('reports').insert([{
+      reporter_id: currentUser.id,
+      reported_user_id: otherUserId,
+      thread_id: currentThreadId,
+      reason: picked.value,
+      details: details || null
+    }]);
+    if (error) { err.textContent = 'Could not send the report: ' + error.message; btn.disabled = false; return; }
 
-      const { error } = await supabaseClient.from('reports').insert([{
-        reporter_id: currentUser.id,
-        reported_user_id: otherUserId,
-        thread_id: currentThreadId,
-        reason: 'User reported from chat'
-      }]);
-
-      if (error) {
-        alert('Error submitting report: ' + error.message);
-      } else {
-        alert('Thank you. This conversation has been reported to the safety team.');
-      }
+    if (alsoBlock) {
+      await supabaseClient.from('blocks').insert([{ blocker_id: currentUser.id, blocked_id: otherUserId }]);
+      const column = thread.author_id === currentUser.id ? 'deleted_by_author' : 'deleted_by_replier';
+      await supabaseClient.from('threads').update({ [column]: true }).eq('id', currentThreadId);
     }
-    document.getElementById('dropdown-menu').classList.remove('show');
+    closeReport();
+    alert('Thank you. Your report has been sent to the safety team.');
+    if (alsoBlock) window.location.href = 'inbox.html';
+    btn.disabled = false;
   }
 
    async function blockChat() {

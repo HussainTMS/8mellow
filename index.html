@@ -589,20 +589,19 @@
     loggedIn = !!session;
     if (!loggedIn) document.getElementById('search-input').placeholder = 'Log in to search by place, school, interest or word';
 
-    const { data: likes } = await supabaseClient
-      .from('post_likes')
-      .select('post_id, user_id')
-      .in('post_id', posts.map(p => p.id));
-
+    // Only the counts are public. Who pressed it is never loaded (apart from my own presses).
+    const ids = posts.map(p => String(p.id));
+    const { data: counts } = await supabaseClient.rpc('like_counts', { ids: ids });
     const likeCounts = {};
+    (counts || []).forEach(c => { likeCounts[String(c.post_id)] = Number(c.n); });
     const myLikes = new Set();
-    (likes || []).forEach(l => {
-      likeCounts[l.post_id] = (likeCounts[l.post_id] || 0) + 1;
-      if (l.user_id === myId) myLikes.add(l.post_id);
-    });
+    if (myId) {
+      const { data: mine } = await supabaseClient.from('post_likes').select('post_id').eq('user_id', myId).in('post_id', posts.map(p => p.id));
+      (mine || []).forEach(l => myLikes.add(String(l.post_id)));
+    }
     posts.forEach(post => {
-      post.likeCount = likeCounts[post.id] || 0;
-      post.liked = myLikes.has(post.id);
+      post.likeCount = likeCounts[String(post.id)] || 0;
+      post.liked = myLikes.has(String(post.id));
     });
 
     allPosts = posts; 

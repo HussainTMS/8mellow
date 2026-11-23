@@ -527,14 +527,10 @@
     try {
       // "Me too" on my posts in the last 7 days (not counting my own)
       const { data: myPosts } = await supabaseClient.from('posts').select('id').eq('user_id', user.id);
-      const ids = (myPosts || []).map(p => p.id);
       let likeCount = 0;
-      if (ids.length) {
-        const since = new Date(Date.now() - 7 * 86400000).toISOString();
-        const { count } = await supabaseClient.from('post_likes')
-          .select('post_id', { count: 'exact', head: true })
-          .in('post_id', ids).gte('created_at', since).neq('user_id', user.id);
-        likeCount = count || 0;
+      if ((myPosts || []).length) {
+        const { data: n } = await supabaseClient.rpc('my_week_likes');
+        likeCount = Number(n) || 0;
       }
 
       // Unread private conversations (same rules as the Inbox page)
@@ -731,11 +727,13 @@
       const picked = posts.filter(p => !blocked.includes(p.user_id)).slice(0, 3);
       if (!picked.length) return;
 
-      const { data: likes } = await supabaseClient.from('post_likes').select('post_id, user_id').in('post_id', picked.map(p => p.id));
+      const { data: counts } = await supabaseClient.rpc('like_counts', { ids: picked.map(p => String(p.id)) });
+      const { data: mine } = await supabaseClient.from('post_likes').select('post_id').eq('user_id', user.id).in('post_id', picked.map(p => p.id));
+      const mineSet = new Set((mine || []).map(l => String(l.post_id)));
       picked.forEach(p => {
-        const mine = (likes || []).filter(l => l.post_id === p.id);
-        p.count = mine.length;
-        p.liked = mine.some(l => l.user_id === user.id);
+        const c = (counts || []).find(x => String(x.post_id) === String(p.id));
+        p.count = c ? Number(c.n) : 0;
+        p.liked = mineSet.has(String(p.id));
       });
 
       const grid = document.getElementById('strip-grid');

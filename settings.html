@@ -52,6 +52,12 @@
   .more a{ color:var(--purple); font-weight:600; text-decoration:none; }
   .more a:hover{ text-decoration:underline; }
   @media(max-width:600px){ .container{ padding:32px 22px; } h1{ font-size:26px; } .card{ padding:20px; } }
+  .block-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-top:1px solid var(--line); }
+  .block-row:first-of-type{ border-top:none; }
+  .block-row .who{ font-size:15px; color:var(--ink); word-break:break-word; }
+  .btn-small{ padding:8px 16px; border:1.5px solid var(--purple); border-radius:10px; background:white; color:var(--purple); font-family:'Outfit',sans-serif; font-size:14px; font-weight:600; cursor:pointer; }
+  .btn-small:hover{ background:var(--light-purple); }
+  .btn-small:disabled{ opacity:.5; cursor:not-allowed; }
 </style>
 </head>
 <body>
@@ -108,6 +114,14 @@
     <p class="status" id="notify-status" role="status"></p>
   </div>
 
+  <!-- BLOCKED USERS -->
+  <div class="card" id="blocked-card">
+    <h2>Blocked users</h2>
+    <p class="desc">People you have blocked can't start a chat with you or message you. Unblocking lets them reach you again.</p>
+    <div id="blocked-list"><p class="desc" style="margin:0">Loading…</p></div>
+    <p class="status" id="blocked-status" role="status"></p>
+  </div>
+
   <p class="more">
     To change your User ID, bio or to delete your account, go to <a href="profile.html">My Profile</a>.
   </p>
@@ -157,6 +171,50 @@
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) { window.location.href = 'auth.html?mode=login'; return; }
     renderUser(user);
+    loadBlocked(user);
+  }
+
+  // ---- Blocked users ----
+  async function loadBlocked(user) {
+    const list = document.getElementById('blocked-list');
+    const { data: blocks, error } = await supabaseClient.from('blocks').select('blocked_id').eq('blocker_id', user.id);
+    list.textContent = '';
+    const note = (t) => { const p = document.createElement('p'); p.className = 'desc'; p.style.margin = '0'; p.textContent = t; list.append(p); };
+    if (error) { note('Could not load your blocked list.'); return; }
+    if (!blocks || !blocks.length) { note("You haven't blocked anyone."); return; }
+
+    const ids = blocks.map(b => b.blocked_id);
+    const { data: profs } = await supabaseClient.from('profiles').select('id, username').in('id', ids);
+    const names = {};
+    (profs || []).forEach(p => { names[p.id] = p.username; });
+
+    blocks.forEach((b, i) => {
+      const row = document.createElement('div');
+      row.className = 'block-row';
+      const who = document.createElement('span');
+      who.className = 'who';
+      who.textContent = names[b.blocked_id] ? '@' + names[b.blocked_id] : 'Anonymous user ' + (i + 1);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn-small';
+      btn.textContent = 'Unblock';
+      btn.addEventListener('click', () => unblock(user, b.blocked_id, btn));
+      row.append(who, btn);
+      list.append(row);
+    });
+  }
+
+  async function unblock(user, blockedId, btn) {
+    clearStatus('blocked-status');
+    btn.disabled = true;
+    const { error } = await supabaseClient.from('blocks').delete().eq('blocker_id', user.id).eq('blocked_id', blockedId);
+    if (error) {
+      btn.disabled = false;
+      showStatus('blocked-status', 'Could not unblock: ' + error.message, false);
+      return;
+    }
+    showStatus('blocked-status', 'Unblocked.', true);
+    loadBlocked(user);
   }
 
   // ---- Display name ----

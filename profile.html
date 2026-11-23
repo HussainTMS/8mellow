@@ -101,11 +101,14 @@
     // Try to load existing profile
     const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
     
+    // Past locations are private: they live in their own table that only this user can read
+    const { data: priv } = await supabaseClient.from('profile_private').select('past_locations').eq('id', user.id).maybeSingle();
+    document.getElementById('past_locations').value = (priv && priv.past_locations) || '';
+
     if (profile) {
       document.getElementById('username').value = profile.username || '';
       document.getElementById('bio').value = profile.bio || '';
       document.getElementById('current_location').value = profile.current_location || '';
-      document.getElementById('past_locations').value = profile.past_locations || '';
       document.getElementById('education').value = profile.education || '';
     }
   }
@@ -130,9 +133,14 @@
       username: cleanUsername,
       bio: bio,
       current_location: current_location,
-      past_locations: past_locations,
       education: education
     });
+
+    let error2 = null;
+    if (!error) {
+      ({ error: error2 } = await supabaseClient.from('profile_private').upsert({ id: currentUser.id, past_locations: past_locations }));
+    }
+    if (error2) { alert("Error saving past locations: " + error2.message); return; }
 
     if (error) {
       if (error.code === '23505') {

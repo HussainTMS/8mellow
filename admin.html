@@ -29,6 +29,10 @@
   .btn-delete { background: var(--danger); color: white; }
   .btn-dismiss { background: #E0E0E0; color: var(--ink); }
   
+  .reason-tag { display: inline-block; background: #FDECEA; color: #9A3B30; padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; margin: 4px 0; }
+  .report-details { font-size: 14px; color: var(--ink); background: white; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; white-space: pre-wrap; word-break: break-word; }
+  .flag-text { font-size: 15px; background: white; border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-bottom: 14px; white-space: pre-wrap; word-break: break-word; }
+  h2.section { font-family: 'Outfit', sans-serif; font-size: 22px; color: var(--purple); margin: 40px 0 16px; }
   .empty-state { text-align: center; padding: 40px; color: var(--muted); }
   /* Fixes for mobile screens */
   @media(max-width: 600px) {
@@ -50,6 +54,12 @@
   <h1>Reported Conversations</h1>
   <div id="reports-list">
     <p>Loading reports...</p>
+  </div>
+
+  <h2 class="section">Flagged posts</h2>
+  <p class="report-meta" style="margin-bottom:16px">Posts the filter flagged for self-harm wording. They are still on the wall. Check on them, then keep or remove.</p>
+  <div id="flagged-list">
+    <p>Loading…</p>
   </div>
 </div>
 
@@ -85,6 +95,8 @@
       .select('*')
       .order('created_at', { ascending: false });
 
+    loadFlagged();
+
     if (error || reports.length === 0) {
       container.innerHTML = '<div class="empty-state">No pending reports. The community is safe!</div>';
       return;
@@ -94,13 +106,16 @@
       <div class="report-card" id="report-${report.id}">
         <div class="report-header">
           <div>
-            <strong>Thread ID:</strong> ${report.thread_id} <br>
+            <strong>Thread ID:</strong> ${esc(report.thread_id)} <br>
+            <span class="reason-tag">${esc(report.reason || 'No reason given')}</span> <br>
             <span class="report-meta">Reported by User: ${report.reporter_id}</span> <br>
             <span class="report-meta">Reported User: ${report.reported_user_id}</span>
           </div>
           <div class="report-meta">${new Date(report.created_at).toLocaleString()}</div>
         </div>
         
+        ${report.details ? `<div class="report-details">${esc(report.details)}</div>` : ''}
+
         <div class="chat-log" id="log-${report.id}">
           Loading messages...
         </div>
@@ -157,6 +172,33 @@
     } else {
       alert("Error deleting thread.");
     }
+  }
+
+  async function loadFlagged() {
+    const box = document.getElementById('flagged-list');
+    const { data: posts, error } = await supabaseClient.from('posts').select('id, content, category, created_at')
+      .eq('flagged', true).order('created_at', { ascending: false });
+    if (error) { box.innerHTML = '<div class="empty-state">Could not load flagged posts: ' + esc(error.message) + '</div>'; return; }
+    if (!posts.length) { box.innerHTML = '<div class="empty-state">No flagged posts.</div>'; return; }
+    box.textContent = '';
+    posts.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'report-card';
+      card.innerHTML = `<div class="report-header"><div><span class="reason-tag">${esc(p.category || 'Post')}</span></div><div class="report-meta">${esc(new Date(p.created_at).toLocaleString())}</div></div>
+        <div class="flag-text">${esc(p.content)}</div>
+        <div class="actions"><button class="btn btn-dismiss">Looks OK, unflag</button><button class="btn btn-delete">Delete post</button></div>`;
+      const [okBtn, delBtn] = card.querySelectorAll('button');
+      okBtn.addEventListener('click', async () => {
+        const { error } = await supabaseClient.from('posts').update({ flagged: false }).eq('id', p.id);
+        if (error) alert('Could not unflag: ' + error.message); else card.remove();
+      });
+      delBtn.addEventListener('click', async () => {
+        if (!confirm('Delete this post for good?')) return;
+        const { error } = await supabaseClient.from('posts').delete().eq('id', p.id);
+        if (error) alert('Could not delete: ' + error.message); else card.remove();
+      });
+      box.append(card);
+    });
   }
 
   async function dismissReport(reportId) {
