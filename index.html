@@ -136,16 +136,14 @@
   .skel-line{ height:16px; margin-bottom:12px; }
   .skel-foot{ display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line); padding-top:20px; margin-top:28px; }
 /* Empty states */
-  .today-wall{ display:none; background:var(--light-purple); border-radius:20px; padding:22px 22px 20px; margin-bottom:28px; }
-  .today-wall h2{ font-family:'Outfit',sans-serif; font-size:22px; color:var(--purple); margin-bottom:2px; }
-  .today-wall .tw-sub{ font-size:14px; color:var(--muted); margin-bottom:14px; }
-  .tw-item{ background:white; border-radius:14px; padding:12px 14px; margin-bottom:10px; }
-  .tw-cat{ font-size:12px; font-weight:600; color:var(--purple); margin-bottom:4px; }
-  .tw-text{ font-size:15px; color:var(--ink); line-height:1.5; word-break:break-word; }
-  .tw-cta{ display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; margin-top:14px; font-size:14px; color:var(--muted); }
-  .tw-cta a.tw-btn{ background:var(--purple); color:white; text-decoration:none; padding:10px 18px; border-radius:10px; font-family:'Outfit',sans-serif; font-weight:600; font-size:15px; }
-  .tw-cta a.tw-btn:hover{ background:var(--purple-hover); }
-  .tw-cta a.tw-link{ color:var(--purple); font-weight:600; }
+  .thought-card{ display:none; background:var(--light-purple); border-radius:20px; padding:22px 24px; margin-bottom:28px; text-align:center; }
+  .thought-label{ font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--purple); margin-bottom:8px; }
+  .thought-text{ font-family:'Outfit',sans-serif; font-size:22px; line-height:1.35; color:var(--purple); margin-bottom:16px; }
+  .thought-btn{ display:inline-block; background:var(--purple); color:white; text-decoration:none; padding:11px 22px; border-radius:999px; font-family:'Outfit',sans-serif; font-weight:600; font-size:15px; }
+  .thought-btn:hover{ background:var(--purple-hover); }
+  .thought-count{ font-size:14px; color:var(--purple); font-weight:600; margin-top:14px; min-height:20px; }
+  .thought-note{ font-size:13px; color:var(--muted); margin-top:12px; }
+  .thought-note a{ color:var(--purple); font-weight:600; }
   .empty-card{ text-align:center; padding:48px 20px; }
   .empty-card svg{ width:170px; height:auto; margin-bottom:20px; animation:floaty 5s ease-in-out infinite; }
   .empty-card.small{ padding:32px 20px; }
@@ -343,14 +341,12 @@
 
 <div class="feed-section" id="messages">
   <!-- Shown only to visitors who are not logged in -->
-  <section class="today-wall" id="today-wall" aria-labelledby="tw-title">
-    <h2 id="tw-title">Today on the wall</h2>
-    <p class="tw-sub" id="tw-sub"></p>
-    <div id="tw-list"></div>
-    <div class="tw-cta">
-      <a class="tw-btn" href="auth.html?mode=signup">Join to reply privately</a>
-      <span>Already a member? <a class="tw-link" href="auth.html?mode=login">Log in</a></span>
-    </div>
+  <section class="thought-card" id="thought-card" aria-labelledby="th-label">
+    <div class="thought-label" id="th-label">Today's Thought</div>
+    <p class="thought-text" id="th-text"></p>
+    <a class="thought-btn" id="th-btn" href="auth.html?mode=signup">Write about this</a>
+    <p class="thought-count" id="th-count" aria-live="polite"></p>
+    <p class="thought-note">Free and anonymous. Already a member? <a href="auth.html?mode=login" id="th-login">Log in</a></p>
   </section>
 
   <div class="feed-header">
@@ -640,40 +636,52 @@
 
     allPosts = posts; 
     renderPosts();    
-    showTodayWall(posts);
   }
 
-  // A short, read-only preview for visitors who are not logged in
-  function showTodayWall(posts) {
-    const box = document.getElementById('today-wall');
-    if (loggedIn) { box.style.display = 'none'; return; }
-    const visible = posts.filter(p => !p.flagged);
-    const midnight = new Date(); midnight.setHours(0, 0, 0, 0);
-    const today = visible.filter(p => new Date(p.created_at) >= midnight);
-    const picks = (today.length ? today : visible).slice(0, 3);
-    if (!picks.length) { box.style.display = 'none'; return; }
+  // One gentle question a day for visitors who are not logged in (same one members see on their dashboard)
+  const PROMPTS = [
+    { text: 'Is there someone you never properly thanked?', cat: 'thanks' },
+    { text: 'Is there an apology that has been waiting for you?', cat: 'sorry' },
+    { text: 'Who showed you kindness when you needed it most?', cat: 'thanks' },
+    { text: 'Is there a goodbye you never got to say?', cat: 'goodbye' },
+    { text: 'Is there something you are ready to let go of?', cat: 'forgive' },
+    { text: 'Is there something you wish someone understood about you?', cat: 'explain' },
+    { text: 'Who do you wonder about from time to time?', cat: 'reconnect' },
+    { text: 'What did someone teach you that you still carry?', cat: 'thanks' },
+    { text: 'Is there something you would do differently, if you could?', cat: 'regret' },
+    { text: 'What is one thing you wish you had said out loud?', cat: 'other' },
+    { text: 'Who would you message if you knew they would answer kindly?', cat: 'reconnect' },
+    { text: 'Is there a small moment from long ago that you are still grateful for?', cat: 'thanks' },
+    { text: 'Is there a mistake you have been carrying for too long?', cat: 'sorry' },
+    { text: 'Is there something that changed you that you have never told anyone?', cat: 'impact' }
+  ];
 
-    const sub = document.getElementById('tw-sub');
-    sub.textContent = today.length
-      ? (today.length === 1 ? '1 message shared today. Here is a glimpse.' : today.length + ' messages shared today. Here is a glimpse.')
-      : 'Quiet so far today. Here are the latest messages.';
-
-    const list = document.getElementById('tw-list');
-    list.textContent = '';
-    picks.forEach(p => {
-      const item = document.createElement('div');
-      item.className = 'tw-item';
-      const cat = document.createElement('div');
-      cat.className = 'tw-cat';
-      cat.textContent = (p.category || 'Message') + ' · ' + timeAgo(p.created_at);
-      const text = document.createElement('div');
-      text.className = 'tw-text';
-      const t = String(p.content || '');
-      text.textContent = t.length > 140 ? t.slice(0, 140).trimEnd() + '…' : t;
-      item.append(cat, text);
-      list.append(item);
-    });
+  async function showTodaysThought() {
+    const box = document.getElementById('thought-card');
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) { box.style.display = 'none'; return; }
+    const now = new Date();
+    const dayNumber = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
+    const p = PROMPTS[dayNumber % PROMPTS.length];   // same thought all day, new one tomorrow
+    document.getElementById('th-text').textContent = p.text;
+    const target = 'write.html?category=' + p.cat;
+    document.getElementById('th-btn').href = 'auth.html?mode=signup&next=' + encodeURIComponent(target);
+    document.getElementById('th-login').href = 'auth.html?mode=login&next=' + encodeURIComponent(target);
     box.style.display = 'block';
+
+    // "N messages shared today" (a count only, no content)
+    try {
+      const midnight = new Date(); midnight.setHours(0, 0, 0, 0);
+      const { count, error } = await supabaseClient.from('posts')
+        .select('id', { count: 'exact', head: true })
+        .neq('status', 'hidden')
+        .gte('created_at', midnight.toISOString());
+      const el = document.getElementById('th-count');
+      if (error || count === null) return;
+      el.textContent = count === 0 ? 'Be the first to share something today.'
+        : count === 1 ? '1 message shared today'
+        : count + ' messages shared today';
+    } catch (e) { /* the count is optional */ }
   }
 
    function renderPosts() {
@@ -854,6 +862,7 @@
   // Call the function when the page loads
   checkLoggedInUser();
   loadMessages();
+  showTodaysThought();
 </script>
 
 <script src="idle-timeout.js"></script>
