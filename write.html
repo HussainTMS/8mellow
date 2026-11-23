@@ -315,7 +315,7 @@
     <textarea placeholder="What do you wish you could say to them now?"></textarea>
     
     <div class="char-count">0 / 2000</div>
-    <div class="calm-row">Finding this hard to write? <button type="button" class="calm-link" onclick="openCalm()">Take a calm minute</button></div>
+    <div class="calm-row">Finding this hard to write? <button type="button" class="calm-link" onclick="if (window.openCalm) openCalm(); else alert('The calm activities could not load. Please refresh the page.');">Take a calm minute</button></div>
     <div class="post-error" id="post-error" role="alert"></div>
 
     <!-- Safety Warning -->

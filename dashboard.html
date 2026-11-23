@@ -553,10 +553,11 @@
     actions.textContent = '';
     f.actions.forEach(a => {
       if (a.calm) {
+        if (typeof window.openCalm !== 'function') return;   // calm.js not loaded: skip the button, keep the rest working
         const b = document.createElement('button');
         b.type = 'button';
         b.textContent = a.t;
-        b.onclick = openCalm;
+        b.onclick = () => window.openCalm();
         actions.append(b);
         return;
       }
