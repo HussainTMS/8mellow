@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>8mellow — How It Works & FAQs</title>
+<title>8mellow — Help &amp; FAQs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -37,7 +37,7 @@
   
   .container {
     width: 100%;
-    max-width: 720px;
+    max-width: 760px;
     margin: 0 auto;
     background: white;
     border-radius: 24px;
@@ -94,177 +94,135 @@
     margin-bottom: 40px;
   }
 
-  /* How It Works Section */
-  .how-it-works {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    margin-bottom: 48px;
-  }
-  .step-card {
-    background: #FAFAFA;
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 20px;
-  }
-  .step-icon {
-    font-size: 24px;
+  /* Policy Content Styling */
+  .policy-content h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    color: var(--purple);
+    margin-top: 32px;
     margin-bottom: 12px;
   }
-  .step-card h3 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 16px;
-    color: var(--ink);
-    margin-bottom: 6px;
-  }
-  .step-card p {
-    font-size: 13px;
-    color: var(--muted);
-  }
-
-  /* FAQ Section */
-  .faq-section h2 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 24px;
-    color: var(--purple);
-    margin-bottom: 24px;
-  }
-  .faq-item {
-    border-bottom: 1px solid var(--line);
-    padding: 16px 0;
-  }
-  .faq-item:last-child {
-    border-bottom: none;
-  }
-  .faq-question {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 600;
+  .policy-content p {
     font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .policy-content ul {
+    margin-left: 20px;
+    margin-bottom: 16px;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .policy-content li {
+    margin-bottom: 8px;
+  }
+  .policy-content strong {
     color: var(--ink);
-    cursor: pointer;
-    list-style: none; /* Hide default triangle */
-  }
-  .faq-question::-webkit-details-marker {
-    display: none;
-  }
-  .faq-question svg {
-    width: 20px;
-    height: 20px;
-    color: var(--muted);
-    transition: transform 0.2s;
-  }
-  details[open] .faq-question svg {
-    transform: rotate(180deg);
-  }
-  .faq-answer {
-    font-size: 14px;
-    color: var(--muted);
-    padding-top: 12px;
-    line-height: 1.6;
   }
 
   @media(max-width: 600px) {
     .container { padding: 32px 24px; }
     h1 { font-size: 28px; }
-    .how-it-works { grid-template-columns: 1fr; }
   }
+
+  .callout { background: var(--light-purple); border-radius: 16px; padding: 20px 24px; margin: 24px 0; }
+  .callout p { color: var(--purple); margin: 0; font-size: 15px; }
+  .rule-grid { display: grid; gap: 12px; margin: 16px 0 24px; }
+  .rule { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; background: #FAFAFA; }
+  .rule h3 { font-family: 'Outfit', sans-serif; font-size: 16px; color: var(--ink); margin-bottom: 4px; }
+  .rule p { margin: 0; font-size: 14px; }
+  .related { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+  .related a { color: var(--purple); font-weight: 600; text-decoration: none; margin-right: 16px; white-space: nowrap; }
+  .related a:hover { text-decoration: underline; }
+
+  details { border: 1px solid var(--line); border-radius: 14px; background: #FAFAFA; margin-bottom: 10px; }
+  details[open] { background: white; border-color: #D9CCF0; }
+  summary { cursor: pointer; padding: 16px 18px; font-weight: 600; font-size: 15px; color: var(--ink); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font-size: 20px; color: var(--purple); flex-shrink: 0; }
+  details[open] summary::after { content: '–'; }
+  details > div { padding: 0 18px 16px; font-size: 14px; color: var(--muted); line-height: 1.65; }
+  details > div p { margin-bottom: 10px; }
+  details > div a, .steps a { color: var(--purple); font-weight: 600; }
+  .steps { display: grid; gap: 12px; margin: 16px 0 28px; }
+  .step { display: flex; gap: 14px; align-items: flex-start; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: #FAFAFA; }
+  .step .n { width: 30px; height: 30px; border-radius: 50%; background: var(--purple); color: white; font-family: 'Outfit', sans-serif; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step strong { display: block; color: var(--ink); font-size: 15px; }
+  .step span { font-size: 14px; color: var(--muted); }
 </style>
 </head>
 <body>
 
 <div class="container">
-  
+
   <div class="header">
     <div class="logo">8mellow</div>
-    <a href="index.html" class="back-btn">Back to Wall</a>
+    <a href="index.html" onclick="return goBack(event)" class="back-btn" style="font-weight: 600; color: var(--purple);">← Go Back</a>
   </div>
 
-  <h1>How It Works</h1>
-  <p class="subtitle">A safe, anonymous way to connect with people from your past.</p>
+  <h1>Help &amp; FAQs</h1>
+  <p class="subtitle">Answers to common questions about how 8mellow works.</p>
 
-  <!-- HOW IT WORKS STEPS -->
-  <div class="how-it-works">
-    <div class="step-card">
-      <div class="step-icon">📝</div>
-      <h3>1. Post a Message</h3>
-      <p>Share what's on your mind for someone from your past. Choose a category like apology, goodbye, or thank you.</p>
+  <div class="policy-content">
+
+    <h2 id="how-it-works">How it works</h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><div><strong>Write what you never got to say</strong><span>Pick a category, such as an apology, a thank you or a goodbye, and write your message.</span></div></div>
+      <div class="step"><div class="n">2</div><div><strong>It appears on the wall</strong><span>Your message is shown without your name or email, so you can be honest.</span></div></div>
+      <div class="step"><div class="n">3</div><div><strong>Others can respond</strong><span>Someone who relates can press <em>Me too</em>, or choose to reply privately.</span></div></div>
+      <div class="step"><div class="n">4</div><div><strong>Talk in private, if you want to</strong><span>A private chat only starts when someone replies. You can block, report or delete it at any time.</span></div></div>
     </div>
-    <div class="step-card">
-      <div class="step-icon">🔍</div>
-      <h3>2. Find the Right Person</h3>
-      <p>Your message is posted anonymously on the public wall. Anyone can read it, but no one knows it's from you.</p>
-    </div>
-    <div class="step-card">
-      <div class="step-icon">🛡️</div>
-      <h3>3. Connect Safely</h3>
-      <p>If someone wants to reply, they must create an account. This keeps the community safe and prevents spam.</p>
-    </div>
-    <div class="step-card">
-      <div class="step-icon">🔒</div>
-      <h3>4. Chat Privately</h3>
-      <p>Once they reply, a private conversation opens. Only you two can see it. No one else can join or read it.</p>
-    </div>
-  </div>
 
-  <!-- FAQ SECTION -->
-  <div class="faq-section">
-    <h2>Frequently Asked Questions</h2>
+    <h2>Getting started</h2>
+    <details><summary>What is 8mellow?</summary><div><p>8mellow is a place to share the things you never got to say, anonymously. You can read other people's messages, show support, and start a private conversation if a message speaks to you.</p></div></details>
+    <details><summary>Do I need an account?</summary><div><p>You can read the wall without one. To write a message, press <em>Me too</em>, reply privately or search, you need to sign up.</p></div></details>
+    <details><summary>How do I sign in?</summary><div><p>There is no password. Enter your email address and we send you a secure, one-time sign-in link. Open it and you are signed in. The link works once and expires after a short time, so request a new one if it stops working.</p></div></details>
+    <details><summary>Who can use 8mellow?</summary><div><p>You must be 18 or older. Please read our <a href="terms.html">Terms of Service</a> and <a href="guidelines.html">Community Guidelines</a>.</p></div></details>
 
-    <details class="faq-item">
-      <summary class="faq-question">
-        Is my message really anonymous?
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </summary>
-      <div class="faq-answer">
-        Yes. When you post on the public wall, your name and email are never shown. You can also choose to leave your Display Name blank, making you fully anonymous. Only you know which messages are yours.
-      </div>
-    </details>
+    <h2>Privacy and anonymity</h2>
+    <details><summary>Is my message really anonymous?</summary><div><p>Your name and email address are never shown. If you add a User ID, school, current location or bio to your profile, those details appear next to your messages and logged-in members can search them. Leave them empty to stay fully anonymous.</p><p>People who know you may still recognise your story, so avoid details that point to you or to someone else.</p></div></details>
+    <details><summary>Who can see my private chats?</summary><div><p>Only you and the other person. We do not read private chats unless one of you reports it, or we are legally required to. See our <a href="privacy.html">Privacy Policy</a>.</p></div></details>
+    <details><summary>Can I delete my message?</summary><div><p>Yes. In <em>My Messages</em> you can hide a message from the wall or delete it. Deleting a message does not delete private chats that started from it. Those stay in each person's inbox until they delete them.</p></div></details>
+    <details><summary>How do I delete my account?</summary><div><p>Go to <em>My Profile</em> from the Account menu on your dashboard and choose delete account.</p></div></details>
 
-    <details class="faq-item">
-      <summary class="faq-question">
-        Can anyone message me directly?
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </summary>
-      <div class="faq-answer">
-        No. We have a strict "No Cold DMs" policy. The only way someone can start a private chat with you is by replying to one of your public messages. You will never receive unsolicited private messages.
-      </div>
-    </details>
+    <h2>Writing a message</h2>
+    <details><summary>Why was my message not posted?</summary><div><p>To protect everyone's anonymity, messages cannot contain email addresses, phone numbers, links or @handles. Hateful language is also not allowed. Remove those parts and try again. Strong feelings and strong words are fine, but threats and harassment are not allowed.</p></div></details>
+    <details><summary>Can I save a message and finish it later?</summary><div><p>Yes. Your unfinished message is saved on the device you are using, for up to 7 days, and your dashboard offers to continue it. It is not saved on other devices, and it is removed when you post or sign out.</p></div></details>
+    <details><summary>What is the search bar on the wall?</summary><div><p>Logged-in members can search messages and the details shown next to them, such as a school, a current location or words in a bio, to find people with shared experiences or interests.</p></div></details>
 
-    <details class="faq-item">
-      <summary class="faq-question">
-        What happens if someone reports my message?
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </summary>
-      <div class="faq-answer">
-        If a message is reported, it is automatically hidden from the public wall while our safety team reviews it. If it violates our guidelines (e.g., contains real names, threats, or harassment), it will be permanently removed.
-      </div>
-    </details>
+    <h2>Messages and chats</h2>
+    <details><summary>What does "Me too" mean?</summary><div><p>It is a quiet way to tell the writer you have felt something similar. They see the count on their message, but not who pressed it.</p></div></details>
+    <details><summary>How do private replies work?</summary><div><p>Press <em>Reply privately</em> on a message to start a one-to-one chat with its writer. Your conversations are in your <em>Inbox</em>, and a number on the Inbox card shows how many are unread.</p></div></details>
+    <details><summary>What if someone makes me uncomfortable?</summary><div><p>Open the chat and use the Safety menu: <strong>Block</strong> stops them contacting you and they are not told, and <strong>Report</strong> sends the chat to our safety team. You never have to reply to anyone.</p></div></details>
+    <details><summary>If I delete a chat, is it deleted for the other person too?</summary><div><p>No. Deleting a conversation removes it from your inbox only, and the other person keeps their copy. If they send you a new message, the chat comes back to your inbox. Messages may be kept for a short time so our safety team can review any report.</p></div></details>
 
-    <details class="faq-item">
-      <summary class="faq-question">
-        Can I delete a message I posted?
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </summary>
-      <div class="faq-answer">
-        Yes. Go to "My Messages" from your dashboard. You can hide a message from the wall or delete it permanently at any time.
-      </div>
-    </details>
+    <h2>Your account</h2>
+    <details><summary>Why was I signed out?</summary><div><p>For your privacy, we sign you out after 30 minutes of inactivity. You see a warning first, and you can choose to stay signed in.</p></div></details>
+    <details><summary>How do I change my name or email?</summary><div><p>Open <em>Settings</em> from the Account menu on your dashboard. A change of email address is confirmed by a link sent to the new address.</p></div></details>
 
-    <details class="faq-item">
-      <summary class="faq-question">
-        Is 8mellow a crisis service?
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </summary>
-      <div class="faq-answer">
-        No. 8mellow is not a therapy service, a crisis hotline, or a substitute for professional mental health care. If you are in crisis, please contact a local emergency service or a crisis helpline immediately.
-      </div>
-    </details>
+    <h2>Support and safety</h2>
+    <details><summary>Is 8mellow a crisis or counselling service?</summary><div><p>No. 8mellow is not a replacement for professional help. If you are struggling or in danger, please contact your local emergency number or a crisis line. You can find options on our <a href="safety.html">Safety &amp; Support</a> page, including 9-8-8 in Canada.</p></div></details>
+    <details><summary>I have another question or a problem</summary><div><p>Email us at [support@8mellow.com] and we will get back to you.</p></div></details>
 
+    <div class="related">Also see: <a href="guidelines.html">Community Guidelines</a><a href="terms.html">Terms of Service</a><a href="privacy.html">Privacy Policy</a><a href="safety.html">Safety &amp; Support</a></div>
   </div>
 
 </div>
 
+<script>
+  // Back button: close this tab if it was opened from another page,
+  // otherwise go back, otherwise go to the wall
+  function goBack(e) {
+    e.preventDefault();
+    if (window.opener && !window.opener.closed) {
+      window.close();
+      setTimeout(function () { window.location.href = 'index.html'; }, 200);
+      return false;
+    }
+    if (document.referrer && window.history.length > 1) { window.history.back(); return false; }
+    window.location.href = 'index.html';
+    return false;
+  }
+</script>
 </body>
 </html>
