@@ -179,6 +179,10 @@
     The link works once and expires after a short time. If you do not see it, check your spam folder.
   </div>
 
+  <div class="info-box" id="no-account-hint" style="display:none; margin-top:0;">
+    <strong>No email after a minute?</strong> You may not have an account with this address yet. <a href="auth.html?mode=signup" style="color: var(--purple); font-weight: 600;">Sign up here</a>, or check that the address is spelled correctly.
+  </div>
+
   <button type="button" class="btn-resend" id="resend-btn">Send the link again</button>
   <p class="resend-status" id="resend-status" role="status"></p>
 
@@ -207,6 +211,7 @@
   if (!email) {
     window.location.replace('auth.html?mode=login');
   } else {
+    if (mode !== 'signup') document.getElementById('no-account-hint').style.display = 'block';
     document.getElementById('sent-to').textContent = email;      // textContent: never inserts HTML
     document.getElementById('back-link').href = 'auth.html?mode=' + (mode === 'signup' ? 'signup' : 'login');
   }
