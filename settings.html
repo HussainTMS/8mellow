@@ -255,7 +255,7 @@
     btn.disabled = true;
     const { data, error } = await supabaseClient.auth.updateUser(
       { email: newEmail },
-      { emailRedirectTo: 'https://hussaintms.github.io/8mellow/settings.html' }
+      { emailRedirectTo: 'https://8mellow.com/settings.html' }
     );
     btn.disabled = false;
 
