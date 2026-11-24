@@ -340,6 +340,7 @@
   <p class="ex-sub">A 20-second story: say it, be found, reply privately.</p>
   <div id="story-mount"></div>
   <div class="ex-actions">
+    <button type="button" class="ex-sound" id="ex-sound" aria-pressed="false">&#128264; Sound off</button>
     <button type="button" class="ex-replay" id="ex-replay">&#8635; Replay</button>
     <a class="ex-join" href="auth.html?mode=signup">Write your first message</a>
   </div>
@@ -357,17 +358,19 @@
   .btn-hero-ghost{ display:none; margin-left:12px; padding:13px 24px; border:1.5px solid var(--purple); border-radius:999px; background:rgba(255,255,255,.85); color:var(--purple); font-weight:600; font-size:16px; text-decoration:none; white-space:nowrap; align-self:flex-start; width:fit-content; }
   .btn-hero-ghost:hover{ background:var(--light-purple); }
   @media(max-width:600px){ .btn-hero-ghost{ margin:12px 0 0; } }
-  body.has-explainer .scroll-indicator{ display:none; }
   @media(min-width:1000px){
-    .hero-section{ min-height:660px; }
+    .hero-section{ min-height:700px; }
     .explainer.in-hero{ position:absolute; z-index:11; right:max(48px,calc((100% - 1280px)/2 + 48px)); top:110px; width:460px; max-width:none; margin:0; padding:0; }
+    body.has-explainer .scroll-indicator{ right:auto; left:48px; bottom:28px; }
     body.has-explainer .hero-content{ margin:0 auto 0 max(0px,calc((100% - 1280px)/2)); max-width:620px; }
     .explainer.in-hero h2{ font-size:22px; margin-bottom:4px; }
-    .explainer.in-hero .ex-sub, .explainer.in-hero p{ font-size:14px; margin-bottom:10px; }
+    .explainer.in-hero .ex-sub, .explainer.in-hero p{ font-size:15px; margin-bottom:10px; }
     .explainer.in-hero .story-stage{ box-shadow:0 18px 40px rgba(91,50,165,.28); }
   }
   .explainer h2{ font-family:'Outfit',sans-serif; font-size:28px; color:var(--purple); margin-bottom:6px; }
-  .ex-sub{ font-size:15px; color:var(--muted); margin-bottom:18px; }
+  .ex-sub{ font-size:16px; font-weight:500; color:#2B2B2B; margin-bottom:18px; }
+  .ex-sound{ background:none; border:1.5px solid var(--purple); border-radius:999px; font-family:inherit; font-size:14px; font-weight:600; color:var(--purple); cursor:pointer; padding:8px 14px; }
+  .ex-sound[aria-pressed="true"]{ background:var(--purple); color:#fff; }
   #explainer .story-stage{ --ar:4/3; box-shadow:0 14px 40px rgba(91,50,165,.22); }
   @media(max-width:600px){ #explainer .story-stage{ --ar:4/5; } .explainer h2{ font-size:24px; } }
   .ex-actions{ display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:14px 20px; margin-top:18px; }
@@ -475,7 +478,7 @@ function createStory(mount, opts) {
       if (opts.loop) { end.classList.remove('on'); at(900, play); }
     });
   }
-  function stop() { clear(); reset(); }
+  function stop() { clear(); reset(); if (opts.onStop) opts.onStop(); }
   if (reduce) stage.classList.add('st-static');
   if (opts.autoplay) play();
   return { play: play, stop: stop, stage: stage };
@@ -494,7 +497,17 @@ window.addEventListener('load', async function () {
   var watch = document.getElementById('hero-watch');
   if (watch) watch.style.display = sec.classList.contains('in-hero') ? 'none' : 'inline-block';
   var cards = document.querySelector('.how-it-works'); if (cards) cards.style.marginTop = '0';
-  var story = createStory(document.getElementById('story-mount'), { loop: true, cta: 'Join free' });
+  var music = new Audio('explainer-music.mp3'); music.preload = 'none';
+  var soundOn = false, sbtn = document.getElementById('ex-sound');
+  var story = createStory(document.getElementById('story-mount'), { loop: true, cta: 'Join free',
+    onPlay: function () { if (soundOn) { try { music.currentTime = 0; var p = music.play(); if (p && p.catch) p.catch(function(){}); } catch (e) {} } },
+    onStop: function () { try { music.pause(); } catch (e) {} } });
+  sbtn.addEventListener('click', function () {
+    soundOn = !soundOn;
+    sbtn.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+    sbtn.innerHTML = soundOn ? '&#128266; Sound on' : '&#128264; Sound off';
+    if (soundOn) { story.play(); playing = true; } else { music.pause(); }
+  });
   var playing = false;
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (entries) {
