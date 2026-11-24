@@ -461,7 +461,7 @@ function createStory(mount, opts) {
   function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
 
   function play() {
-    clear(); reset();
+    clear(); reset(); if (opts.onPlay) opts.onPlay();
     if (reduce) { stage.classList.add('st-static'); return; }
     at(300,   function () { hook.classList.add('on'); });
     at(3000,  function () { hook.classList.remove('on'); });
