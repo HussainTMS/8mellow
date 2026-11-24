@@ -235,8 +235,9 @@
     .banner-script{ border-left:none; border-top:1px solid rgba(91,50,165,0.1); width:100%; }
   }
   @media(max-width:768px){
-    .nav-links { display:none; } /* Only hide the text links (How It Works, etc) */
-    .nav { padding: 16px 16px; } /* Reduce padding slightly */
+    .nav { padding: 16px 16px 8px; flex-wrap: wrap; row-gap: 10px; } /* Reduce padding slightly */
+    .nav-links { order: 3; width: 100%; justify-content: center; gap: 22px; padding: 6px 0 2px; } /* Links drop onto their own row */
+    .nav-links a { font-size: 14px; padding: 6px 2px; }
     .nav-actions { gap: 8px; } /* Bring buttons closer together */
     .btn-outline, .btn-solid { padding: 8px 14px; font-size: 13px; } /* Make buttons smaller */
     .hero-content{ padding:20px 24px 60px; }
