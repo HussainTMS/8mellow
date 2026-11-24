@@ -322,6 +322,7 @@
   Get Started
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
     </a>
+    <a href="#explainer" class="btn-hero-ghost" id="hero-watch">&#9654; See how it works</a>
   <!-- SCROLL DOWN INDICATOR -->
   <a href="#messages" class="scroll-indicator">
     <span>See messages</span>
@@ -333,12 +334,179 @@
   </div>
 </div>
 
+<!-- HOW IT WORKS ANIMATION (visitors who are not logged in) -->
+<section class="explainer" id="explainer" aria-labelledby="ex-title">
+  <h2 id="ex-title">See how 8mellow works</h2>
+  <p class="ex-sub">A 20-second story: say it, be found, reply privately.</p>
+  <div id="story-mount"></div>
+  <div class="ex-actions">
+    <button type="button" class="ex-replay" id="ex-replay">&#8635; Replay</button>
+    <a class="ex-join" href="auth.html?mode=signup">Write your first message</a>
+  </div>
+</section>
+
 <div class="how-it-works">
   <div class="step-card"><div class="step-icon">📝</div><h3>1. Post a Message</h3><p>Share what's on your mind for someone from your past.</p></div>
   <div class="step-card"><div class="step-icon">🔍</div><h3>2. Find the Right Person</h3><p>Let others discover your message with helpful clues.</p></div>
   <div class="step-card"><div class="step-icon">🛡️</div><h3>3. Connect Safely</h3><p>Once they respond, you decide to connect.</p></div>
   <div class="step-card"><div class="step-icon">🔒</div><h3>4. Chat Privately</h3><p>Your conversation stays between you.</p></div>
 </div>
+
+<style>
+  .explainer{ display:none; max-width:760px; margin:36px auto 48px; padding:0 24px; text-align:center; scroll-margin-top:16px; }
+  .btn-hero-ghost{ display:none; margin-left:12px; padding:13px 24px; border:1.5px solid var(--purple); border-radius:999px; background:rgba(255,255,255,.85); color:var(--purple); font-weight:600; font-size:16px; text-decoration:none; white-space:nowrap; align-self:flex-start; width:fit-content; }
+  .btn-hero-ghost:hover{ background:var(--light-purple); }
+  @media(max-width:600px){ .btn-hero-ghost{ margin:12px 0 0; } }
+  body.has-explainer .scroll-indicator{ display:none; }
+  @media(min-width:1000px){
+    .hero-section{ min-height:660px; }
+    .explainer.in-hero{ position:absolute; z-index:11; right:max(48px,calc((100% - 1280px)/2 + 48px)); top:110px; width:460px; max-width:none; margin:0; padding:0; }
+    body.has-explainer .hero-content{ margin:0 auto 0 max(0px,calc((100% - 1280px)/2)); max-width:620px; }
+    .explainer.in-hero h2{ font-size:22px; margin-bottom:4px; }
+    .explainer.in-hero .ex-sub, .explainer.in-hero p{ font-size:14px; margin-bottom:10px; }
+    .explainer.in-hero .story-stage{ box-shadow:0 18px 40px rgba(91,50,165,.28); }
+  }
+  .explainer h2{ font-family:'Outfit',sans-serif; font-size:28px; color:var(--purple); margin-bottom:6px; }
+  .ex-sub{ font-size:15px; color:var(--muted); margin-bottom:18px; }
+  #explainer .story-stage{ --ar:4/3; box-shadow:0 14px 40px rgba(91,50,165,.22); }
+  @media(max-width:600px){ #explainer .story-stage{ --ar:4/5; } .explainer h2{ font-size:24px; } }
+  .ex-actions{ display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:14px 20px; margin-top:18px; }
+  .ex-replay{ background:none; border:none; font-family:inherit; font-size:15px; font-weight:600; color:var(--purple); cursor:pointer; padding:10px 6px; }
+  .ex-replay:hover{ text-decoration:underline; }
+  .ex-join{ background:var(--purple); color:#fff; text-decoration:none; padding:12px 24px; border-radius:999px; font-family:'Outfit',sans-serif; font-weight:600; font-size:16px; }
+  .ex-join:hover{ background:var(--purple-hover); }
+.story-stage{ --ar:4/3; position:relative; width:100%; aspect-ratio:var(--ar); container-type:size; overflow:hidden; border-radius:24px; background:radial-gradient(120% 90% at 20% 0%,#7448C4 0%,#5B32A5 45%,#3E2078 100%); font-family:'Inter',sans-serif; color:#fff; isolation:isolate; }
+.story-stage *{ box-sizing:border-box; }
+.story-stage .st-b{ text-align:left; }
+.st-layer{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:6cqmin; }
+.st-hook{ font-family:'Outfit','Inter',sans-serif; font-weight:700; font-size:6.2cqmin; line-height:1.25; text-align:center; max-width:82cqw; opacity:0; transform:translateY(2cqmin); transition:opacity .7s ease, transform .7s ease; }
+.st-hook.on{ opacity:1; transform:none; }
+.st-stack{ align-items:stretch; justify-content:center; gap:0; transition:opacity .6s ease, transform .6s ease; }
+.st-stack.out{ opacity:0; transform:scale(.96); }
+.st-b{ position:relative; max-width:min(80cqw,100cqmin); padding:3.6cqmin 4.6cqmin; border-radius:5.5cqmin; font-size:4.6cqmin; line-height:1.35; font-weight:600; opacity:0; transform:translateY(3cqmin) scale(.85); transition:opacity .5s ease, transform .55s cubic-bezier(.2,.9,.3,1.3); }
+.st-b.on{ opacity:1; transform:none; }
+.st-b1{ align-self:flex-start; margin-left:4cqw; transform-origin:left bottom; color:#fff; background:radial-gradient(circle at 20% 10%,#CFA02A 0%,#A87A0A 28%,#94690A 60%,#7E5906 100%); }
+.st-b2{ align-self:flex-end; margin-right:4cqw; transform-origin:right bottom; color:#2B1561; background:radial-gradient(circle at 25% 10%,#D8FFF4 0%,#7FFFD4 45%,#5BE0B8 100%); }
+.st-b::after{ content:''; position:absolute; bottom:-2.8cqmin; width:4.8cqmin; height:4.8cqmin; }
+.st-b1::after{ left:5cqmin; background:#7E5906; clip-path:polygon(0 0,100% 0,18% 100%); }
+.st-b2::after{ right:5cqmin; background:#5BE0B8; clip-path:polygon(0 0,100% 0,82% 100%); }
+.st-text{ display:block; opacity:0; transition:opacity .5s ease; }
+.st-b.typed .st-text{ opacity:1; }
+.st-dots{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:1.6cqmin; opacity:0; transition:opacity .2s; }
+.st-dots i{ width:2.1cqmin; height:2.1cqmin; border-radius:50%; background:#fff; animation:stBounce 1s infinite ease-in-out; }
+.st-b2 .st-dots i{ background:#5B32A5; }
+.st-dots i:nth-child(2){ animation-delay:.15s; } .st-dots i:nth-child(3){ animation-delay:.3s; }
+.st-b.typing .st-dots{ opacity:1; }
+.st-b.typed .st-dots{ opacity:0; }
+@keyframes stBounce{ 0%,60%,100%{ transform:translateY(0); opacity:.55; } 30%{ transform:translateY(-1.3cqmin); opacity:1; } }
+.st-cap{ display:inline-flex; align-items:center; gap:1.2cqmin; font-size:3.8cqmin; font-weight:500; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28); padding:1.2cqmin 3cqmin; border-radius:999px; margin:4.2cqmin 4cqw 4.6cqmin; opacity:0; transform:translateY(1.5cqmin); transition:opacity .6s ease, transform .6s ease; }
+.st-cap svg{ width:1.1em; height:1.1em; flex:none; }
+.st-cap.on{ opacity:1; transform:none; }
+.st-cap1{ align-self:flex-start; margin-bottom:5cqmin; }
+.st-cap2{ align-self:flex-end; }
+.st-end{ gap:2.2cqmin; text-align:center; background:radial-gradient(120% 90% at 20% 0%,#7448C4 0%,#5B32A5 45%,#3E2078 100%); opacity:0; pointer-events:none; transition:opacity .7s ease; }
+.st-end.on{ opacity:1; }
+.st-end svg.st-logo{ width:20cqmin; height:20cqmin; margin-bottom:1cqmin; }
+.st-brand{ font-family:'Outfit','Inter',sans-serif; font-size:10cqmin; font-weight:700; line-height:1; }
+.st-tag{ font-size:4.4cqmin; color:#E4D9F7; max-width:80cqw; }
+.st-cta{ margin-top:2.5cqmin; background:#7FFFD4; color:#2B1561; font-weight:700; font-size:4.2cqmin; padding:2cqmin 5cqmin; border-radius:999px; }
+.story-stage.st-static .st-hook, .story-stage.st-static .st-end{ display:none; }
+.story-stage.st-static .st-b, .story-stage.st-static .st-cap{ opacity:1; transform:none; transition:none; }
+.story-stage.st-static .st-text{ opacity:1; transition:none; }
+.story-stage.st-static .st-dots{ display:none; }
+
+</style>
+<script>
+/* 8mellow explainer story: createStory(mount, { loop, cta, autoplay, onDone }) */
+function createStory(mount, opts) {
+  opts = opts || {};
+  var LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+  var CHAT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.5A8 8 0 1 1 21 12z"/></svg>';
+  var LOGO = '<svg class="st-logo" viewBox="0 0 64 64" aria-hidden="true"><defs><radialGradient id="stg" gradientUnits="userSpaceOnUse" cx="16" cy="12" r="38"><stop offset="0" stop-color="#EBC45A"/><stop offset=".55" stop-color="#B8860B"/><stop offset="1" stop-color="#8A6209"/></radialGradient><radialGradient id="stm" gradientUnits="userSpaceOnUse" cx="34" cy="28" r="36"><stop offset="0" stop-color="#D4FFF3"/><stop offset=".55" stop-color="#7FFFD4"/><stop offset="1" stop-color="#4DD3AB"/></radialGradient></defs><ellipse cx="25" cy="23.5" rx="19" ry="14.5" fill="url(#stg)"/><path d="M13 32Q11 40 6.5 43.5Q17 43 23 37Z" fill="url(#stg)"/><g stroke="#5B32A5" stroke-width="3" stroke-linejoin="round"><ellipse cx="40" cy="38" rx="19" ry="14.5" fill="#5B32A5"/><path d="M52 46.5Q54 54 58.5 57.5Q48 57 42 51Z" fill="#5B32A5"/></g><ellipse cx="40" cy="38" rx="19" ry="14.5" fill="url(#stm)"/><path d="M52 46.5Q54 54 58.5 57.5Q48 57 42 51Z" fill="url(#stm)"/><g fill="#5B32A5"><circle cx="14" cy="21.5" r="2.1"/><circle cx="21" cy="21.5" r="2.1"/><circle cx="28" cy="21.5" r="2.1"/><circle cx="33" cy="38.5" r="2.1"/><circle cx="40" cy="38.5" r="2.1"/><circle cx="47" cy="38.5" r="2.1"/></g></svg>';
+  var T = {
+    hook: 'Is there something you never got to say?',
+    b1: "There’s something I never got to say. I hope you see this one\u00a0day.",
+    c1: 'Post anonymously. No name shown.',
+    b2: 'I remember you. I’m glad you said it.',
+    c2: 'Reply privately. Just the two of you.',
+    brand: '8mellow', tag: 'Some things are worth saying.', cta: opts.cta || 'Join free'
+  };
+  mount.innerHTML =
+    '<div class="story-stage" role="img" aria-label="Short animation: someone posts an anonymous message on 8mellow, a person who remembers them replies privately, and the two can talk just between themselves.">' +
+    '<div class="st-layer" aria-hidden="true"><div class="st-hook">' + T.hook + '</div></div>' +
+    '<div class="st-layer st-stack" aria-hidden="true">' +
+      '<div class="st-b st-b1"><div class="st-dots"><i></i><i></i><i></i></div><span class="st-text">' + T.b1 + '</span></div>' +
+      '<div class="st-cap st-cap1">' + LOCK + '<span>' + T.c1 + '</span></div>' +
+      '<div class="st-b st-b2"><div class="st-dots"><i></i><i></i><i></i></div><span class="st-text">' + T.b2 + '</span></div>' +
+      '<div class="st-cap st-cap2">' + CHAT + '<span>' + T.c2 + '</span></div>' +
+    '</div>' +
+    '<div class="st-layer st-end" aria-hidden="true">' + LOGO + '<div class="st-brand">' + T.brand + '</div><div class="st-tag">' + T.tag + '</div><div class="st-cta">' + T.cta + '</div></div>' +
+    '</div>';
+
+  var stage = mount.querySelector('.story-stage');
+  var q = function (s) { return stage.querySelector(s); };
+  var hook = q('.st-hook'), stack = q('.st-stack'), b1 = q('.st-b1'), b2 = q('.st-b2'),
+      c1 = q('.st-cap1'), c2 = q('.st-cap2'), end = q('.st-end');
+  var timers = [];
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function clear() { timers.forEach(clearTimeout); timers = []; }
+  function reset() {
+    [hook, b1, b2, c1, c2, end].forEach(function (e) { e.classList.remove('on', 'typing', 'typed'); });
+    stack.classList.remove('out');
+  }
+  function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
+
+  function play() {
+    clear(); reset();
+    if (reduce) { stage.classList.add('st-static'); return; }
+    at(300,   function () { hook.classList.add('on'); });
+    at(3000,  function () { hook.classList.remove('on'); });
+    at(3300,  function () { b1.classList.add('on', 'typing'); });
+    at(4600,  function () { b1.classList.remove('typing'); b1.classList.add('typed'); });
+    at(6400,  function () { c1.classList.add('on'); });
+    at(10600, function () { b2.classList.add('on', 'typing'); });
+    at(11700, function () { b2.classList.remove('typing'); b2.classList.add('typed'); });
+    at(13300, function () { c2.classList.add('on'); });
+    at(17600, function () { stack.classList.add('out'); });
+    at(18000, function () { end.classList.add('on'); });
+    at(24500, function () {
+      if (opts.onDone) opts.onDone();
+      if (opts.loop) { end.classList.remove('on'); at(900, play); }
+    });
+  }
+  function stop() { clear(); reset(); }
+  if (reduce) stage.classList.add('st-static');
+  if (opts.autoplay) play();
+  return { play: play, stop: stop, stage: stage };
+}
+
+window.addEventListener('load', async function () {
+  var sec = document.getElementById('explainer');
+  try {
+    var r = await supabaseClient.auth.getSession();
+    if (r.data && r.data.session) return;          // members don't need the intro
+  } catch (e) { return; }
+  sec.style.display = 'block';
+  document.body.classList.add('has-explainer');
+  var hero = document.querySelector('.hero-section');
+  if (hero && window.innerWidth >= 1000) { sec.classList.add('in-hero'); hero.appendChild(sec); }
+  var watch = document.getElementById('hero-watch');
+  if (watch) watch.style.display = sec.classList.contains('in-hero') ? 'none' : 'inline-block';
+  var cards = document.querySelector('.how-it-works'); if (cards) cards.style.marginTop = '0';
+  var story = createStory(document.getElementById('story-mount'), { loop: true, cta: 'Join free' });
+  var playing = false;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting && !playing) { playing = true; story.play(); }
+        else if (!en.isIntersecting && playing) { playing = false; story.stop(); }
+      });
+    }, { threshold: 0.5 }).observe(story.stage);
+  } else { story.play(); }
+  document.getElementById('ex-replay').addEventListener('click', function () { playing = true; story.play(); });
+});
+</script>
 
 <div class="feed-section" id="messages">
   <!-- Shown only to visitors who are not logged in -->
