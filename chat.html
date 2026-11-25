@@ -225,7 +225,7 @@
       await supabaseClient.from('threads').update({ [column]: true }).eq('id', currentThreadId);
     }
     closeReport();
-    alert('Thank you. Your report has been sent to the safety team.');
+    alert('Thank you. Your report has been sent to the safety team.' + (alsoBlock ? '\n\nYou can unblock this person anytime in Settings, under Blocked users.' : ''));
     if (alsoBlock) window.location.href = 'inbox.html';
     btn.disabled = false;
   }
@@ -251,7 +251,7 @@
       if (error) {
         alert('Error blocking user: ' + error.message);
       } else {
-        alert('User blocked successfully.');
+        alert('User blocked. You can unblock them anytime in Settings, under Blocked users.');
         window.location.href = 'inbox.html'; // Send them back to the inbox
       }
     }
