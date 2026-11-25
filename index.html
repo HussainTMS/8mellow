@@ -355,7 +355,7 @@
   .explainer{ display:none; max-width:760px; margin:36px auto 48px; padding:0 24px; text-align:center; scroll-margin-top:16px; }
   .btn-hero-ghost{ display:none; margin-left:12px; padding:13px 24px; border:1.5px solid var(--purple); border-radius:999px; background:rgba(255,255,255,.85); color:var(--purple); font-weight:600; font-size:16px; text-decoration:none; white-space:nowrap; align-self:flex-start; width:fit-content; }
   .btn-hero-ghost:hover{ background:var(--light-purple); }
-  @media(max-width:600px){ .btn-hero-ghost{ margin:12px 0 0; } }
+  @media(max-width:600px){ .btn-hero-ghost{ margin:0; } }
   @media(min-width:1000px){
     .hero-section{ min-height:700px; }
     .explainer.in-hero{ position:absolute; z-index:11; right:max(48px,calc((100% - 1280px)/2 + 48px)); top:110px; width:460px; max-width:none; margin:0; padding:0; }
@@ -492,6 +492,7 @@ window.addEventListener('load', async function () {
   document.body.classList.add('has-explainer');
   var hero = document.querySelector('.hero-section');
   if (hero && window.innerWidth >= 1000) { sec.classList.add('in-hero'); hero.appendChild(sec); }
+  var gs = document.getElementById('hero-btn'); if (gs) gs.style.display = 'none';   /* visitors: Sign Up is in the top corner */
   var watch = document.getElementById('hero-watch');
   if (watch) watch.style.display = sec.classList.contains('in-hero') ? 'none' : 'inline-block';
   var cards = document.querySelector('.how-it-works'); if (cards) cards.style.marginTop = '0';
