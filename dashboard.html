@@ -324,39 +324,6 @@
     </div>
   </div>
 
-  <div class="dashboard-grid">
-    
-    <!-- LEFT COLUMN: CORE ACTIONS -->
-    <div class="menu-column">
-      <a href="write.html" class="menu-item">
-        <div class="menu-icon">✍️</div>
-        <div class="menu-text"><h3>Write a Message</h3><p>Share what's on your mind anonymously.</p></div>
-      </a>
-      <a href="my-messages.html" class="menu-item">
-        <div class="menu-icon">📝</div>
-        <div class="menu-text"><h3>My Messages</h3><p>Manage your public posts and see replies.</p></div>
-      </a>
-      <a href="inbox.html" class="menu-item">
-        <div class="menu-icon">💬</div>
-        <div class="menu-text"><h3>Inbox<span class="count-badge" id="inbox-badge" style="display:none"></span></h3><p>Check your private conversations.</p></div>
-      </a>
-    </div>
-
-    <!-- RIGHT COLUMN: EXPLORE + LINKED MESSAGES -->
-    <div class="right-column">
-      
-      <!-- LINKED MESSAGES BOX -->
-      <div class="linked-column">
-        <h3>🔍 Maybe 4 you</h3>
-        <div id="suggested-list">
-          <p class="empty-msg">Checking for shared clues...</p>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-
   <!-- FROM THE WALL TODAY -->
   <div class="wall-strip" id="wall-strip">
     <div class="wall-strip-head">
@@ -478,7 +445,7 @@
 
       // Badge on the Inbox card
       const badge = document.getElementById('inbox-badge');
-      if (unread > 0) { badge.textContent = unread; badge.style.display = 'inline-block'; }
+      if (badge && unread > 0) { badge.textContent = unread; badge.style.display = 'inline-block'; }
 
       body.textContent = '';
       if (likeCount > 0) body.append(weekRow('💜 ' + likeCount, ' “Me too” on your messages this week'));
@@ -511,8 +478,8 @@
         return mineAsAuthor ? (t.unread_author && !t.deleted_by_author) : (t.unread_replier && !t.deleted_by_replier);
       }).length;
       const badge = document.getElementById('inbox-badge');
-      if (unread > 0) { badge.textContent = unread; badge.style.display = 'inline-block'; }
-      else { badge.style.display = 'none'; }
+      if (badge && unread > 0) { badge.textContent = unread; badge.style.display = 'inline-block'; }
+      else if (badge) { badge.style.display = 'none'; }
     } catch (e) { /* keep the old badge */ }
   }
 
@@ -861,7 +828,6 @@
     renderMatches();        
   }
 
-  loadSuggestedMessages();
   initDashboard();
 </script>
 

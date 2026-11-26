@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>8mellow — Maybe 4 you</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#5B32A5">
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --purple:#5B32A5; --light-purple:#F3ECFC; --mint:#7FFFD4; --dark-gold:#B8860B; --ink:#1A1A1A; --muted:#666666; --line:#F0EAE1; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background: radial-gradient(circle at 20% 10%, #FFF5F5 0%, transparent 40%), radial-gradient(circle at 80% 90%, #FFF9F0 0%, transparent 40%), #FAF7F2; color:var(--ink); font-family:'Inter',sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased; min-height:100vh; padding:40px 20px; }
+  .wrap{ width:100%; max-width:760px; margin:0 auto; background:#fff; border-radius:24px; padding:44px; box-shadow:0 20px 60px rgba(91,50,165,0.06); position:relative; overflow:hidden; }
+  .wrap::before{ content:''; position:absolute; top:0; left:0; right:0; height:6px; background:linear-gradient(90deg, var(--purple), var(--mint)); }
+  .header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; }
+  .logo{ font-family:'Outfit',sans-serif; font-size:24px; font-weight:700; color:var(--dark-gold); padding-bottom:2px; border-bottom:4px solid var(--purple); text-decoration:none; }
+  .back-btn{ color:var(--muted); text-decoration:none; font-size:15px; font-weight:500; }
+  h1{ font-family:'Outfit',sans-serif; font-size:32px; color:var(--purple); margin-bottom:6px; }
+  .subtitle{ color:var(--muted); font-size:16px; margin-bottom:28px; }
+  .empty-msg{ font-size:15px; color:var(--muted); font-style:italic; padding:8px 0; }
+  .empty-msg a{ color:var(--purple); font-weight:600; font-style:normal; }
+  .match-card{ display:flex; gap:16px; padding:16px 18px; background:#FAFFF9; border:1px solid var(--line); border-radius:14px; margin-bottom:12px; text-decoration:none; color:var(--ink); transition:all .2s; }
+  .match-card:hover{ border-color:var(--purple); box-shadow:0 4px 12px rgba(91,50,165,0.08); }
+  .match-icon{ font-size:24px; }
+  .match-content h4{ font-size:14px; color:var(--purple); margin-bottom:4px; }
+  .match-content p{ font-size:14px; font-style:italic; color:var(--muted); margin-bottom:8px; }
+  .match-time{ font-size:12px; color:#6B6B6B; display:block; }
+  .load-more-btn{ width:100%; padding:12px; margin-top:8px; background:var(--light-purple); color:var(--purple); border:none; border-radius:12px; font-weight:600; font-family:inherit; cursor:pointer; }
+  .load-more-btn:hover{ background:#E5D9F5; }
+  .retry-btn{ margin-top:10px; padding:10px 18px; background:var(--purple); color:#fff; border:none; border-radius:999px; font-weight:600; font-family:inherit; cursor:pointer; }
+  .skel{ height:84px; border-radius:14px; margin-bottom:12px; background:linear-gradient(90deg,#F5F0FA,#FBF8FE,#F5F0FA); background-size:200% 100%; animation:sh 1.4s infinite; }
+  @keyframes sh{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  @media(max-width:600px){ body{ padding:16px 12px; } .wrap{ padding:28px 20px; } h1{ font-size:26px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><a class="logo" href="dashboard.html">8mellow</a><a class="back-btn" href="dashboard.html">&larr; Home</a></div>
+  <h1>Maybe 4 you</h1>
+  <p class="subtitle">Messages from people who share a place, a school or a word with you.</p>
+  <div id="suggested-list"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = 'https://gwirenkzjelndztpgjfk.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3aXJlbmt6amVsbmR6dHBnamZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTk3MjMsImV4cCI6MjExMDA3NTcyM30.ijyo2hp4TWgh_QW0wft4FHZwfxk4XQgAANYZgBOUds4';
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+  function esc(s) {
+    return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function timeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
+    if (diffHours < 24) return `${diffHours} hr${diffHours > 1 ? 's' : ''} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  function getKeywords(text) {
+    if (!text) return [];
+    const cleanText = text.toLowerCase().replace(/[^\w\s]/g, '');
+    const words = cleanText.split(/\s+/);
+    const stopWords = ['the', 'and', 'of', 'to', 'in', 'at', 'for', 'with', 'on', 'a', 'an', 'my', 'is', 'was', 'i', 'null', 'undefined', 'studied', 'study', 'university', 'uni', 'college', 'school', 'lived', 'live', 'living', 'moved', 'born', 'raised', 'from', 'about', 'that', 'this', 'have', 'has', 'had', 'but', 'not', 'are', 'were', 'you', 'your', 'they', 'their', 'them', 'we', 'us', 'want', 'need', 'see', 'next', 'week', 'time', 'day', 'today', 'tomorrow', 'yesterday', 'good', 'bye', 'yes', 'no', 'okay'];
+    return words.filter(w => w.length > 2 && !stopWords.includes(w));
+  }
+
+  let allMatches = [];
+  let displayedMatches = 10;
+  const list = document.getElementById('suggested-list');
+
+  function showMessage(html) { list.innerHTML = html; }
+
+  async function loadSuggestedMessages() {
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) { window.location.replace('auth.html?mode=login&next=maybe.html'); return; }
+      const user = session.user;
+
+      const { data: myProfile } = await supabaseClient.from('profiles').select('education, current_location, bio').eq('id', user.id).maybeSingle();
+      if (!myProfile) { showMessage('<p class="empty-msg">Create a profile to see messages that might link to you. <a href="profile.html">Go to my profile</a></p>'); return; }
+
+      const myKeywords = getKeywords(`${myProfile.education || ''} ${myProfile.current_location || ''} ${myProfile.bio || ''}`);
+      if (myKeywords.length === 0) { showMessage('<p class="empty-msg">Add a school, a place or a few words to your profile to see messages here. <a href="profile.html">Go to my profile</a></p>'); return; }
+
+      const { data: myReplies, error: e1 } = await supabaseClient.from('threads').select('post_id').eq('replier_id', user.id);
+      if (e1) throw e1;
+      const repliedPostIds = (myReplies || []).map(r => r.post_id);
+
+      const { data: posts, error: e2 } = await supabaseClient.from('posts').select('*').neq('status', 'hidden').neq('user_id', user.id);
+      if (e2) throw e2;
+      if (!posts || posts.length === 0) { showMessage('<p class="empty-msg">No other messages on the wall yet.</p>'); return; }
+
+      const userIds = [...new Set(posts.map(p => p.user_id))];
+      const { data: profiles, error: e3 } = await supabaseClient.from('profiles').select('id, education, current_location, bio').in('id', userIds);
+      if (e3) throw e3;
+
+      allMatches = [];
+      posts.forEach(post => {
+        if (repliedPostIds.includes(post.id)) return;
+        const posterProfile = (profiles || []).find(p => p.id === post.user_id);
+        if (!posterProfile) return;
+        const posterKeywords = getKeywords(`${posterProfile.education || ''} ${posterProfile.current_location || ''} ${posterProfile.bio || ''}`);
+        const sharedWord = myKeywords.find(word => posterKeywords.includes(word));
+        if (sharedWord) allMatches.push({ post, posterProfile, sharedWord });
+      });
+      renderMatches();
+    } catch (err) {
+      showMessage('<p class="empty-msg">We could not load this just now.</p><button class="retry-btn" onclick="retryLoad()">Try again</button>');
+    }
+  }
+
+  function retryLoad() {
+    showMessage('<div class="skel"></div><div class="skel"></div><div class="skel"></div>');
+    loadSuggestedMessages();
+  }
+
+  function renderMatches() {
+    if (allMatches.length === 0) { showMessage('<p class="empty-msg">No linked messages found yet. Check back soon, or add more to your profile.</p>'); return; }
+    let html = allMatches.slice(0, displayedMatches).map(match => `
+      <a href="chat.html?post_id=${encodeURIComponent(match.post.id)}" class="match-card">
+        <div class="match-icon">✨</div>
+        <div class="match-content">
+          <h4>Linked by: "${esc(match.sharedWord)}"</h4>
+          <p>"${esc(match.post.content.substring(0, 90))}..."</p>
+          <span class="match-time">${timeAgo(match.post.created_at)}</span>
+        </div>
+      </a>`).join('');
+    if (allMatches.length > displayedMatches) html += '<button onclick="loadMoreMatches()" class="load-more-btn">Load more messages</button>';
+    showMessage(html);
+  }
+
+  function loadMoreMatches() { displayedMatches += 10; renderMatches(); }
+
+  loadSuggestedMessages();
+</script>
+<script src="idle-timeout.js"></script>
+</body>
+</html>

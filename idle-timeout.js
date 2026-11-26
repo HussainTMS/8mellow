@@ -9,7 +9,7 @@
   // If one is opened on its own, move it into the shell.
   try {
     const here = location.pathname.split('/').pop();
-    const SHELL_PAGES = ['dashboard.html','inbox.html','write.html','my-messages.html','chat.html','profile.html','settings.html'];
+    const SHELL_PAGES = ['dashboard.html','inbox.html','write.html','my-messages.html','maybe.html','chat.html','profile.html','settings.html'];
     if (window.top === window.self && SHELL_PAGES.indexOf(here) !== -1) {
       // An email sign-in link carries a one-time code. Let the page finish
       // signing in first, then move into the shell (otherwise the code is lost).
