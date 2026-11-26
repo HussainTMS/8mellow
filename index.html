@@ -313,10 +313,10 @@
 
   <div class="h2-grid">
     <div class="hero-content h2-copy">
-      <span class="h2-pill"><i></i>Anonymous &middot; Private &middot; Free</span>
+      <span class="h2-pill"><i></i>Anonymous &middot; Private</span>
       <h1>Say the thing you <span class="h2-grad">never got to say.</span></h1>
       <div class="h2-quote"><span id="h2-quote">&ldquo;I'm sorry I stopped answering.&rdquo;</span></div>
-      <p class="h2-lead">An anonymous wall for apologies, thank-yous and goodbyes. Someone may recognise your words and reply &mdash; privately, and only if you want them to.</p>
+      <p class="h2-lead">Anonymous messages for the things you never got to say. Someone may recognise your words and reply &mdash; privately.</p>
       <div class="h2-cta">
         <a href="auth.html?mode=signup" class="btn-hero" id="hero-btn">
           Join free
@@ -324,7 +324,6 @@
         </a>
         <a href="#explainer" class="btn-hero-ghost" id="hero-watch">&#9654; See how it works</a>
       </div>
-      <ul class="h2-trust"><li>No real names</li><li>Private replies</li><li>Block anytime</li></ul>
     </div>
 
     <div class="h2-visual" aria-hidden="true">
@@ -339,19 +338,10 @@
         <div class="bb mint b6 sm"><div class="bb-in">Me too &#128156;</div></div>
         <div class="bb gold b3"><div class="bb-in">Thank you for noticing me.</div></div>
         <div class="bb mint b4 pb"><div class="bb-in">I'd like that. Thank you.</div></div>
-        <span class="bb-orb o1"></span><span class="bb-orb o2"></span><span class="bb-orb o3"></span>
       </div>
       <div class="h2-note">Examples of unsent messages</div>
     </div>
   </div>
-
-  <a href="#messages" class="scroll-indicator">
-    <span>See messages</span>
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="12" y1="5" x2="12" y2="19"></line>
-      <polyline points="19 12 12 19 5 12"></polyline>
-    </svg>
-  </a>
 </div>
 
 <script>
@@ -656,6 +646,16 @@ body.has-explainer .hero2 .btn-hero-ghost{ display:inline-flex !important; }
   .h2-quote{ font-size:18px; }
 }
 @media (prefers-reduced-motion: reduce){ .bb,.bb-orb{ animation:none; } .bl{ animation:none; opacity:.9; } .pa .bb-in,.pb .bb-in{ animation:none; } }
+</style>
+<style>
+/* ===== Trimmed hero ===== */
+.hero2::after{ display:none; }
+.hero2 .h2-glow.g2, .hero2 .h2-glow.g3{ opacity:.22; }
+#nav-signup{ display:none; }
+.hero-section.hero2 .btn-hero-ghost, body.has-explainer .hero-section.hero2 .btn-hero-ghost{ background:none; border:none; padding:10px 6px; color:var(--purple); text-decoration:underline; text-underline-offset:4px; font-weight:600; font-size:16px; }
+.hero-section.hero2 .btn-hero-ghost:hover{ background:none; color:var(--purple-hover); }
+.h2-cta{ margin-bottom:0; }
+@media(max-width:600px){ .hero2 .btn-hero-ghost{ width:auto !important; align-self:center; } .h2-grid{ padding-bottom:28px; } .h2-visual{ height:380px; } }
 </style>
 <script>
 /* 8mellow explainer story: createStory(mount, { loop, cta, autoplay, onDone }) */
