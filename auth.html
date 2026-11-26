@@ -159,7 +159,7 @@
 
   // Where the email link brings the person back to (and the message they wanted to reply to, if any)
   function redirectUrl() {
-    return SITE + 'dashboard.html' + (replyTo ? '?reply_to=' + encodeURIComponent(replyTo) : '');
+    return SITE + 'app.html' + (replyTo ? '?reply_to=' + encodeURIComponent(replyTo) : '');
   }
 
   async function requestLink(email, createAccount, name, button) {

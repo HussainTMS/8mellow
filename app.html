@@ -129,7 +129,12 @@
 
   function currentTarget() {
     let h = decodeURIComponent((location.hash || '').replace(/^#/, ''));
-    if (!ALLOWED.test(h)) h = 'dashboard.html';
+    if (!ALLOWED.test(h)) {
+      h = 'dashboard.html';
+      // coming back from an email link that was opened from a message's "reply" button
+      const rp = new URLSearchParams(location.search).get('reply_to');
+      if (rp && /^[A-Za-z0-9_\-]+$/.test(rp)) h += '?reply_to=' + rp;
+    }
     return h;
   }
 
