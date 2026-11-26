@@ -653,6 +653,14 @@ body.has-explainer .hero2 .btn-hero-ghost{ display:inline-flex !important; }
 .h2-cta{ margin-bottom:0; }
 @media(max-width:600px){ .hero2 .btn-hero-ghost{ width:auto !important; align-self:center; } .h2-grid{ padding-bottom:28px; } .h2-visual{ height:380px; } }
 </style>
+<style>
+/* ===== Smaller explainer ===== */
+#explainer.explainer{ max-width:440px; margin:32px auto 36px; }
+#explainer .story-stage{ --ar:4/3; border-radius:20px; box-shadow:0 10px 26px rgba(91,50,165,.18); }
+#explainer.explainer h2{ font-size:22px; }
+#explainer.explainer .ex-sub, #explainer.explainer p{ font-size:14px; }
+@media(max-width:600px){ #explainer.explainer{ max-width:300px; margin:24px auto 28px; } #explainer .story-stage{ --ar:1/1; } #explainer.explainer h2{ font-size:20px; } }
+</style>
 <script>
 /* 8mellow explainer story: createStory(mount, { loop, cta, autoplay, onDone }) */
 function createStory(mount, opts) {
