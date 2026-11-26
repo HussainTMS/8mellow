@@ -663,16 +663,19 @@ body.has-explainer .hero2 .btn-hero-ghost{ display:inline-flex !important; }
 </style>
 <style>
 /* ===== Compact wall cards ===== */
-.feed-list{ gap:14px; }
-.feed-card{ padding:18px 20px; border-radius:16px; box-shadow:0 4px 16px rgba(0,0,0,.03); }
-.feed-card:hover{ transform:none; box-shadow:0 8px 24px rgba(91,50,165,.08); }
-.msg-category{ font-size:11px; padding:4px 11px; margin-bottom:10px; }
-.msg-text{ font-size:15px; line-height:1.55; margin-bottom:14px; }
-.msg-footer{ padding-top:12px; }
-.btn-reply{ padding:7px 15px; font-size:13px; }
-.btn-like{ padding:5px 11px; font-size:12px; }
-.feed-card .msg-time{ font-size:12px; }
-@media(max-width:768px){ .feed-card{ padding:16px; } .msg-footer{ flex-direction:row; align-items:center; gap:10px; flex-wrap:wrap; } }
+.feed-list{ gap:10px; }
+.feed-card{ padding:12px 14px; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.03); }
+.feed-card:hover{ transform:none; box-shadow:0 6px 18px rgba(91,50,165,.08); }
+.feed-card > div:first-child{ margin-bottom:6px !important; font-size:11px !important; }
+.msg-category{ font-size:10.5px; padding:3px 9px; margin-bottom:6px; }
+.msg-text{ font-size:14px; line-height:1.45; margin-bottom:8px; }
+.msg-footer{ padding-top:8px; }
+.btn-reply{ padding:5px 12px; font-size:12px; border-width:1px; }
+.btn-like{ padding:3px 9px; font-size:11px; border-width:1px; }
+.btn-like .heart{ font-size:13px; }
+.feed-card .msg-time{ font-size:11px; }
+.msg-meta{ gap:10px; }
+@media(max-width:768px){ .feed-card{ padding:12px; } .msg-footer{ flex-direction:row; align-items:center; gap:8px; flex-wrap:wrap; } }
 </style>
 <script>
 /* 8mellow explainer story: createStory(mount, { loop, cta, autoplay, onDone }) */
