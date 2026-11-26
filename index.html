@@ -298,7 +298,8 @@
 </head>
 <body>
 
-<div class="hero-section">
+<div class="hero-section hero2">
+  <div class="h2-glow g1"></div><div class="h2-glow g2"></div><div class="h2-glow g3"></div>
   <nav class="nav">
     <div class="logo">8mellow</div>
     <div class="nav-links">
@@ -310,18 +311,29 @@
 </div>
   </nav>
 
-  <div class="hero-content">
-    <h1>Some things<br>are worth saying.</h1>
-    <p>Find, share, or respond to messages from people in your past — safely and privately.</p>
-    <p style="font-size: 15px; color: var(--muted); max-width: 480px; margin-bottom: 24px; line-height: 1.7;">
-      <strong style="color: var(--dark-gold);">8mellow</strong> is a safe, anonymous space to say the things you never got to say—or were hesitant to say. Whether it's an apology, a forgiveness, a goodbye, a thank you, or something else entirely—write it here. Someone might read it and reply privately. Or you might just find peace in letting it out.
-    </p>
-    <a href="auth.html?mode=signup" class="btn-hero" id="hero-btn">
-  Get Started
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-    </a>
-    <a href="#explainer" class="btn-hero-ghost" id="hero-watch">&#9654; See how it works</a>
-  <!-- SCROLL DOWN INDICATOR -->
+  <div class="h2-grid">
+    <div class="hero-content h2-copy">
+      <span class="h2-pill"><i></i>Anonymous &middot; Private &middot; Free</span>
+      <h1>Say the thing you <span class="h2-grad">never got to say.</span></h1>
+      <p class="h2-lead">An anonymous wall for apologies, thank-yous and goodbyes. Someone may recognise your words and reply &mdash; privately, and only if you want them to.</p>
+      <div class="h2-cta">
+        <a href="auth.html?mode=signup" class="btn-hero" id="hero-btn">
+          Join free
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+        <a href="#explainer" class="btn-hero-ghost" id="hero-watch">&#9654; See how it works</a>
+      </div>
+      <ul class="h2-trust"><li>No real names</li><li>Private replies</li><li>Block anytime</li></ul>
+    </div>
+
+    <div class="h2-visual" aria-hidden="true">
+      <div class="h2-card c1"><span class="h2-tag">To my old friend</span><p>I'm sorry I stopped answering. I was ashamed, not angry.</p><small>Anonymous &middot; just now</small></div>
+      <div class="h2-card c2"><span class="h2-tag mint">Thank you</span><p>You were the only teacher who noticed. I never said thanks.</p><small>Anonymous &middot; 2h ago</small></div>
+      <div class="h2-card c3"><span class="h2-tag gold">Private reply</span><p>I think this is about me. Can we talk? <b>&#128274;</b></p><small>Only you two can see this</small></div>
+      <div class="h2-note">Example messages</div>
+    </div>
+  </div>
+
   <a href="#messages" class="scroll-indicator">
     <span>See messages</span>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -329,7 +341,6 @@
       <polyline points="19 12 12 19 5 12"></polyline>
     </svg>
   </a>
-  </div>
 </div>
 
 <!-- HOW IT WORKS ANIMATION (visitors who are not logged in) -->
@@ -417,6 +428,71 @@
 .story-stage.st-static .st-dots{ display:none; }
 
 </style>
+<style>
+/* ===== Hero redesign (dark, social-app style) ===== */
+.hero-section.hero2{ background:linear-gradient(160deg,#12072A 0%,#220F4D 55%,#2E1566 100%); min-height:680px; border-radius:0 0 44px 44px; box-shadow:0 20px 50px rgba(30,10,70,.25); }
+.hero2::before{ display:none; }
+.h2-glow{ position:absolute; border-radius:50%; filter:blur(90px); opacity:.55; pointer-events:none; z-index:0; }
+.h2-glow.g1{ width:480px; height:480px; background:#7C4DDB; top:-120px; right:-80px; }
+.h2-glow.g2{ width:380px; height:380px; background:#7FFFD4; opacity:.22; bottom:-140px; left:8%; }
+.h2-glow.g3{ width:300px; height:300px; background:#B8860B; opacity:.25; top:30%; left:-120px; }
+.hero2 .logo{ border-bottom-color:#8E63E8; }
+.hero2 .nav-links a{ color:#E9E1FA; }
+.hero2 .nav-links a:hover{ color:#fff; }
+.hero2 .btn-outline{ background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.25); }
+.hero2 .btn-outline:hover{ background:rgba(255,255,255,.2); }
+.hero2 .btn-solid{ background:#7FFFD4; color:#1E0B4A; }
+.hero2 .btn-solid:hover{ background:#a8ffe5; }
+.h2-grid{ position:relative; z-index:10; width:100%; max-width:1280px; margin:0 auto; padding:10px 48px 90px; flex:1; display:grid; grid-template-columns:1.05fr .95fr; gap:40px; align-items:center; }
+.hero2 .hero-content.h2-copy{ padding:0; max-width:none; margin:0; }
+.h2-pill{ display:inline-flex; align-items:center; gap:8px; width:fit-content; padding:7px 14px; border-radius:999px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#E9E1FA; font-size:13px; font-weight:600; margin-bottom:22px; }
+.h2-pill i{ width:8px; height:8px; border-radius:50%; background:#7FFFD4; box-shadow:0 0 10px #7FFFD4; }
+.hero2 .hero-content h1{ color:#fff; font-size:64px; line-height:1.04; letter-spacing:-.03em; margin-bottom:20px; }
+.h2-grad{ background:linear-gradient(90deg,#FFD66B,#7FFFD4); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.hero2 .hero-content p.h2-lead{ color:#D9CEF2; font-size:19px; font-weight:400; line-height:1.6; max-width:520px; margin-bottom:30px; }
+.h2-cta{ display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin-bottom:26px; }
+.hero2 .btn-hero{ background:#7FFFD4; color:#1E0B4A; font-weight:700; padding:16px 32px; font-size:17px; box-shadow:0 10px 30px rgba(127,255,212,.25); }
+.hero2 .btn-hero svg{ width:18px; height:18px; flex:none; }
+.hero2 .btn-hero:hover{ background:#a8ffe5; }
+.hero2 .btn-hero-ghost{ display:none !important; margin:0; padding:15px 26px; background:rgba(255,255,255,.08); color:#fff; border:1.5px solid rgba(255,255,255,.35); }
+body.has-explainer .hero2 .btn-hero-ghost{ display:inline-flex !important; }
+.hero2 .btn-hero-ghost:hover{ background:rgba(255,255,255,.16); }
+.h2-trust{ list-style:none; display:flex; flex-wrap:wrap; gap:8px 22px; color:#BFB1E0; font-size:14px; font-weight:500; }
+.h2-trust li::before{ content:'\2713'; color:#7FFFD4; margin-right:8px; font-weight:700; }
+.h2-visual{ position:relative; height:440px; }
+.h2-card{ position:absolute; width:300px; padding:18px 20px; border-radius:22px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.22); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); color:#fff; box-shadow:0 20px 50px rgba(0,0,0,.28); animation:h2float 7s ease-in-out infinite; }
+.h2-card p{ font-size:16px; line-height:1.45; font-weight:500; margin:10px 0 12px; color:#fff; }
+.h2-card small{ font-size:12px; color:#BFB1E0; }
+.h2-tag{ display:inline-block; font-size:12px; font-weight:700; padding:4px 10px; border-radius:999px; background:rgba(142,99,232,.45); color:#fff; }
+.h2-tag.mint{ background:#7FFFD4; color:#1E0B4A; }
+.h2-tag.gold{ background:#E3B341; color:#2B1561; }
+.h2-card.c1{ top:0; left:6%; transform:rotate(-3deg); }
+.h2-card.c2{ top:150px; right:0; transform:rotate(2.5deg); animation-delay:-2.5s; }
+.h2-card.c3{ top:290px; left:14%; transform:rotate(-1.5deg); animation-delay:-4.5s; background:rgba(127,255,212,.12); border-color:rgba(127,255,212,.4); }
+.h2-note{ position:absolute; right:4px; bottom:-6px; font-size:12px; color:#9F90C8; }
+@keyframes h2float{ 0%,100%{ translate:0 0; } 50%{ translate:0 -10px; } }
+@media (prefers-reduced-motion: reduce){ .h2-card, .scroll-indicator{ animation:none; } }
+.hero-section.hero2 .scroll-indicator{ left:50%; right:auto; bottom:26px; margin-left:-62px; background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.25); box-shadow:none; animation:none; }
+.hero2 .scroll-indicator:hover{ background:rgba(255,255,255,.22); transform:none; }
+@media(max-width:1000px){
+  .h2-grid{ grid-template-columns:1fr; padding:10px 28px 110px; gap:36px; }
+  .hero2 .hero-content h1{ font-size:48px; }
+  .h2-visual{ height:400px; max-width:460px; margin:0 auto; width:100%; }
+  .h2-card{ width:270px; }
+}
+@media(max-width:600px){
+  .hero-section.hero2{ min-height:0; border-radius:0 0 32px 32px; }
+  .h2-grid{ padding:6px 20px 96px; gap:28px; }
+  .hero2 .hero-content h1{ font-size:38px; }
+  .hero2 .hero-content p.h2-lead{ font-size:16px; }
+  .hero2 .btn-hero, .hero2 .btn-hero-ghost{ width:100%; justify-content:center; }
+  .h2-visual{ height:330px; }
+  .h2-card{ width:230px; padding:14px 16px; }
+  .h2-card p{ font-size:14px; }
+  .h2-card.c2{ top:120px; } .h2-card.c3{ top:236px; left:6%; }
+  .hero2 .logo{ font-size:24px; }
+}
+</style>
 <script>
 /* 8mellow explainer story: createStory(mount, { loop, cta, autoplay, onDone }) */
 function createStory(mount, opts) {
@@ -490,11 +566,6 @@ window.addEventListener('load', async function () {
   } catch (e) { return; }
   sec.style.display = 'block';
   document.body.classList.add('has-explainer');
-  var hero = document.querySelector('.hero-section');
-  if (hero && window.innerWidth >= 1000) { sec.classList.add('in-hero'); hero.appendChild(sec); }
-  var gs = document.getElementById('hero-btn'); if (gs) gs.style.display = 'none';   /* visitors: Sign Up is in the top corner */
-  var watch = document.getElementById('hero-watch');
-  if (watch) watch.style.display = sec.classList.contains('in-hero') ? 'none' : 'inline-block';
   var cards = document.querySelector('.how-it-works'); if (cards) cards.style.marginTop = '0';
   var music = new Audio('explainer-music.mp3'); music.preload = 'none';
   var soundOn = false, sbtn = document.getElementById('ex-sound');
