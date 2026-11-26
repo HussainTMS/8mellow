@@ -315,6 +315,7 @@
     <div class="hero-content h2-copy">
       <span class="h2-pill"><i></i>Anonymous &middot; Private &middot; Free</span>
       <h1>Say the thing you <span class="h2-grad">never got to say.</span></h1>
+      <div class="h2-quote"><span id="h2-quote">&ldquo;I'm sorry I stopped answering.&rdquo;</span></div>
       <p class="h2-lead">An anonymous wall for apologies, thank-yous and goodbyes. Someone may recognise your words and reply &mdash; privately, and only if you want them to.</p>
       <div class="h2-cta">
         <a href="auth.html?mode=signup" class="btn-hero" id="hero-btn">
@@ -327,35 +328,20 @@
     </div>
 
     <div class="h2-visual" aria-hidden="true">
-      <div class="ph-chip pc1">&#128274; Private by default</div>
-      <div class="ph-chip pc2">&#10003; No real names</div>
-      <div class="ph-wrap" id="ph-wrap">
-        <div class="ph" id="ph">
-          <div class="ph-notch"></div>
-          <div class="ph-screen">
-            <div class="ph-bar"><b>8mellow</b><span class="ph-dot"></span></div>
-            <div class="ph-scene s1 on">
-              <div class="ph-label">Write a message</div>
-              <div class="ph-to">To my old friend</div>
-              <div class="ph-input"><span id="ph-type"></span><i class="ph-caret"></i></div>
-              <div class="ph-btn" id="ph-post">Post anonymously</div>
-            </div>
-            <div class="ph-scene s2">
-              <div class="ph-label">The wall</div>
-              <div class="ph-msg" id="ph-new"><span class="ph-tag">To my old friend</span><p>I'm sorry I stopped answering. I was ashamed, not angry.</p><small>Anonymous &middot; just now</small></div>
-              <div class="ph-msg dim"><span class="ph-tag mint">Thank you</span><p>You were the only teacher who noticed.</p><small>Anonymous &middot; 2h ago</small></div>
-              <div class="ph-notif" id="ph-notif">&#128274; Someone replied privately</div>
-            </div>
-            <div class="ph-scene s3">
-              <div class="ph-label">Private chat &middot; &#128274;</div>
-              <div class="ph-bub them" id="pb1">I think this is about me. Can we talk?</div>
-              <div class="ph-bub me" id="pb2">I'd like that. Thank you for answering.</div>
-              <div class="ph-bub them" id="pb3">Thank you for saying it &#128156;</div>
-            </div>
-          </div>
-        </div>
+      <div class="bb-stage">
+        <svg class="bb-lines" viewBox="0 0 440 500" fill="none">
+          <path class="bl la" d="M178 114 C 214 122 214 152 242 170"/>
+          <path class="bl lb" d="M205 392 C 226 398 226 414 246 424"/>
+        </svg>
+        <div class="bb gold b1"><div class="bb-in">I'm sorry I stopped answering.</div></div>
+        <div class="bb gold b5 sm"><div class="bb-in">I forgive you.</div></div>
+        <div class="bb mint b2 pa"><div class="bb-in">I think this is about me. Can we talk? &#128274;</div></div>
+        <div class="bb mint b6 sm"><div class="bb-in">Me too &#128156;</div></div>
+        <div class="bb gold b3"><div class="bb-in">Thank you for noticing me.</div></div>
+        <div class="bb mint b4 pb"><div class="bb-in">I'd like that. Thank you.</div></div>
+        <span class="bb-orb o1"></span><span class="bb-orb o2"></span><span class="bb-orb o3"></span>
       </div>
-      <div class="h2-note">Illustrative demo</div>
+      <div class="h2-note">Examples of unsent messages</div>
     </div>
   </div>
 
@@ -406,6 +392,14 @@
       hero.addEventListener('mouseleave',function(){ ph.style.setProperty('--ry','-8deg'); ph.style.setProperty('--rx','4deg'); });
     }
   }
+})();
+</script>
+<script>
+(function(){
+  var el=document.getElementById('h2-quote'); if(!el) return;
+  var L=["I'm sorry I stopped answering.","Thank you for noticing me.","I forgive you. I should have said it sooner.","I never got to say goodbye.","I was proud of you. I never said it."];
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var i=0; setInterval(function(){ if(document.hidden) return; el.classList.add('out'); setTimeout(function(){ i=(i+1)%L.length; el.innerHTML='&ldquo;'+L[i].replace(/&/g,'&amp;').replace(/</g,'&lt;')+'&rdquo;'; el.classList.remove('out'); },600); },3600);
 })();
 </script>
 <!-- HOW IT WORKS ANIMATION (visitors who are not logged in) -->
@@ -624,6 +618,44 @@ body.has-explainer .hero2 .btn-hero-ghost{ display:inline-flex !important; }
 .hero2 .ph{ background:linear-gradient(160deg,rgba(91,50,165,.35),rgba(91,50,165,.12)); border-color:rgba(91,50,165,.3); box-shadow:0 36px 70px rgba(60,30,120,.28), 0 0 60px rgba(127,255,212,.2), inset 0 1px 0 rgba(255,255,255,.5); }
 .hero2 .ph-chip{ background:rgba(255,255,255,.9); color:#2B1561; border:1px solid #E1D4F6; box-shadow:0 12px 30px rgba(91,50,165,.15); }
 .hero-section.hero2 .scroll-indicator{ background:#fff; color:var(--purple); border:1px solid #E1D4F6; box-shadow:0 6px 20px rgba(91,50,165,.12); } .hero-section.hero2 .scroll-indicator:hover{ background:var(--light-purple); }
+</style>
+<style>
+/* ===== Bubble sky ===== */
+.h2-quote{ border-left:3px solid #CFA02A; padding:2px 0 2px 14px; margin:0 0 18px; min-height:30px; font-family:'Outfit',sans-serif; font-size:21px; font-weight:500; color:var(--purple); }
+.h2-quote span{ display:inline-block; transition:opacity .6s ease, transform .6s ease; }
+.h2-quote span.out{ opacity:0; transform:translateY(6px); }
+.h2-visual{ perspective:none; height:520px; align-items:flex-start; justify-content:center; }
+.h2-visual{ display:block; position:relative; }
+.bb-stage{ position:absolute; left:50%; top:0; margin-left:-220px; width:440px; height:500px; transform-origin:top center; }
+.bb-lines{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; }
+.bl{ stroke:url(#none); stroke:#8E63E8; stroke-width:2.5; stroke-linecap:round; stroke-dasharray:6 7; filter:drop-shadow(0 0 6px rgba(142,99,232,.55)); opacity:0; animation:blLine 12s ease-in-out infinite; }
+.bl.lb{ animation-delay:-6s; }
+@keyframes blLine{ 0%,8%{ opacity:0; } 14%,80%{ opacity:.9; } 90%,100%{ opacity:0; } }
+.bb{ position:absolute; animation:h2float 7s ease-in-out infinite; }
+.bb-in{ position:relative; padding:18px 22px; border-radius:30px; font-size:17px; line-height:1.35; font-weight:600; }
+.bb-in::after{ content:''; position:absolute; bottom:-13px; width:24px; height:24px; }
+.bb.gold .bb-in{ color:#fff; background:radial-gradient(circle at 24% 14%,#EBC86A 0%,#CFA02A 22%,#A87A0A 58%,#7E5906 100%); box-shadow:0 22px 40px rgba(126,89,6,.32), inset 0 2px 6px rgba(255,255,255,.45), inset 0 -8px 14px rgba(70,45,0,.28); }
+.bb.gold .bb-in::after{ left:30px; background:#8A6208; clip-path:polygon(0 0,100% 0,18% 100%); }
+.bb.mint .bb-in{ color:#1E0B4A; background:radial-gradient(circle at 26% 14%,#F0FFF9 0%,#A8FFE6 28%,#7FFFD4 55%,#4FD9B0 100%); box-shadow:0 22px 40px rgba(40,170,135,.3), inset 0 2px 6px rgba(255,255,255,.7), inset 0 -8px 14px rgba(20,120,95,.22); }
+.bb.mint .bb-in::after{ right:30px; background:#55DDB4; clip-path:polygon(0 0,100% 0,82% 100%); }
+.bb.sm .bb-in{ font-size:14px; padding:12px 16px; border-radius:24px; }
+.bb.sm .bb-in::after{ width:18px; height:18px; bottom:-9px; }
+.b1{ left:0; top:20px; width:205px; } .b5{ left:252px; top:0; width:150px; animation-delay:-3s; }
+.b2{ left:228px; top:158px; width:205px; animation-delay:-1.5s; } .b6{ left:6px; top:222px; width:128px; animation-delay:-4.5s; }
+.b3{ left:18px; top:340px; width:190px; animation-delay:-2.2s; } .b4{ left:244px; top:410px; width:190px; animation-delay:-5s; }
+.pa .bb-in{ animation:bbPop 12s ease-in-out infinite; transform-origin:left center; }
+.pb .bb-in{ animation:bbPop 12s ease-in-out infinite -6s; transform-origin:left center; }
+@keyframes bbPop{ 0%,16%{ opacity:0; transform:scale(.5); } 24%{ opacity:1; transform:scale(1.06); } 28%,84%{ opacity:1; transform:scale(1); } 94%,100%{ opacity:0; transform:scale(.9); } }
+.bb-orb{ position:absolute; border-radius:50%; animation:h2float 9s ease-in-out infinite; }
+.bb-orb.o1{ width:34px; height:34px; left:200px; top:300px; background:radial-gradient(circle at 30% 25%,#F0FFF9,#7FFFD4 60%,#4FD9B0); box-shadow:0 8px 18px rgba(40,170,135,.3); }
+.bb-orb.o2{ width:22px; height:22px; left:150px; top:180px; background:radial-gradient(circle at 30% 25%,#EBC86A,#A87A0A); box-shadow:0 8px 16px rgba(126,89,6,.3); animation-delay:-3s; }
+.bb-orb.o3{ width:46px; height:46px; left:392px; top:330px; background:radial-gradient(circle at 30% 25%,#EBC86A,#A87A0A 70%); box-shadow:0 10px 22px rgba(126,89,6,.3); animation-delay:-5s; }
+@media(max-width:1000px){ .h2-visual{ height:520px; } }
+@media(max-width:600px){
+  .h2-visual{ height:404px; } .bb-stage{ transform:scale(.79); }
+  .h2-quote{ font-size:18px; }
+}
+@media (prefers-reduced-motion: reduce){ .bb,.bb-orb{ animation:none; } .bl{ animation:none; opacity:.9; } .pa .bb-in,.pb .bb-in{ animation:none; } }
 </style>
 <script>
 /* 8mellow explainer story: createStory(mount, { loop, cta, autoplay, onDone }) */
