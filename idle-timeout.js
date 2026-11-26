@@ -5,6 +5,32 @@
  *     <script src="idle-timeout.js"></script>
  */
 (function () {
+  // Logged-in pages live inside the side-menu shell (app.html).
+  // If one is opened on its own, move it into the shell.
+  try {
+    const here = location.pathname.split('/').pop();
+    const SHELL_PAGES = ['dashboard.html','inbox.html','write.html','my-messages.html','chat.html','profile.html','settings.html'];
+    if (window.top === window.self && SHELL_PAGES.indexOf(here) !== -1) {
+      // An email sign-in link carries a one-time code. Let the page finish
+      // signing in first, then move into the shell (otherwise the code is lost).
+      const hasAuth = /(access_token|refresh_token|error_description|token_hash)=/.test(location.hash) ||
+                      /[?&](code|token_hash|error_description)=/.test(location.search);
+      if (!hasAuth) {
+        location.replace('app.html#' + here + location.search + location.hash);
+        return;
+      }
+      let tries = 0;
+      const wait = setInterval(async function () {
+        tries++;
+        try {
+          const r = await supabaseClient.auth.getSession();
+          if (r.data && r.data.session) { clearInterval(wait); location.replace('app.html#' + here); return; }
+        } catch (e) {}
+        if (tries > 40) clearInterval(wait);   // give up after ~10 seconds
+      }, 250);
+    }
+  } catch (e) {}
+
   const IDLE_LIMIT  = 30 * 60 * 1000;  // sign out after 30 minutes with no activity
   const WARN_BEFORE = 60 * 1000;       // show a warning for the last minute
   const KEY = '8mellow_last_activity'; // shared between tabs

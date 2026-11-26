@@ -1027,7 +1027,7 @@ window.addEventListener('load', async function () {
         
         // Create a new Dashboard button and add it to the nav
         const dashBtn = document.createElement('a');
-        dashBtn.href = 'dashboard.html';
+        dashBtn.href = 'app.html';
         dashBtn.className = 'btn-solid'; // Use the same purple button styling
         dashBtn.innerText = 'My Dashboard';
         navActions.appendChild(dashBtn);
@@ -1036,7 +1036,7 @@ window.addEventListener('load', async function () {
       // 2. Update the Hero "Get Started" button
       const heroBtn = document.getElementById('hero-btn');
       if (heroBtn) {
-        heroBtn.href = 'dashboard.html';
+        heroBtn.href = 'app.html';
         heroBtn.innerHTML = `Go to Dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
       }
     }
