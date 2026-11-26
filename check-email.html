@@ -221,7 +221,7 @@
 
   // If the link is opened in another tab of this browser, this tab follows along
   supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN' && session) window.location.replace('dashboard.html');
+    if (event === 'SIGNED_IN' && session) window.location.replace('app.html');
   });
 
   // "Send again" with a 60 second wait
@@ -254,7 +254,7 @@
 
     let replyTo = null;
     try { replyTo = localStorage.getItem('reply_to_post'); } catch (e) {}
-    const redirect = SITE + 'dashboard.html' + (replyTo ? '?reply_to=' + encodeURIComponent(replyTo) : '');
+    const redirect = SITE + 'app.html' + (replyTo ? '?reply_to=' + encodeURIComponent(replyTo) : '');
 
     const { error } = await supabaseClient.auth.signInWithOtp({
       email: email,
