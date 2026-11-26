@@ -327,10 +327,35 @@
     </div>
 
     <div class="h2-visual" aria-hidden="true">
-      <div class="h2-card c1"><span class="h2-tag">To my old friend</span><p>I'm sorry I stopped answering. I was ashamed, not angry.</p><small>Anonymous &middot; just now</small></div>
-      <div class="h2-card c2"><span class="h2-tag mint">Thank you</span><p>You were the only teacher who noticed. I never said thanks.</p><small>Anonymous &middot; 2h ago</small></div>
-      <div class="h2-card c3"><span class="h2-tag gold">Private reply</span><p>I think this is about me. Can we talk? <b>&#128274;</b></p><small>Only you two can see this</small></div>
-      <div class="h2-note">Example messages</div>
+      <div class="ph-chip pc1">&#128274; Private by default</div>
+      <div class="ph-chip pc2">&#10003; No real names</div>
+      <div class="ph-wrap" id="ph-wrap">
+        <div class="ph" id="ph">
+          <div class="ph-notch"></div>
+          <div class="ph-screen">
+            <div class="ph-bar"><b>8mellow</b><span class="ph-dot"></span></div>
+            <div class="ph-scene s1 on">
+              <div class="ph-label">Write a message</div>
+              <div class="ph-to">To my old friend</div>
+              <div class="ph-input"><span id="ph-type"></span><i class="ph-caret"></i></div>
+              <div class="ph-btn" id="ph-post">Post anonymously</div>
+            </div>
+            <div class="ph-scene s2">
+              <div class="ph-label">The wall</div>
+              <div class="ph-msg" id="ph-new"><span class="ph-tag">To my old friend</span><p>I'm sorry I stopped answering. I was ashamed, not angry.</p><small>Anonymous &middot; just now</small></div>
+              <div class="ph-msg dim"><span class="ph-tag mint">Thank you</span><p>You were the only teacher who noticed.</p><small>Anonymous &middot; 2h ago</small></div>
+              <div class="ph-notif" id="ph-notif">&#128274; Someone replied privately</div>
+            </div>
+            <div class="ph-scene s3">
+              <div class="ph-label">Private chat &middot; &#128274;</div>
+              <div class="ph-bub them" id="pb1">I think this is about me. Can we talk?</div>
+              <div class="ph-bub me" id="pb2">I'd like that. Thank you for answering.</div>
+              <div class="ph-bub them" id="pb3">Thank you for saying it &#128156;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="h2-note">Illustrative demo</div>
     </div>
   </div>
 
@@ -343,6 +368,46 @@
   </a>
 </div>
 
+<script>
+(function(){
+  var ph=document.getElementById('ph'); if(!ph) return;
+  var $=function(id){return document.getElementById(id);};
+  var scenes=ph.querySelectorAll('.ph-scene'), typeEl=$('ph-type'), btn=$('ph-post'), nw=$('ph-new'), nt=$('ph-notif');
+  var bubs=[$('pb1'),$('pb2'),$('pb3')];
+  var TXT="I'm sorry I stopped answering. I was ashamed, not angry.";
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var timers=[], running=false, visible=true;
+  function at(ms,fn){ timers.push(setTimeout(fn,ms)); }
+  function show(n){ for(var i=0;i<scenes.length;i++) scenes[i].classList.toggle('on',i===n); }
+  function reset(){ typeEl.textContent=''; btn.classList.remove('press'); nw.classList.remove('on'); nt.classList.remove('on'); bubs.forEach(function(b){b.classList.remove('on');}); show(0); }
+  function run(){
+    if(running||!visible) return; running=true; reset();
+    var t=700;
+    for(var i=1;i<=TXT.length;i++){ (function(k){ at(t+k*42,function(){ typeEl.textContent=TXT.slice(0,k); }); })(i); }
+    t+=TXT.length*42+500; at(t,function(){ btn.classList.add('press'); });
+    t+=450; at(t,function(){ show(1); });
+    t+=600; at(t,function(){ nw.classList.add('on'); });
+    t+=2200; at(t,function(){ nt.classList.add('on'); });
+    t+=1800; at(t,function(){ show(2); });
+    t+=500; at(t,function(){ bubs[0].classList.add('on'); });
+    t+=1300; at(t,function(){ bubs[1].classList.add('on'); });
+    t+=1300; at(t,function(){ bubs[2].classList.add('on'); });
+    t+=3200; at(t,function(){ running=false; run(); });
+  }
+  function stop(){ timers.forEach(clearTimeout); timers=[]; running=false; }
+  if(reduce){ show(1); nw.classList.add('on'); nt.classList.add('on'); }
+  else {
+    if('IntersectionObserver' in window){ new IntersectionObserver(function(e){ visible=e[0].isIntersecting; if(visible) run(); else stop(); },{threshold:.2}).observe(ph); }
+    else run();
+    document.addEventListener('visibilitychange',function(){ if(document.hidden) stop(); else { visible=true; run(); } });
+    var hero=document.querySelector('.hero2');
+    if(hero && matchMedia('(hover:hover)').matches){
+      hero.addEventListener('mousemove',function(ev){ var r=hero.getBoundingClientRect(); var x=(ev.clientX-r.left)/r.width-.5, y=(ev.clientY-r.top)/r.height-.5; ph.style.setProperty('--ry',(-8+x*14)+'deg'); ph.style.setProperty('--rx',(4-y*10)+'deg'); });
+      hero.addEventListener('mouseleave',function(){ ph.style.setProperty('--ry','-8deg'); ph.style.setProperty('--rx','4deg'); });
+    }
+  }
+})();
+</script>
 <!-- HOW IT WORKS ANIMATION (visitors who are not logged in) -->
 <section class="explainer" id="explainer" aria-labelledby="ex-title">
   <h2 id="ex-title">See how 8mellow works</h2>
@@ -492,6 +557,50 @@ body.has-explainer .hero2 .btn-hero-ghost{ display:inline-flex !important; }
   .h2-card.c2{ top:120px; } .h2-card.c3{ top:236px; left:6%; }
   .hero2 .logo{ font-size:24px; }
 }
+</style>
+<style>
+/* ===== Live phone demo ===== */
+.h2-glow{ animation:h2drift 18s ease-in-out infinite alternate; }
+.h2-glow.g2{ animation-duration:23s; animation-delay:-6s; }
+.h2-glow.g3{ animation-duration:27s; animation-delay:-11s; }
+@keyframes h2drift{ 0%{ transform:translate(0,0) scale(1); } 100%{ transform:translate(60px,40px) scale(1.15); } }
+.hero2::after{ content:''; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.35; background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px); background-size:56px 56px; -webkit-mask-image:radial-gradient(70% 60% at 70% 45%,#000 0%,transparent 75%); mask-image:radial-gradient(70% 60% at 70% 45%,#000 0%,transparent 75%); }
+.h2-visual{ height:540px; display:flex; align-items:center; justify-content:center; perspective:1100px; }
+.ph-wrap{ position:relative; }
+.ph{ position:relative; width:262px; height:520px; border-radius:42px; padding:9px; background:linear-gradient(160deg,rgba(255,255,255,.28),rgba(255,255,255,.06)); border:1px solid rgba(255,255,255,.3); box-shadow:0 40px 80px rgba(0,0,0,.45), 0 0 80px rgba(127,255,212,.12), inset 0 1px 0 rgba(255,255,255,.35); transform:rotateY(var(--ry,-8deg)) rotateX(var(--rx,4deg)); transition:transform .25s ease-out; transform-style:preserve-3d; }
+.ph-notch{ position:absolute; top:14px; left:50%; width:84px; height:22px; margin-left:-42px; background:#0b0418; border-radius:14px; z-index:5; }
+.ph-screen{ position:relative; width:100%; height:100%; border-radius:34px; overflow:hidden; background:linear-gradient(170deg,#1B0B3E,#10062A); color:#fff; }
+.ph-bar{ display:flex; justify-content:space-between; align-items:center; padding:46px 20px 10px; font-family:'Outfit',sans-serif; font-size:17px; color:#E3B341; }
+.ph-bar b{ border-bottom:3px solid #8E63E8; padding-bottom:1px; }
+.ph-dot{ width:8px; height:8px; border-radius:50%; background:#7FFFD4; box-shadow:0 0 10px #7FFFD4; }
+.ph-scene{ position:absolute; left:0; right:0; top:84px; bottom:0; padding:8px 16px; opacity:0; transform:translateY(8px); transition:opacity .5s ease, transform .5s ease; pointer-events:none; }
+.ph-scene.on{ opacity:1; transform:none; }
+.ph-label{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#A99BD0; font-weight:700; margin-bottom:12px; }
+.ph-to{ display:inline-block; font-size:12px; font-weight:700; padding:4px 10px; border-radius:999px; background:rgba(142,99,232,.45); margin-bottom:10px; }
+.ph-input{ min-height:132px; border-radius:16px; padding:14px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); font-size:15px; line-height:1.45; color:#fff; }
+.ph-caret{ display:inline-block; width:2px; height:1.1em; background:#7FFFD4; margin-left:2px; vertical-align:-2px; animation:phblink 1s steps(1) infinite; }
+@keyframes phblink{ 50%{ opacity:0; } }
+.ph-btn{ margin-top:16px; text-align:center; padding:13px; border-radius:999px; background:#7FFFD4; color:#1E0B4A; font-weight:700; font-size:14px; transition:transform .15s ease, box-shadow .2s ease; }
+.ph-btn.press{ transform:scale(.94); box-shadow:0 0 0 8px rgba(127,255,212,.25); }
+.ph-msg{ border-radius:18px; padding:13px 14px; margin-bottom:12px; background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.16); }
+.ph-msg p{ font-size:13.5px; line-height:1.4; margin:8px 0; font-weight:500; }
+.ph-msg small{ font-size:11px; color:#A99BD0; }
+.ph-msg.dim{ opacity:.55; }
+#ph-new{ opacity:0; transform:translateY(-14px) scale(.96); transition:opacity .5s ease, transform .5s cubic-bezier(.2,.9,.3,1.3); border-color:rgba(255,214,107,.6); box-shadow:0 0 24px rgba(227,179,65,.25); }
+#ph-new.on{ opacity:1; transform:none; }
+.ph-tag{ display:inline-block; font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; background:rgba(142,99,232,.5); }
+.ph-tag.mint{ background:#7FFFD4; color:#1E0B4A; }
+.ph-notif{ position:absolute; left:14px; right:14px; bottom:26px; padding:12px 14px; border-radius:16px; background:rgba(127,255,212,.18); border:1px solid rgba(127,255,212,.5); font-size:13px; font-weight:600; backdrop-filter:blur(8px); opacity:0; transform:translateY(16px); transition:opacity .5s ease, transform .5s cubic-bezier(.2,.9,.3,1.3); }
+.ph-notif.on{ opacity:1; transform:none; }
+.ph-bub{ max-width:82%; padding:10px 13px; border-radius:18px; font-size:13.5px; line-height:1.4; margin-bottom:10px; opacity:0; transform:translateY(10px) scale(.9); transition:opacity .4s ease, transform .45s cubic-bezier(.2,.9,.3,1.3); }
+.ph-bub.on{ opacity:1; transform:none; }
+.ph-bub.them{ background:linear-gradient(135deg,#C79A2B,#94690A); border-bottom-left-radius:5px; margin-right:auto; }
+.ph-bub.me{ background:#7FFFD4; color:#1E0B4A; border-bottom-right-radius:5px; margin-left:auto; font-weight:600; }
+.ph-chip{ position:absolute; z-index:6; padding:9px 14px; border-radius:999px; font-size:13px; font-weight:600; color:#fff; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:0 14px 34px rgba(0,0,0,.3); animation:h2float 6s ease-in-out infinite; }
+.ph-chip.pc1{ left:0; top:90px; } .ph-chip.pc2{ right:0; bottom:110px; animation-delay:-3s; }
+@media(max-width:1000px){ .h2-visual{ height:540px; max-width:none; } .ph-chip.pc1{ left:calc(50% - 215px); } .ph-chip.pc2{ right:calc(50% - 215px); } }
+@media(max-width:600px){ .h2-visual{ height:500px; } .ph{ width:236px; height:470px; } .ph-chip{ display:none; } .ph-input{ min-height:112px; font-size:14px; } }
+@media (prefers-reduced-motion: reduce){ .h2-glow,.ph-chip,.ph-caret{ animation:none; } .ph{ transition:none; } }
 </style>
 <script>
 /* 8mellow explainer story: createStory(mount, { loop, cta, autoplay, onDone }) */
