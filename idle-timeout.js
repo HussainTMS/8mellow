@@ -5,10 +5,23 @@
  *     <script src="idle-timeout.js"></script>
  */
 (function () {
+  // Logged-in pages live inside the side-menu shell (app.html).
+  // If one is opened on its own, move it into the shell.
+  try {
+    const here = location.pathname.split('/').pop();
+    const SHELL_PAGES = ['dashboard.html','inbox.html','write.html','my-messages.html','chat.html','profile.html','settings.html'];
+    if (window.top === window.self && SHELL_PAGES.indexOf(here) !== -1) {
+      location.replace('app.html#' + here + location.search + location.hash);
+      return;
+    }
+  } catch (e) {}
+
   const IDLE_LIMIT  = 30 * 60 * 1000;  // sign out after 30 minutes with no activity
   const WARN_BEFORE = 60 * 1000;       // show a warning for the last minute
   const KEY = '8mellow_last_activity'; // shared between tabs
-  const LOGIN_URL = 'auth.html?mode=login&timeout=1';
+  // After signing back in, return to the page they were on
+  const LOGIN_URL = 'auth.html?mode=login&timeout=1&next=' +
+    encodeURIComponent(location.pathname.split('/').pop() + location.search);
 
   if (typeof supabaseClient === 'undefined') return;
 
