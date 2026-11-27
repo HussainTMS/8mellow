@@ -67,6 +67,25 @@
     .badge{ position:absolute; top:0; right:calc(50% - 24px); margin:0; }
   }
 </style>
+<style>
+/* ===== Compact side menu (desktop) ===== */
+@media (min-width:861px){
+  .shell{ grid-template-columns:232px minmax(0,1fr); }
+  .side{ padding:16px 10px; gap:2px; }
+  .brand{ margin:2px 8px 14px; }
+  .logo{ font-size:22px; border-bottom-width:3px; }
+  .item{ gap:10px; padding:7px 10px; border-radius:9px; font-size:14px; font-weight:500; line-height:1.25; border:none; --edge:#FCFAF8; }
+  .item:hover{ background:#F4EFFB; color:var(--ink); }
+  .item.active{ background:#EDE5F9; color:var(--purple); box-shadow:none; font-weight:600; }
+  .item:hover{ --edge:#F4EFFB; } .item.active{ --edge:#EDE5F9; }
+  .ico{ width:22px; height:22px; background:none; border-radius:0; }
+  .ico svg{ width:19px; height:19px; }
+  .item[data-page="maybe.html"] .ico svg{ width:22px; height:22px; }
+  .badge{ min-width:18px; padding:0 6px; font-size:11px; line-height:18px; }
+  .acct-btn{ padding:8px 10px; border-radius:9px; font-size:14px; }
+  .menu a, .menu button{ padding:8px 12px; font-size:13px; }
+}
+</style>
 </head>
 <body>
 
