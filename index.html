@@ -677,6 +677,12 @@ body.has-explainer .hero2 .btn-hero-ghost{ display:inline-flex !important; }
 .msg-meta{ gap:10px; }
 @media(max-width:768px){ .feed-card{ padding:12px; } .msg-footer{ flex-direction:row; align-items:center; gap:8px; flex-wrap:wrap; } }
 </style>
+<style>
+/* ===== Smaller headline ===== */
+.hero2 .hero-content h1{ font-size:48px; line-height:1.08; letter-spacing:-.025em; }
+@media(max-width:1000px){ .hero2 .hero-content h1{ font-size:40px; } }
+@media(max-width:600px){ .hero2 .hero-content h1{ font-size:31px; } }
+</style>
 <script>
 /* 8mellow explainer story: createStory(mount, { loop, cta, autoplay, onDone }) */
 function createStory(mount, opts) {
