@@ -274,6 +274,26 @@
     h1 { font-size: 28px; }
     textarea { min-height: 150px; }
   }
+  /* AI helper */
+  .ai-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:10px 0 6px; }
+  .ai-btn { background:#fff; color:var(--purple); border:1.5px solid var(--purple); border-radius:999px; padding:8px 16px; font:600 14px 'Inter',sans-serif; cursor:pointer; }
+  .ai-btn:hover { background:var(--light-purple); }
+  .ai-btn:disabled { opacity:.6; cursor:default; }
+  .ai-hint { font-size:12px; color:var(--muted); }
+  .ai-panel { background:#FBF8FF; border:1px solid #E1D5F5; border-radius:14px; padding:14px; margin:8px 0 12px; }
+  .ai-note { font-size:14px; color:var(--ink); line-height:1.5; }
+  .ai-small { font-size:12px; color:var(--muted); margin-top:10px; line-height:1.5; }
+  .ai-draft { background:#fff; border:1px solid #E8DEF7; border-radius:12px; padding:12px 14px; margin-bottom:10px; }
+  .ai-draft b { display:block; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--purple); margin-bottom:6px; }
+  .ai-draft p { font-size:14.5px; line-height:1.55; color:var(--ink); margin-bottom:10px; white-space:pre-wrap; }
+  .ai-use, .ai-undo { background:var(--purple); color:#fff; border:none; border-radius:999px; padding:6px 14px; font:600 13px 'Inter',sans-serif; cursor:pointer; }
+  .ai-undo { background:#fff; color:var(--purple); border:1.5px solid var(--purple); }
+  .ai-panel a { color:var(--purple); font-weight:600; }
+  /* Category dropdown (replaces the chip list; chips stay hidden as the data source) */
+  .category-grid { display:none; }
+  .category-select { width:100%; appearance:none; -webkit-appearance:none; background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235B32A5' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 14px center; border:1px solid var(--line); border-radius:12px; padding:12px 40px 12px 14px; font:500 15px 'Inter',sans-serif; color:var(--ink); margin-bottom:12px; cursor:pointer; }
+  .category-select:focus { outline:none; border-color:var(--purple); box-shadow:0 0 0 3px rgba(91,50,165,.15); }
+  .category-intro { margin-bottom:16px; padding:12px 14px; }
 </style>
 </head>
 <body>
@@ -315,6 +335,11 @@
     <textarea placeholder="What do you wish you could say to them now?"></textarea>
     
     <div class="char-count">0 / 2000</div>
+    <div class="ai-row">
+      <button type="button" class="ai-btn" id="ai-btn">&#10024; Help me say it</button>
+      <span class="ai-hint">Optional. Suggests a few ways to word what you wrote.</span>
+    </div>
+    <div class="ai-panel" id="ai-panel" aria-live="polite" style="display:none"></div>
     <div class="calm-row">Finding this hard to write? <button type="button" class="calm-link" onclick="if (window.openCalm) openCalm(); else alert('The calm activities could not load. Please refresh the page.');">Take a calm minute</button></div>
     <div class="post-error" id="post-error" role="alert"></div>
 
@@ -431,6 +456,69 @@
     introBox.style.display = 'block';
   }
 
+  // 4b. Optional AI writing help (suggestions only; nothing is sent or posted automatically)
+  (function () {
+    const btn = document.getElementById('ai-btn');
+    const panel = document.getElementById('ai-panel');
+    let original = null, busy = false;
+    function setPanel(node) { panel.innerHTML = ''; panel.appendChild(node); panel.style.display = 'block'; }
+    function note(text, extraHtml) {
+      const d = document.createElement('div');
+      const p = document.createElement('p'); p.className = 'ai-note'; p.textContent = text; d.appendChild(p);
+      if (extraHtml) { const e = document.createElement('div'); e.innerHTML = extraHtml; d.appendChild(e); }
+      return d;
+    }
+    function chosenCategory() { const a = document.querySelector('.category-chip.active'); return a ? a.textContent.trim() : ''; }
+    function showDrafts(res) {
+      const wrap = document.createElement('div');
+      res.drafts.forEach(function (d) {
+        const card = document.createElement('div'); card.className = 'ai-draft';
+        const b = document.createElement('b'); b.textContent = d.label || 'Option'; card.appendChild(b);
+        const p = document.createElement('p'); p.textContent = d.text; card.appendChild(p);
+        const use = document.createElement('button'); use.type = 'button'; use.className = 'ai-use'; use.textContent = 'Use this';
+        use.addEventListener('click', function () {
+          if (original === null) original = textarea.value;
+          textarea.value = d.text.slice(0, 2000);
+          textarea.dispatchEvent(new Event('input', { bubbles: true }));
+          const u = document.createElement('div');
+          u.appendChild(note('Added to your message. You can keep editing it.'));
+          const undo = document.createElement('button'); undo.type = 'button'; undo.className = 'ai-undo'; undo.textContent = 'Undo';
+          undo.addEventListener('click', function () {
+            textarea.value = original; original = null;
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+            panel.style.display = 'none';
+          });
+          u.appendChild(undo);
+          setPanel(u);
+        });
+        card.appendChild(use); wrap.appendChild(card);
+      });
+      const s = document.createElement('p'); s.className = 'ai-small';
+      s.textContent = 'These are only suggestions, and you decide what to post. Your words are sent to an AI service to make them and are not saved.' + (typeof res.remaining === 'number' ? ' ' + res.remaining + ' left today.' : '');
+      wrap.appendChild(s);
+      setPanel(wrap);
+    }
+    btn.addEventListener('click', async function () {
+      if (busy) return;
+      const text = textarea.value.trim();
+      if (text.length < 10) { setPanel(note('Write a few rough words first, even one sentence. Then I can help shape it.')); return; }
+      busy = true; btn.disabled = true;
+      setPanel(note('Finding some gentle ways to say this…'));
+      try {
+        const out = await supabaseClient.functions.invoke('help-me-say-it', { body: { text: text, category: chosenCategory(), mode: 'write' } });
+        const res = out.data;
+        if (out.error || !res) { setPanel(note('The writing help is not available right now. You can still post your message as it is.')); }
+        else if (res.crisis) { setPanel(note('It sounds like you may be carrying something very heavy. You do not have to do it alone.', '<p class="ai-note" style="margin-top:8px"><a href="safety.html" target="_blank" rel="noopener">Crisis &amp; Support</a> has people you can talk to right now.</p>')); }
+        else if (res.limit) { setPanel(note('You have used today\'s writing help. It comes back tomorrow, and you can still post your message as it is.')); }
+        else if (res.drafts && res.drafts.length) { showDrafts(res); }
+        else { setPanel(note('Could not make suggestions this time. Please try again.')); }
+      } catch (e) {
+        setPanel(note('The writing help is not available right now. You can still post your message as it is.'));
+      }
+      busy = false; btn.disabled = false;
+    });
+  })();
+
   // 5. Drafts (saved in this browser only) and category chosen from the dashboard
   const DRAFT_KEY = '8mellow_draft';
   const CATEGORY_KEYS = { sorry: 'sorry', unfair: 'fair', forgive: 'forgive', thanks: 'thank you', explain: 'explain', reconnect: 'reconnect', goodbye: 'goodbye', regret: 'regret', impact: 'what it did', other: 'something else' };
@@ -482,6 +570,26 @@
       }
     } catch (e) {}
   })();
+</script>
+
+<script>
+/* Category dropdown mirrors the category chips */
+(function () {
+  var chips = Array.prototype.slice.call(document.querySelectorAll('.category-chip'));
+  var grid = document.querySelector('.category-grid');
+  if (!chips.length || !grid) return;
+  var sel = document.createElement('select');
+  sel.id = 'category-select'; sel.className = 'category-select'; sel.setAttribute('aria-label', 'Choose a category');
+  chips.forEach(function (c, i) {
+    var o = document.createElement('option'); o.value = i; o.textContent = c.textContent.trim(); sel.appendChild(o);
+  });
+  grid.parentNode.insertBefore(sel, grid);
+  function sync() { var k = chips.findIndex(function (c) { return c.classList.contains('active'); }); if (k >= 0) sel.value = k; }
+  sel.addEventListener('change', function () { chips[Number(sel.value)].click(); });
+  var orig = window.selectCategory;
+  window.selectCategory = function (b, t, d) { orig(b, t, d); sync(); };
+  sync();
+})();
 </script>
 
 <script>
