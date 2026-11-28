@@ -294,6 +294,36 @@
   .category-select { width:100%; appearance:none; -webkit-appearance:none; background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235B32A5' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 14px center; border:1px solid var(--line); border-radius:12px; padding:12px 40px 12px 14px; font:500 15px 'Inter',sans-serif; color:var(--ink); margin-bottom:12px; cursor:pointer; }
   .category-select:focus { outline:none; border-color:var(--purple); box-shadow:0 0 0 3px rgba(91,50,165,.15); }
   .category-intro { margin-bottom:16px; padding:12px 14px; }
+  /* Compact one-screen layout */
+  body { padding:20px 16px; }
+  .write-container { padding:26px 32px 18px; overflow:clip; }
+  .header { margin-bottom:10px; }
+  h1 { font-size:26px; margin-bottom:0; }
+  .subtitle { font-size:20px; margin-bottom:10px; }
+  .label { margin-bottom:6px; font-size:13px; }
+  .category-select { padding:10px 40px 10px 14px; margin-bottom:8px; }
+  .category-intro { padding:8px 12px; margin-bottom:10px; font-size:13px; line-height:1.4; }
+  textarea { min-height:130px; padding:14px 16px; font-size:16px; }
+  .char-count { margin-top:4px; font-size:12px; }
+  .ai-row { margin:4px 0 0; gap:14px; }
+  .ai-hint { display:none; }
+  .ai-btn { padding:7px 14px; font-size:13px; }
+  .ai-row .calm-link { padding:4px 0; font-size:13px; }
+  .warning { background:none; border:none; padding:0; margin:10px 0 0; gap:8px; align-items:flex-start; }
+  .warning svg { width:16px; height:16px; margin-top:1px; }
+  .warning p { font-size:12.5px; line-height:1.4; }
+  .post-bar { position:sticky; bottom:0; z-index:5; background:#fff; margin-top:10px; padding:10px 0 2px; border-top:1px solid #F0EAF8; }
+  .consent-group { margin-bottom:10px; gap:10px; }
+  .consent-group input[type="checkbox"] { width:18px; height:18px; }
+  .consent-group label { font-size:13px; line-height:1.4; }
+  .btn-submit { padding:14px; font-size:17px; }
+  @media(max-width:600px){
+    body { padding:10px 8px; }
+    .write-container { padding:18px 16px 12px; border-radius:18px; }
+    h1 { font-size:22px; }
+    .subtitle { font-size:18px; margin-bottom:8px; }
+    textarea { min-height:104px; }
+  }
 </style>
 </head>
 <body>
@@ -338,9 +368,9 @@
     <div class="ai-row">
       <button type="button" class="ai-btn" id="ai-btn">&#10024; Help me say it</button>
       <span class="ai-hint">Optional. Suggests a few ways to word what you wrote.</span>
+      <button type="button" class="calm-link" onclick="if (window.openCalm) openCalm(); else alert('The calm activities could not load. Please refresh the page.');">Take a calm minute</button>
     </div>
     <div class="ai-panel" id="ai-panel" aria-live="polite" style="display:none"></div>
-    <div class="calm-row">Finding this hard to write? <button type="button" class="calm-link" onclick="if (window.openCalm) openCalm(); else alert('The calm activities could not load. Please refresh the page.');">Take a calm minute</button></div>
     <div class="post-error" id="post-error" role="alert"></div>
 
     <!-- Safety Warning -->
@@ -350,9 +380,10 @@
         <line x1="12" y1="9" x2="12" y2="13"></line>
         <line x1="12" y1="17" x2="12.01" y2="17"></line>
       </svg>
-      <p>Please do not include real names, contact details, or anything that identifies someone. Keep it about the feelings, not the identity. See our <a href="guidelines.html" onclick="window.open(this.href, '_blank'); return false;" style="color:#8B4513; font-weight:600; text-decoration:underline;">Community Guidelines</a>.</p>
+      <p>No real names or contact details. Keep it about the feelings, not the identity. See our <a href="guidelines.html" onclick="window.open(this.href, '_blank'); return false;" style="color:#8B4513; font-weight:600; text-decoration:underline;">Community Guidelines</a>.</p>
     </div>
 
+    <div class="post-bar">
     <!-- Consent Checkbox -->
     <div class="consent-group">
       <input type="checkbox" id="consent" required>
@@ -361,6 +392,7 @@
 
     <!-- Submit -->
     <button type="submit" class="btn-submit">Post message</button>
+    </div>
 
   </form>
 
