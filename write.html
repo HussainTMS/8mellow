@@ -289,11 +289,6 @@
   .ai-use, .ai-undo { background:var(--purple); color:#fff; border:none; border-radius:999px; padding:6px 14px; font:600 13px 'Inter',sans-serif; cursor:pointer; }
   .ai-undo { background:#fff; color:var(--purple); border:1.5px solid var(--purple); }
   .ai-panel a { color:var(--purple); font-weight:600; }
-  /* Category dropdown (replaces the chip list; chips stay hidden as the data source) */
-  .category-grid { display:none; }
-  .category-select { width:100%; appearance:none; -webkit-appearance:none; background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235B32A5' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 14px center; border:1px solid var(--line); border-radius:12px; padding:12px 40px 12px 14px; font:500 15px 'Inter',sans-serif; color:var(--ink); margin-bottom:12px; cursor:pointer; }
-  .category-select:focus { outline:none; border-color:var(--purple); box-shadow:0 0 0 3px rgba(91,50,165,.15); }
-  .category-intro { margin-bottom:16px; padding:12px 14px; }
 </style>
 </head>
 <body>
@@ -442,33 +437,10 @@
       const wantsSupport = confirm('Your message was posted.\n\nIt sounds like you might be carrying something heavy. You are not alone. Would you like to see support options now?');
       window.location.href = wantsSupport ? 'safety.html' : 'dashboard.html';
     } else {
-      // Once only: gently suggest adding a place or school so the right people can find this message
-      try {
-        const nudgeKey = '8m_nudge_' + user.id;
-        if (!localStorage.getItem(nudgeKey)) {
-          const { data: p } = await supabaseClient.from('profiles').select('current_location, education').eq('id', user.id).maybeSingle();
-          const { data: pv } = await supabaseClient.from('profile_private').select('past_locations').eq('id', user.id).maybeSingle();
-          const hasInfo = (p && (p.current_location || p.education)) || (pv && pv.past_locations);
-          if (!hasInfo) { localStorage.setItem(nudgeKey, '1'); showFindNudge(); return; }
-        }
-      } catch (e) {}
       alert('Success! Your message was saved.');
       window.location.href = 'dashboard.html';
     }
   });
-
-  function showFindNudge() {
-    const wrap = document.createElement('div');
-    wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true');
-    wrap.style.cssText = 'position:fixed;inset:0;background:rgba(26,16,51,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999;';
-    wrap.innerHTML = '<div style="background:#fff;border-radius:20px;max-width:380px;width:100%;padding:26px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25);font-family:Inter,sans-serif;">'
-      + '<div style="font-size:34px;margin-bottom:6px;">&#128156;</div>'
-      + '<h2 style="font-size:20px;color:#1A1033;margin:0 0 8px;font-weight:700;">Your message is on the wall</h2>'
-      + '<p style="font-size:15px;line-height:1.55;color:#4A4560;margin:0 0 18px;">Want to be found? Add a place or a school to your profile, and people who share it can see your message in &ldquo;Maybe 4 you&rdquo;. It is optional, and you can change it anytime.</p>'
-      + '<a href="profile.html" style="display:block;background:#5B32A5;color:#fff;text-decoration:none;font-weight:600;padding:13px;border-radius:999px;margin-bottom:10px;">Add to my profile</a>'
-      + '<a href="dashboard.html" style="display:block;color:#5B32A5;text-decoration:none;font-weight:600;padding:10px;">Not now</a></div>';
-    document.body.appendChild(wrap);
-  }
 
   // 4. Category Selector
   function selectCategory(btn, title, desc) {
@@ -593,26 +565,6 @@
       }
     } catch (e) {}
   })();
-</script>
-
-<script>
-/* Category dropdown mirrors the category chips */
-(function () {
-  var chips = Array.prototype.slice.call(document.querySelectorAll('.category-chip'));
-  var grid = document.querySelector('.category-grid');
-  if (!chips.length || !grid) return;
-  var sel = document.createElement('select');
-  sel.id = 'category-select'; sel.className = 'category-select'; sel.setAttribute('aria-label', 'Choose a category');
-  chips.forEach(function (c, i) {
-    var o = document.createElement('option'); o.value = i; o.textContent = c.textContent.trim(); sel.appendChild(o);
-  });
-  grid.parentNode.insertBefore(sel, grid);
-  function sync() { var k = chips.findIndex(function (c) { return c.classList.contains('active'); }); if (k >= 0) sel.value = k; }
-  sel.addEventListener('change', function () { chips[Number(sel.value)].click(); });
-  var orig = window.selectCategory;
-  window.selectCategory = function (b, t, d) { orig(b, t, d); sync(); };
-  sync();
-})();
 </script>
 
 <script>
