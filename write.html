@@ -442,10 +442,33 @@
       const wantsSupport = confirm('Your message was posted.\n\nIt sounds like you might be carrying something heavy. You are not alone. Would you like to see support options now?');
       window.location.href = wantsSupport ? 'safety.html' : 'dashboard.html';
     } else {
+      // Once only: gently suggest adding a place or school so the right people can find this message
+      try {
+        const nudgeKey = '8m_nudge_' + user.id;
+        if (!localStorage.getItem(nudgeKey)) {
+          const { data: p } = await supabaseClient.from('profiles').select('current_location, education').eq('id', user.id).maybeSingle();
+          const { data: pv } = await supabaseClient.from('profile_private').select('past_locations').eq('id', user.id).maybeSingle();
+          const hasInfo = (p && (p.current_location || p.education)) || (pv && pv.past_locations);
+          if (!hasInfo) { localStorage.setItem(nudgeKey, '1'); showFindNudge(); return; }
+        }
+      } catch (e) {}
       alert('Success! Your message was saved.');
       window.location.href = 'dashboard.html';
     }
   });
+
+  function showFindNudge() {
+    const wrap = document.createElement('div');
+    wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true');
+    wrap.style.cssText = 'position:fixed;inset:0;background:rgba(26,16,51,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999;';
+    wrap.innerHTML = '<div style="background:#fff;border-radius:20px;max-width:380px;width:100%;padding:26px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25);font-family:Inter,sans-serif;">'
+      + '<div style="font-size:34px;margin-bottom:6px;">&#128156;</div>'
+      + '<h2 style="font-size:20px;color:#1A1033;margin:0 0 8px;font-weight:700;">Your message is on the wall</h2>'
+      + '<p style="font-size:15px;line-height:1.55;color:#4A4560;margin:0 0 18px;">Want to be found? Add a place or a school to your profile, and people who share it can see your message in &ldquo;Maybe 4 you&rdquo;. It is optional, and you can change it anytime.</p>'
+      + '<a href="profile.html" style="display:block;background:#5B32A5;color:#fff;text-decoration:none;font-weight:600;padding:13px;border-radius:999px;margin-bottom:10px;">Add to my profile</a>'
+      + '<a href="dashboard.html" style="display:block;color:#5B32A5;text-decoration:none;font-weight:600;padding:10px;">Not now</a></div>';
+    document.body.appendChild(wrap);
+  }
 
   // 4. Category Selector
   function selectCategory(btn, title, desc) {
